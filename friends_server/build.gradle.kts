@@ -38,11 +38,11 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("org.redisson:redisson-spring-boot-starter:3.30.0")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-//    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:jpql-render:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:hibernate-kotlin-jdsl-jakarta:2.2.1.RELEASE")
-//    implementation("org.hibernate.orm:hibernate-spatial:6.5.2.Final")
+    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:jpql-render:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:hibernate-kotlin-jdsl-jakarta:2.2.1.RELEASE")
+    implementation("org.hibernate.orm:hibernate-spatial:6.5.2.Final")
 
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
