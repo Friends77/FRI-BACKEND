@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // Spring
-    // implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -35,14 +35,14 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     // DB
-//    implementation("org.postgresql:postgresql:42.7.3")
-//    implementation("org.redisson:redisson-spring-boot-starter:3.30.0")
-//    implementation("org.springframework.boot:spring-boot-starter-data-redis:3.3.4")
-//    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:jpql-render:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.4.1")
-//    implementation("com.linecorp.kotlin-jdsl:hibernate-kotlin-jdsl-jakarta:2.2.1.RELEASE")
-//    implementation("org.hibernate.orm:hibernate-spatial:6.5.2.Final")
+    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.redisson:redisson-spring-boot-starter:3.30.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:jpql-render:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:3.4.1")
+    implementation("com.linecorp.kotlin-jdsl:hibernate-kotlin-jdsl-jakarta:2.2.1.RELEASE")
+    implementation("org.hibernate.orm:hibernate-spatial:6.5.2.Final")
 
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
