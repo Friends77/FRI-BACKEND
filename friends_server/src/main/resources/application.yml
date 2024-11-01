@@ -24,6 +24,10 @@ spring:
         show_sql: false
         default_batch_fetch_size: 100
     open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
 logging:
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%highlight(%-5level)] %cyan(%logger.%method:line%line) - %msg%n"
