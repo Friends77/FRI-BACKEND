@@ -21,9 +21,15 @@ services:
     volumes:
       - redis_data:/data
 
-  spring :
-    image: hosungahn/fri_server:latest
+  spring:
+    image: hosungahn/fri_server:0.1
     container_name: fri_server
+    environment:
+      APP_PHASE: dev  # 활성화할 Spring 프로파일
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydb
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+      SPRING_REDIS_HOST: redis
     ports:
       - "8080:8080"
     depends_on:
