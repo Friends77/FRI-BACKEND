@@ -14,7 +14,7 @@ class Member(
 
     @Enumerated(EnumType.STRING)
     var oauth2Provider: OAuth2Provider,
-    var oauth2Id: Int,
+
     var imageUrl: String,
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -39,7 +39,6 @@ class Member(
                 email = email,
                 password = password,
                 oauth2Provider = oauth2Provider,
-                oauth2Id = oauth2Id,
                 imageUrl = imageUrl
             ).apply {
                 addAuthority(Role.ROLE_USER)  // 기본 권한을 사용자 권한으로 설정
@@ -63,7 +62,6 @@ class Member(
                 email = email,
                 password = password,
                 oauth2Provider = oauth2Provider,
-                oauth2Id = oauth2Id,
                 imageUrl = imageUrl
             ).apply {
                 addAuthority(Role.ROLE_USER)  // 기본 권한으로 사용자 권한 추가
