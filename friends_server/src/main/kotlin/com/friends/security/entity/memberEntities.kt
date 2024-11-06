@@ -5,6 +5,7 @@ import jakarta.persistence.*
 @Entity
 class Member(
     @Id @GeneratedValue
+    @Column(name = "member_id")
     val id: Long? = null,  // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
     var name: String,
 
@@ -85,6 +86,7 @@ class Member(
 @Entity
 class Authority(
     @Id @GeneratedValue
+    @Column(name = "authority_id")
     val id: Long? = null,  // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
     @Enumerated(EnumType.STRING)
     var role: Role,
