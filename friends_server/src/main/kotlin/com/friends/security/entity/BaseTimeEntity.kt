@@ -1,26 +1,25 @@
 package com.friends.security.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
+import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
 
 @MappedSuperclass
-open class BaseTimeEntity (
-    @Column(updatable = false)
-    var createdAt: LocalDateTime = LocalDateTime.now(),
-    var updatedAt : LocalDateTime = LocalDateTime.now()
-){
-    @PrePersist
-    fun prePersist(){
-        val now = LocalDateTime.now()
-        createdAt = now
-        updatedAt = now
-    }
-
-    @PreUpdate
-    fun preUpdate(){
-        updatedAt = LocalDateTime.now()
-    }
+@EntityListeners(AuditingEntityListener::class)
+abstract class BaseTimeEntity {
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    lateinit var createdAt: LocalDateTime
+        protected set
 }
+
+@MappedSuperclass
+abstract class BaseModifiableEntity : BaseTimeEntity() {
+    @LastModifiedDate
+    @Column(nullable = false)
+    lateinit var updatedAt: LocalDateTime
+        protected set
+}
+

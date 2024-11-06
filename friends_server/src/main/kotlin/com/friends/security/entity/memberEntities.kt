@@ -20,7 +20,7 @@ class Member(
 
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList()  // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
-) : BaseTimeEntity() {
+) : BaseModifiableEntity() {
 
     companion object {
         /**
@@ -94,4 +94,4 @@ class Authority(
     @ManyToOne
     @JoinColumn(name = "member_id")
     var member: Member
-) : BaseTimeEntity()
+) : BaseModifiableEntity()
