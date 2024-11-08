@@ -5,13 +5,14 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-class CustomUserDetails (
-        private val member : Member
+class CustomUserDetails(
+    private val member: Member,
 ) : UserDetails {
-
-    private val authorities : Collection<GrantedAuthority> = member.authorities.map {
-        authority -> SimpleGrantedAuthority(authority.role.name)
-    }
+    private val authorities: Collection<GrantedAuthority> =
+        member.authorities.map {
+                authority ->
+            SimpleGrantedAuthority(authority.role.name)
+        }
 
     fun getMemberId(): Long = member.id!!
 
