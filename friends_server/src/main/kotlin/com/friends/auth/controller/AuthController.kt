@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     val authCommandService: AuthCommandService,
 ) : AuthControllerSpec {
-
     @GetMapping
     override fun logIn(
         @RequestHeader(AUTHORIZATION) socialAccessToken: String?,

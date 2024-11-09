@@ -12,14 +12,15 @@ import io.swagger.v3.oas.annotations.tags.Tag
 @Tag(name = "Auth")
 interface AuthControllerSpec {
     @Operation(
-        summary = "로그인 API", responses = [
+        summary = "로그인 API",
+        responses = [
             ApiResponse(responseCode = "200", description = "로그인 성공"),
-        ]
+        ],
     )
     @ApiErrorCodeExamples(
         [
-            ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN
-        ]
+            ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN,
+        ],
     )
     fun logIn(
         @Parameter(hidden = true)
@@ -31,12 +32,12 @@ interface AuthControllerSpec {
         description = "Refresh Token 을 통해 AccessToken 을 갱신합니다.",
         responses = [
             ApiResponse(responseCode = "200", description = "요청 성공"),
-        ]
+        ],
     )
     fun refresh(
         @Parameter(
             name = "token",
-            description = "리프레시 토큰 (Bearer 같은 헤더는 붙이지 않고 전달해주세요. ex) eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MX0.fhc3wykrAnRpcKApKhXiahxaOe8PSHatad31NuIZ0Zg)",
+            description = "Bearer 같은 헤더는 붙이지 않고 전달해주세요. 예시 : eyJhbGciOiJIUzI1NiIsInR5cCI6....",
             required = true,
             `in` = ParameterIn.QUERY,
         )
