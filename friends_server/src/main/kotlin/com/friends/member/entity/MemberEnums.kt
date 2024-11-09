@@ -1,4 +1,4 @@
-package com.friends.security.entity
+package com.friends.member.entity
 
 enum class OAuth2Provider {
     GOOGLE,
