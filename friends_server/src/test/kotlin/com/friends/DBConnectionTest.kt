@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 @SpringBootTest
 class DBConnectionTest(
     @Autowired private val jdbcTemplate: JdbcTemplate,
-    @Autowired private val redissonClient: RedissonClient
+    @Autowired private val redissonClient: RedissonClient,
 ) {
     @Test
     fun `PostgreSQL 연결 테스트`() {

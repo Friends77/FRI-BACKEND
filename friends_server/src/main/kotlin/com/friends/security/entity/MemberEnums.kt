@@ -2,9 +2,10 @@ package com.friends.security.entity
 
 enum class OAuth2Provider {
     GOOGLE,
-    NAVER
+    NAVER,
 }
 
 enum class Role {
-    ROLE_USER, ROLE_ADMIN
+    ROLE_USER,
+    ROLE_ADMIN,
 }
