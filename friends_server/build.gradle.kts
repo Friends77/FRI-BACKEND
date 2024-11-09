@@ -29,6 +29,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation ("io.netty:netty-resolver-dns-native-macos:4.1.68.Final:osx-aarch_64")
+
 //    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 
     // Kotlin
@@ -60,6 +62,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
     testImplementation("io.kotest:kotest-assertions-core:5.9.0")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+
 }
 
 kotlin {
