@@ -37,3 +37,9 @@ logging:
       hibernate:
         SQL: debug
         type.descriptor.sql: trace
+
+
+google:
+  client-id: 71559751357-tis73qfauh5974vt84riukfmdgojspi0.apps.googleusercontent.com
+  client-secret: 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
+  redirect-uri: http://localhost:8080/oauth2/code/google
