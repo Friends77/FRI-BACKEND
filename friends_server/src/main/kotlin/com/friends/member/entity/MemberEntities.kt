@@ -18,7 +18,8 @@ class Member(
     // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
-    val id: Long = 0L, // IDENTITY가 1부터 시작하므로, 초기 값인 0L은 무시되며, 엔티티가 저장될 때 데이터베이스가 올바른 자동 증가 값을 할당
+    val id: Long = 0L,
+    // IDENTITY가 1부터 시작하므로, 초기 값인 0L은 무시되며, 엔티티가 저장될 때 데이터베이스가 올바른 자동 증가 값을 할당
     var name: String,
     // 이메일은 중복되지 않아야 하며 수정되지 않아야 합니다.
     @Column(unique = true, updatable = false)

@@ -12,7 +12,7 @@ class InvalidRefreshTokenException() :
 class MissingSocialAccessTokenException() :
     InvalidJwtException(
         ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN,
-        ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN.httpStatus
+        ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN.httpStatus,
     )
 
 class MissingRefreshTokenException() :

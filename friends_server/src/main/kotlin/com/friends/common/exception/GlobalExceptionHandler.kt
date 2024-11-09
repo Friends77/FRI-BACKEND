@@ -10,7 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice // @ControllerAdvice와 @ResponseBody를 결합한 것
 class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
-
     private val log: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
     @ExceptionHandler(InvalidJwtException::class)
