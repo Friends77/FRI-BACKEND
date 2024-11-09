@@ -1,6 +1,6 @@
-package com.friends.security.repository
+package com.friends.member.repository
 
-import com.friends.security.entity.Member
+import com.friends.member.entity.Member
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 

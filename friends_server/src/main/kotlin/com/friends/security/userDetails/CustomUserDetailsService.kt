@@ -1,7 +1,7 @@
 package com.friends.security.userDetails
 
-import com.friends.security.entity.Member
-import com.friends.security.repository.MemberRepository
+import com.friends.member.entity.Member
+import com.friends.member.repository.MemberRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
