@@ -47,10 +47,7 @@ class OAuth2Controller (
     @PostMapping("/oauth2-token")
     fun requestAccessToken(@RequestParam code: String, @RequestParam provider: OAuth2Provider): Mono<ResponseEntity<String>>{
 
-        //client가 넘겨준 인가코드
         println("인가코드: $code, 공급자: $provider")
-
-//        val tokenUri = "https://oauth2.googleapis.com/token"
 
         val config = when (provider) {
             OAuth2Provider.GOOGLE -> OAuthConfig(
