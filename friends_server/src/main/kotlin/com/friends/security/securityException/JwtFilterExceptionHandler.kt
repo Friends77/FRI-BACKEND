@@ -1,4 +1,4 @@
-package com.friends.common.exception
+package com.friends.security.securityException
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
