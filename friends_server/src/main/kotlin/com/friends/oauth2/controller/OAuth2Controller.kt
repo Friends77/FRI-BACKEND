@@ -1,5 +1,6 @@
 package com.friends.oauth2.controller
 
+import com.friends.config.OAuthConfig
 import com.friends.security.entity.OAuth2Provider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -8,12 +9,6 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 
-data class OAuthConfig(
-    val clientId: String,
-    val clientSecret: String,
-    val redirectUri: String,
-    val tokenUri: String,
-)
 
 @RestController
 @RequestMapping("/api/auth")
