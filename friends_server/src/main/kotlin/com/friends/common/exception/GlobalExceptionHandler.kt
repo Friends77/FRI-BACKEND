@@ -15,6 +15,7 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(InvalidJwtException::class)
     fun handleInvalidJwtException(ex: InvalidJwtException): ResponseEntity<Any> {
         log.error("Invalid JWT", ex)
-        return ResponseEntity.status(ex.httpStatus).body(ErrorResponse.of(ex.errorCode, ex.message))
+        return ResponseEntity.status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
 }
