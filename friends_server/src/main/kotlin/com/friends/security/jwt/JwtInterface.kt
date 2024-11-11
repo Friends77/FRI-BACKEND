@@ -1,7 +1,9 @@
 package com.friends.security.jwt
 
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.stereotype.Component
 
+@Component
 interface JwtInterface {
     fun getMemberId(token: String): Long {
         TODO("Not yet implemented")
