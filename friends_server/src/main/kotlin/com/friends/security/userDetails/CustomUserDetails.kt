@@ -1,6 +1,6 @@
 package com.friends.security.userDetails
 
-import com.friends.security.entity.Member
+import com.friends.member.entity.Member
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -14,7 +14,7 @@ class CustomUserDetails(
             SimpleGrantedAuthority(authority.role.name)
         }
 
-    fun getMemberId(): Long = member.id!!
+    fun getMemberId(): Long = member.id
 
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
 
