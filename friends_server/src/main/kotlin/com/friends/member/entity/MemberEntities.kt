@@ -15,8 +15,8 @@ import jakarta.persistence.OneToMany
 
 @Entity
 class Member(
-    // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     val id: Long = 0L,
     // IDENTITY가 1부터 시작하므로, 초기 값인 0L은 무시되며, 엔티티가 저장될 때 데이터베이스가 올바른 자동 증가 값을 할당
@@ -26,7 +26,7 @@ class Member(
     val email: String,
     var password: String,
     @Enumerated(EnumType.STRING)
-    var oauth2Provider: OAuth2Provider,
+    var oauth2Provider: OAuth2Provider?, // OAuth2Provider는 nullable이지 않을까요?
     var imageUrl: String,
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -41,7 +41,7 @@ class Member(
             name: String,
             email: String,
             password: String,
-            oauth2Provider: OAuth2Provider,
+            oauth2Provider: OAuth2Provider?,
             imageUrl: String,
         ): Member =
             Member(

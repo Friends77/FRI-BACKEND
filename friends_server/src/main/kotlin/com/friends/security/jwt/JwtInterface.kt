@@ -3,34 +3,22 @@ package com.friends.security.jwt
 import org.springframework.security.core.GrantedAuthority
 
 interface JwtInterface {
-    fun getMemberId(token: String): Long {
-        TODO("Not yet implemented")
-    }
+    fun getMemberId(token: String): Long
 
-    fun getAuthorities(token: String): Collection<GrantedAuthority> {
-        TODO("Not yet implemented")
-    }
+    fun getAuthorities(token: String): Collection<GrantedAuthority>
 
     fun createAccessToken(
         memberId: Long,
         authorities: Collection<GrantedAuthority>,
-    ): String {
-        TODO("Not yet implemented")
-    }
+    ): String
 
     fun createRefreshToken(
         memberId: Long,
         authorities: Collection<GrantedAuthority>,
         rotateId: String,
-    ): String {
-        TODO("Not yet implemented")
-    }
+    ): String
 
-    fun validateAccessToken(token: String): Boolean {
-        TODO("Not yet implemented")
-    }
+    fun validateToken(token: String): Boolean
 
-    fun validateRefreshToken(token: String): Boolean {
-        TODO("Not yet implemented")
-    }
+    fun validateCacheRefreshToken(token: String): Boolean
 }
