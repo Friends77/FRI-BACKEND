@@ -14,4 +14,5 @@ enum class ErrorCode(val httpStatus: HttpStatus, val code: Int, val errorMessage
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
+    NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, -12002, "존재하지 않는 이메일입니다."),
 }

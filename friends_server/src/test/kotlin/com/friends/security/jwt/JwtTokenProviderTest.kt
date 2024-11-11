@@ -1,10 +1,8 @@
-package com.friends.jwt
+package com.friends.security.jwt
 
 import com.friends.auth.createTestAuthorities
 import com.friends.member.TEST_MEMBER_ID
 import com.friends.member.entity.Role
-import com.friends.security.jwt.JwtTokenProvider
-import com.friends.security.jwt.generateHmac256Key
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
