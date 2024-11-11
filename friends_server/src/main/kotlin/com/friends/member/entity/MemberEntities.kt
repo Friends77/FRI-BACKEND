@@ -26,8 +26,8 @@ class Member(
     val email: String,
     var password: String,
     @Enumerated(EnumType.STRING)
-    var oauth2Provider: OAuth2Provider,
-    var imageUrl: String,
+    var oauth2Provider: OAuth2Provider?,
+    var imageUrl: String?,
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
@@ -41,8 +41,8 @@ class Member(
             name: String,
             email: String,
             password: String,
-            oauth2Provider: OAuth2Provider,
-            imageUrl: String,
+            oauth2Provider: OAuth2Provider? = null,
+            imageUrl: String? = null,
         ): Member =
             Member(
                 name = name,
@@ -62,8 +62,8 @@ class Member(
             name: String,
             email: String,
             password: String,
-            oauth2Provider: OAuth2Provider,
-            imageUrl: String,
+            oauth2Provider: OAuth2Provider? = null,
+            imageUrl: String? = null,
         ): Member =
             Member(
                 name = name,
