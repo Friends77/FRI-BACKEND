@@ -2,7 +2,7 @@ package com.friends.security.jwt
 
 import com.friends.auth.TEST_ACCESS_TOKEN
 import com.friends.auth.TEST_BEARER_ACCESS_TOKEN
-import com.friends.auth.createTestSecurityUser
+import com.friends.auth.createTestCustomUserDetails
 import com.friends.member.TEST_MEMBER_ID
 import com.friends.security.userDetails.CustomUserDetailsService
 import io.kotest.core.spec.style.BehaviorSpec
@@ -48,7 +48,7 @@ class JwtAuthenticationFilterTest : BehaviorSpec({
             every { jwtTokenProvider.getMemberId(any<String>()) } returns TEST_MEMBER_ID
             every { jwtTokenProvider.key } returns mockk<SecretKey>()
             every { jwtTokenProvider.validateToken(any<String>()) } returns true
-            val userDetails = createTestSecurityUser()
+            val userDetails = createTestCustomUserDetails()
             every { customUserDetailsService.loadUserByUsername(any<String>()) } returns userDetails
             then("SecurityContextHolder 에 인증 정보가 설정되어야 한다") {
                 jwtAuthenticationFilter.doFilter(request, response, filterChain)
@@ -57,8 +57,8 @@ class JwtAuthenticationFilterTest : BehaviorSpec({
                     UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.authorities
-                    )
+                        userDetails.authorities,
+                    ),
                 )
             }
         }

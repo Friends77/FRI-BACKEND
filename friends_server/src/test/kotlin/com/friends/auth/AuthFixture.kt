@@ -19,4 +19,4 @@ fun createTestAuthorities() =
         GrantedAuthority({ it.role.name })
     }
 
-fun createTestSecurityUser() = CustomUserDetails(createTestMember())
+fun createTestCustomUserDetails() = CustomUserDetails(createTestMember())

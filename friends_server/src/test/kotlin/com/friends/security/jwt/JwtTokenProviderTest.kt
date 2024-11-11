@@ -18,7 +18,7 @@ class JwtTokenProviderTest :
             ReflectionTestUtils.setField(
                 jwtTokenProvider,
                 "secretKey",
-                secretKey
+                secretKey,
             ) //  private 필드에 값을 주입
         }
 
@@ -36,7 +36,6 @@ class JwtTokenProviderTest :
                 }
             }
         }
-
 
         given("createRefreshToken 메서드") {
             `when`("유효한 memberId, authorities, rotateId 를 전달하면") {
