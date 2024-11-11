@@ -31,10 +31,10 @@ class JwtAuthenticationFilterTest : BehaviorSpec({
         mockk<FilterChain>(relaxed = true) // relaxed 모드란 모든 메서드에 대해 Mock 객체를 만들지만, 호출되지 않은 메서드에 대해 예외를 발생시키지 않는다.
 
     beforeEach {
-        /*every { request.getAttribute(any()) } returns null
+        every { request.getAttribute(any()) } returns null
         every { request.dispatcherType } returns null
         every { request.setAttribute(any(), any()) } returns Unit
-        every { request.removeAttribute(any()) } returns Unit*/
+        every { request.removeAttribute(any()) } returns Unit
     }
 
     afterEach {
