@@ -23,7 +23,6 @@ interface JwtInterface {
     fun createRefreshToken(
         memberId: Long,
         authorities: Collection<GrantedAuthority>,
-        rotateId: String,
     ): String {
         TODO("Not yet implemented")
     }
