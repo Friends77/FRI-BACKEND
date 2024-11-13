@@ -9,12 +9,11 @@ class CustomUserDetails(
     private val member: Member,
 ) : UserDetails {
     private val authorities: Collection<GrantedAuthority> =
-        member.authorities.map {
-                authority ->
+        member.authorities.map { authority ->
             SimpleGrantedAuthority(authority.role.name)
         }
 
-    fun getMemberId(): Long = member.id
+    val memberId = member.id
 
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
 
