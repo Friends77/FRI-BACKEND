@@ -16,6 +16,7 @@ class BoardEntity (
 
     var content: String,
 
+    //일단 set으로 구현, 추후 hashtag entity 설계 시 연관관계 구현예정
     @ElementCollection
     var hashtags: MutableSet<String> = mutableSetOf()
 ) {
