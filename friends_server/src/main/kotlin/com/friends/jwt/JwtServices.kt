@@ -22,6 +22,7 @@ class JwtProperties(
 @Component
 class JwtService(
     val jwtProperties: JwtProperties,
+    val authJwtRepository: AuthJwtRepository,
 ) {
     val key by lazy { Keys.hmacShaKeyFor(jwtProperties.secretKey.toByteArray()) }
 
@@ -83,7 +84,7 @@ class JwtService(
             .parseSignedClaims(token)
             .payload.expiration
 
-    fun validate(token: String): Boolean =
+    private fun validate(token: String): Boolean =
         try {
             Jwts
                 .parser()
@@ -94,4 +95,20 @@ class JwtService(
         } catch (e: Exception) {
             false
         }
+
+    fun validateAccessToken(accessToken: String): Boolean {
+        if (!validate(accessToken)) return false
+        authJwtRepository.getRefreshToken(accessToken)?.let {
+            return false
+        }
+        return true
+    }
+
+    fun validateRefreshToken(refreshToken: String): Boolean {
+        if (!validate(refreshToken)) return false
+        authJwtRepository.getRefreshToken(refreshToken)?.let {
+            return false
+        }
+        return true
+    }
 }

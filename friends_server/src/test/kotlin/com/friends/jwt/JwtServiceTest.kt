@@ -36,8 +36,8 @@ class JwtServiceTest(
         val accessToken = jwtService.createAccessToken(memberId, authorities)
 
         // when
-        val expectedTrue = jwtService.validate(accessToken)
-        val expectedFalse = jwtService.validate(accessToken + "a")
+        val expectedTrue = jwtService.validateAccessToken(accessToken)
+        val expectedFalse = jwtService.validateAccessToken(accessToken + "a")
 
         // then
         expectedTrue shouldBe true
