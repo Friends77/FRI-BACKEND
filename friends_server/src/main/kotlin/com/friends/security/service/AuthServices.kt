@@ -1,5 +1,6 @@
 package com.friends.security.service
 
+import com.friends.jwt.AuthJwtRepository
 import com.friends.jwt.JwtService
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service
 class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val jwtService: JwtService,
+    private val authJwtRepository: AuthJwtRepository,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
@@ -24,6 +26,7 @@ class AuthService(
         val userDetails = authenticate.principal as CustomUserDetails
         val accessToken = jwtService.createAccessToken(userDetails.memberId, userDetails.authorities)
         val refreshToken = jwtService.createRefreshToken(userDetails.memberId, userDetails.authorities)
+        authJwtRepository.save(accessToken, refreshToken)
         return AtRtDto(accessToken, refreshToken)
     }
 
