@@ -30,6 +30,23 @@ class AuthService(
         return AtRtDto(accessToken, refreshToken)
     }
 
+    fun refresh(refreshToken: String): AtRtDto {
+        // refresh 될 때 기존의 access token 과 refresh token 을 삭제합니다.
+        authJwtRepository.deleteRefreshToken(refreshToken)
+        authJwtRepository.getAccessToken(refreshToken)?.apply {
+            authJwtRepository.deleteAccessToken(this)
+        }
+
+        val memberId = jwtService.getMemberId(refreshToken)
+        val authorities = jwtService.getAuthorities(refreshToken)
+
+        val newAccessToken = jwtService.createAccessToken(memberId, authorities)
+        val newRefreshToken = jwtService.createRefreshToken(memberId, authorities)
+        authJwtRepository.save(newAccessToken, newRefreshToken)
+
+        return AtRtDto(newAccessToken, newRefreshToken)
+    }
+
     fun register(
         emailAuthToken: String,
         email: String,

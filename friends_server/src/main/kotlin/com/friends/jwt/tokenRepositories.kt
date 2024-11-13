@@ -39,4 +39,8 @@ class AuthJwtRepository(
     fun getAccessToken(refreshToken: String): String? = redisTemplate.opsForValue().get(getRefreshTokenKey(refreshToken))
 
     fun getRefreshToken(accessToken: String): String? = redisTemplate.opsForValue().get(getAccessTokenKey(accessToken))
+
+    fun deleteAccessToken(accessToken: String) = redisTemplate.delete(getAccessTokenKey(accessToken))
+
+    fun deleteRefreshToken(refreshToken: String) = redisTemplate.delete(getRefreshTokenKey(refreshToken))
 }
