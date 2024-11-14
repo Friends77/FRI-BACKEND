@@ -106,7 +106,7 @@ class JwtService(
 
     fun validateRefreshToken(refreshToken: String): Boolean {
         if (!validate(refreshToken)) return false
-        authJwtRepository.getRefreshToken(refreshToken)?.let {
+        authJwtRepository.getAccessToken(refreshToken)?.let {
             return false
         }
         return true
