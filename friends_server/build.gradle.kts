@@ -49,6 +49,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
+    // configuration property
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+
     // Test
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
