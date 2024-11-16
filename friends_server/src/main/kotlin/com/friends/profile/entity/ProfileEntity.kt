@@ -1,11 +1,12 @@
 package com.friends.profile.entity
 
+import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.*
 import java.util.*
 
 @Entity
-class ProfileEntity(
+class Profile(
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
@@ -38,5 +39,6 @@ class ProfileEntity(
     @Column(name = "hobby_tag", length = 20)
     var hobbyTag: String?,
 
-    ) {
+    ) : BaseModifiableEntity() {
+
 }
