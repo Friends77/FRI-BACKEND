@@ -1,6 +1,7 @@
 package com.friends.member.entity
 
 import com.friends.common.entity.BaseModifiableEntity
+import com.friends.profile.entity.Profile
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -12,6 +13,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
 
 @Entity
 class Member(
@@ -31,6 +33,9 @@ class Member(
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
+
+    @OneToOne(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
+    val profile: Profile? = null
 ) : BaseModifiableEntity() {
     companion object {
         /**
