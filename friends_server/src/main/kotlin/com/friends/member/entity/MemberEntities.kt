@@ -1,6 +1,6 @@
 package com.friends.member.entity
 
-import com.friends.board.entity.BoardEntity
+import com.friends.board.entity.Board
 import com.friends.common.entity.BaseModifiableEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -33,9 +33,6 @@ class Member(
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
 
-    //멤버 한명은 여러 개의 게시글을 작성할 수 있습니다.
-    @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val boards: MutableList<BoardEntity> = ArrayList(),
 ) : BaseModifiableEntity() {
     companion object {
         /**
