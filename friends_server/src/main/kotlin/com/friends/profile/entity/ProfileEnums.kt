@@ -1,9 +1,9 @@
 package com.friends.profile.entity
 
-enum class ProfileEnum {
+enum class GenderEnum {
     MAN,
     WOMAN,
-    ETC
+    ETC,
 }
 
 enum class MbtiEnum {
@@ -22,5 +22,5 @@ enum class MbtiEnum {
     ENFJ,
     ESFJ,
     ENTJ,
-    ESTJ
+    ESTJ,
 }

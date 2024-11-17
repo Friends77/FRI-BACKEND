@@ -33,9 +33,8 @@ class Member(
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
-
     @OneToOne(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val profile: Profile? = null
+    val profile: Profile? = null,
 ) : BaseModifiableEntity() {
     companion object {
         /**
