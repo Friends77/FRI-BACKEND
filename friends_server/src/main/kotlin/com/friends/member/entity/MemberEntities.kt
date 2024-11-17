@@ -1,6 +1,5 @@
 package com.friends.member.entity
 
-import com.friends.board.entity.Board
 import com.friends.common.entity.BaseModifiableEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -32,7 +31,6 @@ class Member(
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
-
 ) : BaseModifiableEntity() {
     companion object {
         /**

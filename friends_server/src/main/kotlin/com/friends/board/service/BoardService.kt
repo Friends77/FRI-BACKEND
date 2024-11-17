@@ -8,37 +8,44 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class BoardService @Autowired constructor(
-    val boardRepository: BoardRepository,
-    val memberRepository: MemberRepository
-){
-    fun save(boardFormDto: BoardFormDto): Long?{
-        val member = memberRepository.findById(boardFormDto.memberId)
-            .orElseThrow { IllegalArgumentException("Member not found with id: ${boardFormDto.memberId}")}
+class BoardService
+    @Autowired
+    constructor(
+        val boardRepository: BoardRepository,
+        val memberRepository: MemberRepository,
+    ) {
+        fun save(boardFormDto: BoardFormDto): Long?  {
+            val member =
+                memberRepository.findById(boardFormDto.memberId)
+                    .orElseThrow { IllegalArgumentException("Member not found with id: ${boardFormDto.memberId}") }
 
-        val board = Board(
-            member = member,
-            content = boardFormDto.content,
-        )
+            val board =
+                Board(
+                    member = member,
+                    content = boardFormDto.content,
+                )
 
-        return boardRepository.save(board).id
+            return boardRepository.save(board).id
+        }
+
+        fun getBoard(id: Long): Board {
+            return boardRepository.findById(id).get()
+        }
+
+        fun deleteBoard(id: Long)  {
+            return boardRepository.deleteById(id)
+        }
+
+        fun updateBoard(
+            id: Long,
+            boardFormDto: BoardFormDto,
+        ): Board {
+            val board = boardRepository.findById(id).get()
+            board.updateBoard(boardFormDto)
+            return board
+        }
+
+        fun getBoardList(): List<Board>  {
+            return boardRepository.findAll()
+        }
     }
-
-    fun getBoard(id: Long): Board {
-        return boardRepository.findById(id).get()
-    }
-
-    fun deleteBoard(id: Long){
-        return boardRepository.deleteById(id)
-    }
-
-    fun updateBoard(id: Long, boardFormDto: BoardFormDto): Board {
-        val board = boardRepository.findById(id).get()
-        board.updateBoard(boardFormDto)
-        return board
-    }
-
-    fun getBoardList(): List<Board>{
-        return boardRepository.findAll()
-    }
-}
