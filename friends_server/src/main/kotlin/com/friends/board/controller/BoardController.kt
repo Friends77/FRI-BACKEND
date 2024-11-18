@@ -4,14 +4,13 @@ import com.friends.board.dto.BoardFormDto
 import com.friends.board.entity.Board
 import com.friends.board.service.BoardService
 import jakarta.validation.Valid
-import org.apache.coyote.Response
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/board")
+@RequestMapping("/api/user/board")
 class BoardController(
     val boardService: BoardService
 ) {
@@ -23,7 +22,7 @@ class BoardController(
             return ResponseEntity.noContent().build()
         }
 
-        // 게시글 읽기
+        // 게시글 상세조회
         @GetMapping("/{id}")
         fun getBoard(
             @PathVariable id: Long,
@@ -51,9 +50,13 @@ class BoardController(
             return ResponseEntity.ok().body(board)
         }
 
-        // 게시글 목록
+        // 게시글 전체조회
         @GetMapping("/list")
-        fun listBoards(): ResponseEntity<Any> {
-            return ResponseEntity.ok().body(boardService.getBoardList())
+        fun getBoards(
+            @RequestParam(defaultValue = "0") page: Int,
+            @RequestParam(defaultValue = "10") pageSize: Int
+        ): Page<Board> {
+            val pageable = PageRequest.of(page, pageSize)
+            return boardService.getBoardList(pageable)
         }
     }
