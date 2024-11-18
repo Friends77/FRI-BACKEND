@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class BoardService
-    @Autowired
-    constructor(
+    (
         val boardRepository: BoardRepository,
         val memberRepository: MemberRepository,
     ) {
-        fun save(boardFormDto: BoardFormDto): Long?  {
+        fun save(boardFormDto: BoardFormDto): Board  {
             val member =
                 memberRepository.findById(boardFormDto.memberId)
                     .orElseThrow { IllegalArgumentException("Member not found with id: ${boardFormDto.memberId}") }
@@ -25,7 +24,7 @@ class BoardService
                     content = boardFormDto.content,
                 )
 
-            return boardRepository.save(board).id
+            return boardRepository.save(board)
         }
 
         fun getBoard(id: Long): Board {
