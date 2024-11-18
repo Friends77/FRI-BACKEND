@@ -6,7 +6,6 @@ import com.friends.board.repository.BoardRepository
 import com.friends.member.repository.MemberRepository
 import jakarta.transaction.Transactional
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 
@@ -57,6 +56,8 @@ class BoardService
             return board
         }
 
+
+        //페이징처리
         fun getBoardList(): List<Board>  {
             return boardRepository.findAll()
         }
