@@ -5,6 +5,8 @@ import com.friends.board.entity.Board
 import com.friends.board.repository.BoardRepository
 import com.friends.member.repository.MemberRepository
 import jakarta.transaction.Transactional
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -56,9 +58,7 @@ class BoardService
             return board
         }
 
-
-        //페이징처리
-        fun getBoardList(): List<Board>  {
-            return boardRepository.findAll()
+        fun getBoardList(pageable: Pageable): Page<Board>  {
+            return boardRepository.findAll(pageable)
         }
     }
