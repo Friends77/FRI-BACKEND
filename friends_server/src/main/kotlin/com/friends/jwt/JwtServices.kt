@@ -3,10 +3,9 @@ package com.friends.jwt
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import java.util.Date
+import javax.crypto.SecretKey
 
 /**
  * JWT 설정 정보를 담고 있는 클래스입니다.
@@ -15,100 +14,61 @@ import java.util.Date
 @ConfigurationProperties(prefix = "jwt")
 class JwtProperties(
     val secretKey: String,
-    val accessTokenExpiration: Long,
-    val refreshTokenExpiration: Long,
 )
 
 @Component
 class JwtService(
     val jwtProperties: JwtProperties,
-    val authJwtRepository: AuthJwtRepository,
 ) {
-    val key by lazy { Keys.hmacShaKeyFor(jwtProperties.secretKey.toByteArray()) }
+    val secretKey: SecretKey by lazy { Keys.hmacShaKeyFor(jwtProperties.secretKey.toByteArray()) }
 
     private fun getDateAfterSeconds(seconds: Long) = Date(System.currentTimeMillis() + seconds * 1000)
 
-    fun createAccessToken(
-        memberId: Long,
-        authorities: Collection<GrantedAuthority>,
-    ): String =
-        Jwts
-            .builder()
-            .claim("memberId", memberId.toString())
-            .claim("authorities", authorities.map { it.authority })
-            .signWith(key)
-            .expiration(getDateAfterSeconds(jwtProperties.accessTokenExpiration))
-            .compact()
+    fun createToken(
+        vararg claims: Pair<String, Any>,
+        expirationSeconds: Long,
+    ): String {
+        val claimsMap = mapOf(*claims)
 
-    fun createRefreshToken(
-        memberId: Long,
-        authorities: Collection<GrantedAuthority>,
-    ): String =
-        Jwts
+        return Jwts
             .builder()
-            .claim("memberId", memberId.toString())
-            .claim("authorities", authorities.map { it.authority })
-            .signWith(key)
-            .expiration(getDateAfterSeconds(jwtProperties.refreshTokenExpiration))
+            .apply {
+                claimsMap.forEach { (key, value) -> claim(key, value) }
+            }.signWith(secretKey)
+            .expiration(getDateAfterSeconds(expirationSeconds))
             .compact()
+    }
 
-    fun getMemberId(token: String): Long =
+    fun getClaim(
+        token: String,
+        key: String,
+        type: Class<*>,
+    ): Any? =
         Jwts
             .parser()
-            .verifyWith(key)
+            .verifyWith(secretKey)
             .build()
             .parseSignedClaims(token)
             .payload
-            .get("memberId", String::class.java)
-            .toLong()
-
-    fun getAuthorities(token: String): Collection<GrantedAuthority> {
-        val result = mutableListOf<SimpleGrantedAuthority>()
-        val authorities =
-            Jwts
-                .parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .payload
-                .get("authorities", List::class.java)
-        authorities.forEach { result.add(SimpleGrantedAuthority(it.toString())) }
-        return result
-    }
+            .get(key, type)
 
     fun getExpiration(token: String): Date =
         Jwts
             .parser()
-            .verifyWith(key)
+            .verifyWith(secretKey)
             .build()
             .parseSignedClaims(token)
             .payload.expiration
 
-    private fun validate(token: String): Boolean =
+    fun validate(token: String): Boolean =
         try {
             Jwts
                 .parser()
-                .verifyWith(key)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
             true
         } catch (e: Exception) {
             false
         }
-
-    fun validateAccessToken(accessToken: String): Boolean {
-        if (!validate(accessToken)) return false
-        authJwtRepository.getRefreshToken(accessToken)?.let {
-            return false
-        }
-        return true
-    }
-
-    fun validateRefreshToken(refreshToken: String): Boolean {
-        if (!validate(refreshToken)) return false
-        authJwtRepository.getAccessToken(refreshToken)?.let {
-            return false
-        }
-        return true
-    }
 }

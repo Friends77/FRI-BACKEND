@@ -40,5 +40,6 @@ logging:
 
 jwt :
   secret-key: "ddhjfkafdshjlflhjdas3288998ksjkskj28kjas829uaw89242kl4jk12j6jk1jjjsa28jdska289kj289jdak282313212412312"
+auth :
   access-token-expiration: 43200 # 12 hours
   refresh-token-expiration: 604800 # 1 week
