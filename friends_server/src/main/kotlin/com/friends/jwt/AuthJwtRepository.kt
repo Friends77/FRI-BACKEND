@@ -1,5 +1,6 @@
 package com.friends.jwt
 
+import com.friends.config.AuthProperties
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import java.util.concurrent.TimeUnit
@@ -7,7 +8,7 @@ import java.util.concurrent.TimeUnit
 @Repository
 class AuthJwtRepository(
     private val redisTemplate: RedisTemplate<String, String>,
-    private val jwtProperties: JwtProperties,
+    private val authProperties: AuthProperties,
 ) {
     private fun getAccessTokenKey(accessToken: String) = "accessToken:$accessToken"
 
@@ -25,13 +26,13 @@ class AuthJwtRepository(
         redisTemplate.opsForValue().set(
             getAccessTokenKey(accessToken),
             refreshToken,
-            jwtProperties.accessTokenExpiration,
+            authProperties.accessTokenExpiration,
             TimeUnit.SECONDS,
         )
         redisTemplate.opsForValue().set(
             getRefreshTokenKey(refreshToken),
             accessToken,
-            jwtProperties.refreshTokenExpiration,
+            authProperties.refreshTokenExpiration,
             TimeUnit.SECONDS,
         )
     }
