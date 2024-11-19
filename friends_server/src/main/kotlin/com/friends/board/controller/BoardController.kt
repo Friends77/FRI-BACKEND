@@ -2,7 +2,8 @@ package com.friends.board.controller
 
 import com.friends.board.dto.BoardFormDto
 import com.friends.board.entity.Board
-import com.friends.board.service.BoardService
+import com.friends.board.service.BoardCommandService
+import com.friends.board.service.BoardQueryService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -12,13 +13,12 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/user/board")
 class BoardController(
-    val boardService: BoardService
+    val boardCommandService: BoardCommandService,
+    val boardQueryService: BoardQueryService
 ) {
         // 게시글 등록
         @PostMapping
         fun createBoard(@RequestBody @Valid boardFormDto: BoardFormDto): ResponseEntity<Void> {
-//            val savedBoard = boardService.save(boardFormDto)
-//            return ResponseEntity.ok().body(savedBoard)
             return ResponseEntity.noContent().build()
         }
 
@@ -27,7 +27,7 @@ class BoardController(
         fun getBoard(
             @PathVariable id: Long,
         ): ResponseEntity<Board> {
-            val board = boardService.getBoard(id)
+            val board = boardQueryService.getBoard(id)
             return ResponseEntity.ok().body(board)
         }
 
@@ -36,7 +36,7 @@ class BoardController(
         fun deleteBoard(
             @PathVariable id: Long,
         ): ResponseEntity<Void> {
-            boardService.deleteBoard(id)
+            boardCommandService.deleteBoard(id)
             return ResponseEntity.noContent().build()
         }
 
@@ -46,7 +46,7 @@ class BoardController(
             @PathVariable id: Long,
             boardFormDto: BoardFormDto,
         ): ResponseEntity<Board> {
-            val board = boardService.updateBoard(id, boardFormDto)
+            val board = boardCommandService.updateBoard(id, boardFormDto)
             return ResponseEntity.ok().body(board)
         }
 
@@ -57,6 +57,6 @@ class BoardController(
             @RequestParam(defaultValue = "10") pageSize: Int
         ): Page<Board> {
             val pageable = PageRequest.of(page, pageSize)
-            return boardService.getBoardList(pageable)
+            return boardQueryService.getBoardList(pageable)
         }
     }
