@@ -32,18 +32,34 @@ class BoardCommandService  (
         return boardRepository.save(board)
     }
 
-
-
     @Transactional
-    fun deleteBoard(id: Long)  {
+    fun deleteBoard(id: Long, requestMemberId: Long)  {
+        val board = boardRepository.findById(id).orElseThrow {
+            ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+        }
+
+        //요청자와 작성자 비교
+        if(board.member.id != requestMemberId) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Member with id: $requestMemberId not found")
+        }
+
         boardRepository.deleteById(id)
     }
 
     fun updateBoard(
         id: Long,
         boardFormDto: BoardFormDto,
+        requestMemberId: Long
     ): Board {
-        val board = boardRepository.findById(id).get()
+        val board = boardRepository.findById(id).orElseThrow{
+            ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+        }
+
+        //요청자와 작성자 비교
+        if(board.member.id != requestMemberId) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Member with id: $requestMemberId not found")
+        }
+
         board.updateBoard(boardFormDto)
         return board
     }

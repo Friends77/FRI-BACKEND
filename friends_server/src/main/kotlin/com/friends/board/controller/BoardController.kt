@@ -8,50 +8,59 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestParam
 
 @RestController
-@RequestMapping("/api/user/board")
 class BoardController(
     val boardCommandService: BoardCommandService,
     val boardQueryService: BoardQueryService
 ) {
         // 게시글 등록
-        @PostMapping
+        @PostMapping("api/user/board")
         fun createBoard(@RequestBody @Valid boardFormDto: BoardFormDto): ResponseEntity<Void> {
             return ResponseEntity.noContent().build()
         }
 
         // 게시글 상세조회
-        @GetMapping("/{id}")
+        @GetMapping("api/{id}")
         fun getBoard(
             @PathVariable id: Long,
         ): ResponseEntity<Board> {
             val board = boardQueryService.getBoard(id)
-            return ResponseEntity.ok().body(board)
+            return ResponseEntity.ok(board)
         }
 
         // 게시글 삭제
-        @DeleteMapping("/{id}")
+        @DeleteMapping("api/user/board/{id}")
         fun deleteBoard(
             @PathVariable id: Long,
+            @AuthenticationPrincipal memberId: Long
         ): ResponseEntity<Void> {
-            boardCommandService.deleteBoard(id)
+            boardCommandService.deleteBoard(id, memberId)
             return ResponseEntity.noContent().build()
         }
 
         // 게시글 수정
-        @PutMapping("/{id}")
+        @PutMapping("api/user/board/{id}")
         fun updateBoard(
             @PathVariable id: Long,
-            boardFormDto: BoardFormDto,
+            @RequestBody boardFormDto: BoardFormDto,
+            @AuthenticationPrincipal memberId: Long
         ): ResponseEntity<Board> {
-            val board = boardCommandService.updateBoard(id, boardFormDto)
-            return ResponseEntity.ok().body(board)
+            val board = boardCommandService.updateBoard(id, boardFormDto, memberId)
+            return ResponseEntity.ok(board)
         }
 
         // 게시글 전체조회
-        @GetMapping("/list")
+        @GetMapping("api/board/list")
         fun getBoards(
             @RequestParam(defaultValue = "0") page: Int,
             @RequestParam(defaultValue = "10") pageSize: Int
