@@ -1,16 +1,10 @@
 package com.friends.jwt
 
+import com.friends.config.AuthProperties
 import com.friends.security.service.AtRtDto
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
-
-@ConfigurationProperties(prefix = "auth")
-class AuthProperties(
-    val accessTokenExpiration: Long,
-    val refreshTokenExpiration: Long,
-)
 
 @Service
 class AtRtService(

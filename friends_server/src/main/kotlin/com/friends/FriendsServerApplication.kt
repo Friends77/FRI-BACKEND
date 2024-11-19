@@ -1,7 +1,7 @@
 package com.friends
 
-import com.friends.jwt.AuthProperties
-import com.friends.jwt.JwtProperties
+import com.friends.config.AuthProperties
+import com.friends.config.JwtProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication

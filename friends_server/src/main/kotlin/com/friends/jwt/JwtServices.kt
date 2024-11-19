@@ -1,8 +1,8 @@
 package com.friends.jwt
 
+import com.friends.config.JwtProperties
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import java.util.Date
 import javax.crypto.SecretKey
@@ -11,10 +11,6 @@ import javax.crypto.SecretKey
  * JWT 설정 정보를 담고 있는 클래스입니다.
  * application.yml 파일의 jwt 설정을 바탕으로 생성됩니다.
  */
-@ConfigurationProperties(prefix = "jwt")
-class JwtProperties(
-    val secretKey: String,
-)
 
 @Component
 class JwtService(
