@@ -36,6 +36,18 @@ services:
       - postgres
       - redis
 
+  mongo:
+    image: mongo:8
+    container_name: my_mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: myuser
+      MONGO_INITDB_ROOT_PASSWORD: mypassword
+      MONGO_INITDB_HOST: localhost
+    volumes:
+      - mongo_data:/data/db
 volumes:
   postgres_data:
   redis_data:
+  mongo_data:
