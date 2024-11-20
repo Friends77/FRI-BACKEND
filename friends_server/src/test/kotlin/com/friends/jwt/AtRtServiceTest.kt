@@ -1,6 +1,8 @@
 package com.friends.jwt
 
 import com.friends.config.AuthProperties
+import com.friends.member.MEMBER_ID
+import com.friends.member.makeUserAuthorities
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -23,10 +25,10 @@ class AtRtServiceTest :
         isolationMode = IsolationMode.InstancePerLeaf
 
         given("createAtRt 호출") {
-            val memberId = 123L
-            val authorities = listOf(SimpleGrantedAuthority("ROLE_USER"))
-            val accessToken = "mockAccessToken"
-            val refreshToken = "mockRefreshToken"
+            val memberId = MEMBER_ID
+            val authorities = makeUserAuthorities()
+            val accessToken = VALID_ACCESS_TOKEN
+            val refreshToken = VALID_REFRESH_TOKEN
 
             every {
                 jwtService.createToken(
@@ -74,7 +76,7 @@ class AtRtServiceTest :
         }
 
         given("getAuthorities 호출") {
-            val token = "mockToken"
+            val token = VALID_TOKEN
             val authorities = listOf("ROLE_USER", "ROLE_ADMIN")
 
             every { jwtService.getClaim(token, "authorities", List::class.java) } returns authorities
@@ -89,8 +91,8 @@ class AtRtServiceTest :
         }
 
         given("토큰 검증 메서드 호출") {
-            val accessToken = "mockAccessToken"
-            val refreshToken = "mockRefreshToken"
+            val accessToken = VALID_ACCESS_TOKEN
+            val refreshToken = VALID_REFRESH_TOKEN
 
             every { authJwtRepository.getAccessToken(refreshToken) } returns accessToken
             every { authJwtRepository.getRefreshToken(accessToken) } returns refreshToken
@@ -113,8 +115,8 @@ class AtRtServiceTest :
         }
 
         given("토큰 삭제 메서드 호출") {
-            val accessToken = "mockAccessToken"
-            val refreshToken = "mockRefreshToken"
+            val accessToken = VALID_ACCESS_TOKEN
+            val refreshToken = VALID_REFRESH_TOKEN
 
             every { authJwtRepository.deleteAccessToken(accessToken) } returns true
             every { authJwtRepository.deleteRefreshToken(refreshToken) } returns true

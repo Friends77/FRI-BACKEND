@@ -1,5 +1,8 @@
 package com.friends.security.filter
 
+import com.friends.jwt.AUTHORIZATION_HEADER
+import com.friends.jwt.INVALID_TOKEN
+import com.friends.jwt.VALID_TOKEN
 import com.friends.security.authentication.AuthenticationCreator
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
@@ -18,11 +21,6 @@ class JwtFilterTest :
         val authenticationCreator = mockk<AuthenticationCreator>()
         val jwtFilter = JwtFilter(authenticationCreator)
 
-        /**
-         * 테스트 간에 상태가 공유 되지 않도록 합니다.
-         * 각 테스트가 독립적으로 실행됩니다.
-         * given, when 이 then 이 실행될 때마다 새롭게 실행됩니다.
-         */
         isolationMode = IsolationMode.InstancePerLeaf
 
         /**
@@ -34,7 +32,7 @@ class JwtFilterTest :
         }
 
         given("HTTP 요청에 유효한 JWT가 있는 경우") {
-            val token = "valid.jwt.token"
+            val token = VALID_TOKEN
             val authentication = mockk<Authentication>()
             val request =
                 MockHttpServletRequest().apply {
@@ -47,15 +45,14 @@ class JwtFilterTest :
 
             `when`("JwtFilter가 실행될 때") {
                 jwtFilter.doFilter(request, response, filterChain)
-                println(testCase.name.testName)
 
                 then("AuthenticationCreator가 호출되어야 한다") {
                     verify { authenticationCreator.createByAccessToken(token) }
                 }
 
-//                then("SecurityContextHolder에 Authentication이 설정되어야 한다") {
-//                    SecurityContextHolder.getContext().authentication shouldBe authentication
-//                }
+                then("SecurityContextHolder에 Authentication이 설정되어야 한다") {
+                    SecurityContextHolder.getContext().authentication shouldBe authentication
+                }
 
                 then("필터 체인이 계속 실행되어야 한다") {
                     verify { filterChain.doFilter(request, response) }
@@ -88,7 +85,7 @@ class JwtFilterTest :
         given("HTTP 요청에 잘못된 Authorization 헤더가 있는 경우") {
             val request =
                 MockHttpServletRequest().apply {
-                    addHeader("Authorization", "InvalidHeader")
+                    addHeader(AUTHORIZATION_HEADER, INVALID_TOKEN)
                 }
             val response = MockHttpServletResponse()
             val filterChain = mockk<FilterChain>(relaxed = true)
