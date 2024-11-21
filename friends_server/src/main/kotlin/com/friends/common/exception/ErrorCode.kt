@@ -2,7 +2,11 @@ package com.friends.common.exception
 
 import org.springframework.http.HttpStatus
 
-enum class ErrorCode(val httpStatus: HttpStatus, val code: Int, val errorMessage: String) {
+enum class ErrorCode(
+    val httpStatus: HttpStatus,
+    val code: Int,
+    val errorMessage: String,
+) {
     // global error
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, -10000, "적절하지 않은 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, -10001, "서버 내부 오류입니다."),
