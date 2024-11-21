@@ -11,8 +11,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToMany
-import jakarta.persistence.CascadeType
 
 
 @Entity
@@ -50,6 +48,4 @@ class Hashtag(
     val id: Long = 0L,
     @Column(nullable = false)
     var tag: String,
-    @OneToMany(mappedBy = "hashtag", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var boardHashtags: MutableSet<BoardHashtag> = mutableSetOf(),
 )

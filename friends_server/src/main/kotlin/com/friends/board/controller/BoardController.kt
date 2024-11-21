@@ -25,17 +25,27 @@ class BoardController(
 ) {
         // 게시글 등록
         @PostMapping("api/user/board")
-        fun createBoard(@RequestBody @Valid boardFormDto: BoardFormDto): ResponseEntity<Void> {
+        fun createBoard(
+            @RequestBody @Valid boardFormDto: BoardFormDto,
+            @AuthenticationPrincipal memberId: Long
+        ): ResponseEntity<Void> {
+            boardCommandService.createBoard(boardFormDto, memberId)
             return ResponseEntity.noContent().build()
         }
 
         // 게시글 상세조회
-        @GetMapping("api/{id}")
+        @GetMapping("api/board/{id}")
         fun getBoard(
             @PathVariable id: Long,
-        ): ResponseEntity<Board> {
-            val board = boardQueryService.getBoard(id)
-            return ResponseEntity.ok(board)
+        ): ResponseEntity<BoardFormDto> {
+            var (board, hashtags) = boardQueryService.getBoard(id)
+                ?: return ResponseEntity.notFound().build()
+
+            val boardDto = BoardFormDto(
+                content = board.content,
+                hashtags = hashtags
+            )
+            return ResponseEntity.ok(boardDto)
         }
 
         // 게시글 삭제
