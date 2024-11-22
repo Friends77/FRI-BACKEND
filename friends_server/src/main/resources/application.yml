@@ -59,3 +59,4 @@ auth :
   access-token-expiration: 43200 # 12 hours
   refresh-token-expiration: 604800 # 1 week
   email-code-expiration: 180 #3min
+  email-jwt-expiration: 300 #5min
