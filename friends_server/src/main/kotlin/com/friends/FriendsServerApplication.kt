@@ -1,6 +1,7 @@
 package com.friends
 
 import com.friends.config.AuthProperties
+import com.friends.config.EmailProperties
 import com.friends.config.JwtProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -11,7 +12,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @SpringBootApplication
 @EnableMongoRepositories
 @EnableMongoAuditing
-@EnableConfigurationProperties(JwtProperties::class, AuthProperties::class)
+@EnableConfigurationProperties(JwtProperties::class, AuthProperties::class, EmailProperties::class)
 class FriendsServerApplication
 
 fun main(args: Array<String>) {
