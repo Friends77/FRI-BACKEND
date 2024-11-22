@@ -13,13 +13,17 @@ class EmailService(
         subject: String,
         html: String,
     ) {
-        val message = javaMailSender.createMimeMessage()
-        message.subject = subject
-        message.setText(html, "utf-8", "html")
-        message.setRecipients(
-            Message.RecipientType.TO,
-            to,
-        )
-        javaMailSender.send(message)
+        try {
+            val message = javaMailSender.createMimeMessage()
+            message.subject = subject
+            message.setText(html, "utf-8", "html")
+            message.setRecipients(
+                Message.RecipientType.TO,
+                to,
+            )
+            javaMailSender.send(message)
+        } catch (e: Exception) {
+            throw EmailSendFailedException()
+        }
     }
 }
