@@ -42,12 +42,14 @@ class SpringSecurityConfig(
 
         http.authorizeHttpRequests {
             it
+                .requestMatchers("/api/auth/**", "/api/global/**")
+                .permitAll()
                 .requestMatchers("/api/user/**")
                 .hasAuthority(Role.ROLE_USER.name)
                 .requestMatchers("/api/admin/**")
                 .hasAuthority(Role.ROLE_ADMIN.name)
                 .anyRequest()
-                .permitAll()
+                .authenticated()
         }
 
         return http.build()
