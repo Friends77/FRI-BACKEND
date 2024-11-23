@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import java.time.LocalDateTime
 
 @Entity
 class ChatRoomMember(
@@ -20,6 +21,8 @@ class ChatRoomMember(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
+    @Column(name = "last_read_time")
+    var lastReadTime: LocalDateTime? = null,
 ) {
     companion object {
         fun of(
