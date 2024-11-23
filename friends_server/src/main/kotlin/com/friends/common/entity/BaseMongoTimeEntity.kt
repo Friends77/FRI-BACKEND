@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @Document
 abstract class BaseMongoTimeEntity {
-    @get:CreatedDate
-    abstract var createdAt: LocalDateTime?
+    @CreatedDate
+    lateinit var createdAt: LocalDateTime
+        protected set
 }

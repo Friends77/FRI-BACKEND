@@ -3,7 +3,6 @@ package com.friends.chat.entity
 import com.friends.common.entity.BaseMongoTimeEntity
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
-import java.time.LocalDateTime
 
 @Document(collection = "message")
 class Message(
@@ -11,7 +10,6 @@ class Message(
     val senderId: Long,
     val content: String,
     val type: MessageType,
-    override var createdAt: LocalDateTime? = null,
 ) : BaseMongoTimeEntity() {
     /*
     id에 auto increment를 하기 위해서는 초기값을 String, nullable하게 설정해야하고

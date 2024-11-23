@@ -2,6 +2,7 @@ package com.friends.member.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -16,22 +17,18 @@ class ChatRoomMember(
     val id: Long = 0L,
     @Column(name = "chat_room_id", updatable = false, nullable = false)
     val chatRoomId: String,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
-    @Column(name = "last_read_message_id")
-    val lastReadMessageId: String? = null,
 ) {
     companion object {
         fun of(
             chatRoomId: String,
             member: Member,
-            lastReadMessageId: String? = null,
         ): ChatRoomMember =
             ChatRoomMember(
                 chatRoomId = chatRoomId,
                 member = member,
-                lastReadMessageId = lastReadMessageId,
             )
     }
 }

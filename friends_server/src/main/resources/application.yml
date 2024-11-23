@@ -34,6 +34,8 @@ spring:
       host: localhost
       username: myuser
       password: mypassword
+      authentication-database: admin
+      auto-index-creation: true
 logging:
   pattern:
     console: "[%d{yyyy-MM-dd HH:mm:ss}] [%highlight(%-5level)] %cyan(%logger.%method:line%line) - %msg%n"
