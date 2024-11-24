@@ -44,4 +44,18 @@ class BoardQueryServiceTest :
                 }
             }
 
+            given("존재하지 않는 boardId가 주어졌을 때") {
+                val invalidBoardId = 99L
+
+                every { boardRepository.findByIdOrNull(invalidBoardId) } returns null
+
+                `when`("getBoard 메서드를 호출하면") {
+                    val result = boardQueryService.getBoard(invalidBoardId)
+
+                    then("null을 반환해야한다.") {
+                        result shouldBe null
+                    }
+                }
+            }
+
         })
