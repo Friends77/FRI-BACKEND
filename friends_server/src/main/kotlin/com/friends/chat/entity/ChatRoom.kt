@@ -6,14 +6,14 @@ import org.springframework.data.mongodb.core.mapping.Document
 
 @Document("chat_room")
 class ChatRoom(
+    @Id
+    val chatRoomId: String? = null,
     var title: String,
     val createrId: Long,
     var imageUrl: String?, // 채팅방 이미지
     var categories: MutableList<String> = mutableListOf(),
+    var lastMessageId: Long = 0,
 ) : BaseMongoTimeEntity() {
-    @Id
-    var chatRoomId: String? = null
-        private set
     private val _participants: MutableList<Long> = mutableListOf(createrId)
     val participants: List<Long>
         get() = _participants
@@ -33,3 +33,11 @@ class ChatRoom(
         _messages.add(message)
     }
 }
+
+class Message(
+    var messageId: Long,
+    val chatRoomId: String,
+    val senderId: Long,
+    val content: String,
+    val type: MessageType,
+) : BaseMongoTimeEntity()
