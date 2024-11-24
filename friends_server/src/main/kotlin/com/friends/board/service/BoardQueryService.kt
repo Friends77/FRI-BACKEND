@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
 class BoardQueryService  (
     private val boardRepository: BoardRepository,
     private val boardHashtagRepository: BoardHashtagRepository
@@ -26,6 +25,7 @@ class BoardQueryService  (
     }
 
     //전체조회
+    @Transactional(readOnly = true)
     fun getBoardList(pageable: Pageable): Page<Board> {
         return boardRepository.findAll(pageable)
     }
