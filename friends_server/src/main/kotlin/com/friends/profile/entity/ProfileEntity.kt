@@ -2,8 +2,18 @@ package com.friends.profile.entity
 
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
-import jakarta.persistence.*
-import java.util.*
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Column
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.OneToOne
+import jakarta.persistence.JoinColumn
+import java.util.Date
+import jakarta.persistence.Enumerated
+import jakarta.persistence.EnumType
+import jakarta.persistence.FetchType
 
 @Entity
 class Profile(
