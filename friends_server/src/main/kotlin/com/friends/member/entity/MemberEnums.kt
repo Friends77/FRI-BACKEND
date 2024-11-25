@@ -6,7 +6,7 @@ import com.friends.oauth2.UserProfileDto
 import com.friends.oauth2.UserProfileExtractor
 
 enum class OAuth2Provider(
-    val extractor: UserProfileExtractor,
+    private val extractor: UserProfileExtractor,
 ) {
     GOOGLE(GoogleUserProfileExtractor()),
     NAVER(NaverUserProfileExtractor()),
