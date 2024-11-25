@@ -59,8 +59,6 @@ class BoardCommandServiceTest :
 
             }
 
-
-
             //2. deleteBoard
             given("작성자가 쓴 게시글이 존재할 때") {
                 every { boardRepository.findById(mockBoard.id!!) } returns Optional.of(mockBoard)
@@ -70,11 +68,20 @@ class BoardCommandServiceTest :
                     val result = boardCommandService.deleteBoard(mockBoard.id!!, requestMemberId)
 
                     then("게시글이 삭제되어야 한다.") {
+                        io.mockk.verify { boardRepository.deleteById(mockBoard.id!!) }
+                    }
+                }
+                //3. updateBoard
+                `when`("updateBoard 메서드를 호출하면") {
+                    val updatedContent = "Updated content"
+                    val updatedDto = boardFormDto.copy(content = updatedContent)
+                    mockBoard.content = updatedContent
 
+                    val result = boardCommandService.updateBoard(mockBoard.id!!, updatedDto, requestMemberId)
+
+                    then("게시글의 내용이 수정되어야 한다.") {
+                        result.content shouldBe updatedContent
                     }
                 }
             }
-
-
-            //3. updateBoard
         })
