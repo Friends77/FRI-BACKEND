@@ -11,6 +11,8 @@ import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import java.util.*
@@ -41,12 +43,24 @@ class BoardCommandServiceTest :
             //1. createBoard
             given("유효한 데이터로 게시글을 작성하는 경우") {
                 every { memberRepository.findById(requestMemberId) } returns Optional.of(member)
+                every { hashtagRepository.findByTag(any()) } answers { null } //모든 해시태그는 새로 생성됩니다.
+                every { hashtagRepository.save(any()) } answers { firstArg() } //저장된 해시태그 반환
+
+                `when` ("createBoard 메서드를 호출하면") {
+                    val result = boardCommandService.createBoard(boardFormDto, requestMemberId)
+
+                    then("게시글이 저장되고 반환되어야 한다.") {
+                        result.content shouldBe boardFormDto.content
+                        result.member shouldBe member
+                    }
+                }
 
             }
 
 
 
             //2. deleteBoard
+
 
 
             //3. updateBoard
