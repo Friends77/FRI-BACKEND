@@ -6,9 +6,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 class AuthProperties(
     val accessTokenExpiration: Long,
     val refreshTokenExpiration: Long,
+    val emailCodeExpiration: Long,
+    val emailJwtExpiration: Long,
 )
 
 @ConfigurationProperties(prefix = "jwt")
 class JwtProperties(
     val secretKey: String,
+)
+
+@ConfigurationProperties(prefix = "spring.mail")
+class EmailProperties(
+    val host: String,
+    val port: Int,
+    val username: String,
+    val password: String,
+    val auth: Boolean,
+    val starttls: Boolean,
+    val debug: Boolean,
+    val connectiontimeout: Int,
 )

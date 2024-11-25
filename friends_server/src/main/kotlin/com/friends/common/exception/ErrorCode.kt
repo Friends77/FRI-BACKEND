@@ -18,4 +18,9 @@ enum class ErrorCode(
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
+
+    // Email API error 13000대
+    INVALID_EMAIL(HttpStatus.BAD_REQUEST, -13001, "유효하지 않은 이메일입니다."),
+    INVALID_EMAIL_VERIFY_CODE(HttpStatus.UNAUTHORIZED, -13002, "유효하지 않은 이메일 인증 코드입니다."),
+    SMTP_CONNECTION_FAILED(HttpStatus.SERVICE_UNAVAILABLE, -13003, "이메일 서버와의 연결에 실패했습니다."),
 }
