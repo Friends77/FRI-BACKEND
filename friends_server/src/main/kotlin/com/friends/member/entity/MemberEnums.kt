@@ -1,8 +1,18 @@
 package com.friends.member.entity
 
-enum class OAuth2Provider {
-    GOOGLE,
-    NAVER,
+import com.friends.oauth2.GoogleUserProfileExtractor
+import com.friends.oauth2.NaverUserProfileExtractor
+import com.friends.oauth2.UserProfileDto
+import com.friends.oauth2.UserProfileExtractor
+
+enum class OAuth2Provider(
+    val extractor: UserProfileExtractor,
+) {
+    GOOGLE(GoogleUserProfileExtractor()),
+    NAVER(NaverUserProfileExtractor()),
+    ;
+
+    fun extract(attributes: Map<String, Any>): UserProfileDto = extractor.extract(attributes)
 }
 
 enum class Role {
