@@ -1,5 +1,53 @@
 package com.friends.board.service
 
-import org.junit.jupiter.api.Assertions.*
+import com.friends.board.dto.BoardFormDto
+import com.friends.board.entity.Board
+import com.friends.board.entity.Hashtag
+import com.friends.board.repository.BoardHashtagRepository
+import com.friends.board.repository.BoardRepository
+import com.friends.board.repository.HashtagRepository
+import com.friends.member.entity.Member
+import com.friends.member.entity.OAuth2Provider
+import com.friends.member.repository.MemberRepository
+import io.kotest.core.spec.IsolationMode
+import io.kotest.core.spec.style.BehaviorSpec
+import io.mockk.every
+import io.mockk.mockk
+import java.util.*
 
-class BoardCommandServiceTest
+class BoardCommandServiceTest :
+        BehaviorSpec ({
+            val boardRepository = mockk<BoardRepository>()
+            val memberRepository = mockk<MemberRepository>()
+            val hashtagRepository = mockk<HashtagRepository>()
+            val boardHashtagRepository = mockk<BoardHashtagRepository>()
+
+            val boardCommandService = BoardCommandService(
+                boardRepository = boardRepository,
+                memberRepository = memberRepository,
+                hashtagRepository = hashtagRepository,
+                boardHashtagRepository = boardHashtagRepository
+            )
+
+            val requestMemberId = 1L
+            val member = Member(id = 1L, name = "Test Member", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE, imageUrl = "test imageurl")
+            val mockBoard = Board(id = 100L, member = member, content = "Test content")
+            val hashtagTags = listOf("friends", "kotlin")
+            val hashtags = hashtagTags.map { tag -> Hashtag(id = tag.hashCode().toLong(), tag = tag) }
+            val boardFormDto = BoardFormDto(content = "Test content", hashtags = hashtagTags)
+
+            isolationMode = IsolationMode.InstancePerLeaf
+
+            //1. createBoard
+            given("유효한 데이터로 게시글을 작성하는 경우") {
+                every { memberRepository.findById(requestMemberId) } returns Optional.of(member)
+
+            }
+
+
+
+            //2. deleteBoard
+
+
+            //3. updateBoard
+        })

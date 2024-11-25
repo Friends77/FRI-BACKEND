@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface BoardHashtagRepository : JpaRepository<BoardHashtag, Long> {
-    fun findByBoard(board : Board): List<BoardHashtag>
+    fun findByBoard(board : Board): List<String>
 }

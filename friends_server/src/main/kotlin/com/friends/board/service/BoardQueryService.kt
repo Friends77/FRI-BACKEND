@@ -19,7 +19,7 @@ class BoardQueryService  (
 
         val board = boardRepository.findByIdOrNull(id) ?: return null
         val hashtags = boardHashtagRepository.findByBoard(board)
-            .map { it.hashtag.tag }
+            .map { it }
 
         return Pair(board, hashtags)
     }
