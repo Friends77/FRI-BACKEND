@@ -25,7 +25,7 @@ class GoogleUserProfileExtractor : UserProfileExtractor {
  */
 class NaverUserProfileExtractor : UserProfileExtractor {
     override fun extract(attributes: Map<String, Any>): UserProfileDto {
-        val response = attributes["response"] as Map<String, Object>
+        val response = attributes["response"] as Map<String, Any>
         val name = response["name"] as String
         val email = response["email"] as String
         val imageUrl = response["profile_image"] as String
