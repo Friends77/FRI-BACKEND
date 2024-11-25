@@ -48,7 +48,7 @@ class ChatRoom(
 }
 
 class Message(
-    var messageId: Long,
+    val messageId: Long,
     val chatRoomId: String,
     val senderId: Long,
     val content: String,
