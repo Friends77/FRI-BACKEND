@@ -35,7 +35,6 @@ class BoardCommandServiceTest :
             val member = Member(id = 1L, name = "Test Member", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE, imageUrl = "test imageurl")
             val mockBoard = Board(id = 100L, member = member, content = "Test content")
             val hashtagTags = listOf("friends", "kotlin")
-            val hashtags = hashtagTags.map { tag -> Hashtag(id = tag.hashCode().toLong(), tag = tag) }
             val boardFormDto = BoardFormDto(content = "Test content", hashtags = hashtagTags)
 
             isolationMode = IsolationMode.InstancePerLeaf
