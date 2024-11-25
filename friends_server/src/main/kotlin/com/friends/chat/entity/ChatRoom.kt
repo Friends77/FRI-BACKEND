@@ -13,24 +13,37 @@ class ChatRoom(
     var imageUrl: String?, // 채팅방 이미지
     var categories: MutableList<String> = mutableListOf(),
     var lastMessageId: Long = 0,
+    private val mutableParticipants: MutableList<Long> = mutableListOf(createrId),
+    private val mutableMessages: MutableList<Message> = mutableListOf(),
 ) : BaseMongoTimeEntity() {
-    private val _participants: MutableList<Long> = mutableListOf(createrId)
     val participants: List<Long>
-        get() = _participants
-    private val _messages: MutableList<Message> = mutableListOf()
+        get() = mutableParticipants
     val messages: List<Message>
-        get() = _messages
+        get() = mutableMessages
 
     fun addParticipant(memberId: Long) {
-        _participants.add(memberId)
+        mutableParticipants.add(memberId)
     }
 
     fun removeParticipant(memberId: Long) {
-        _participants.remove(memberId)
+        mutableParticipants.remove(memberId)
     }
 
     fun addMessage(message: Message) {
-        _messages.add(message)
+        mutableMessages.add(message)
+    }
+
+    fun increaseLastMessageId() {
+        lastMessageId++
+    }
+
+    companion object {
+        fun of(
+            title: String,
+            createrId: Long,
+            categories: MutableList<String> = mutableListOf(),
+            imageUrl: String? = null,
+        ): ChatRoom = ChatRoom(title = title, createrId = createrId, categories = categories.toMutableList(), imageUrl = imageUrl)
     }
 }
 
@@ -40,4 +53,19 @@ class Message(
     val senderId: Long,
     val content: String,
     val type: MessageType,
-) : BaseMongoTimeEntity()
+) : BaseMongoTimeEntity() {
+    companion object {
+        fun of(
+            messageId: Long,
+            chatRoomId: String,
+            senderId: Long,
+            content: String,
+            type: MessageType,
+        ): Message = Message(messageId = messageId, chatRoomId = chatRoomId, senderId = senderId, content = content, type = type)
+    }
+}
+
+enum class MessageType {
+    TEXT, // 일반 텍스트 메시지 및 이모지
+    IMAGE,
+}
