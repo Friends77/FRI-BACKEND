@@ -19,9 +19,11 @@ class ProfileQueryService (
             .orElseThrow { IllegalArgumentException("Member not found with id: $requestMemberId") }
 
         val nickname = member.name
+        val email = member.email
         //회원가입 시 어떤 필드들이 채워지는지?
         val profileRes = ProfileDto(
             nickname = nickname,
+            email = email,
         )
         return profileRes
     }

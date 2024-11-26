@@ -6,6 +6,7 @@ import java.util.Date
 
 data class ProfileDto (
     val nickname: String,
+    val email: String,
     var birth: Date? = null,
     var gender: GenderEnum? = null,
     var location: String? = null,
