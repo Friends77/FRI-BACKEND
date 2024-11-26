@@ -14,28 +14,40 @@ import java.util.Date
 import jakarta.persistence.Enumerated
 import jakarta.persistence.EnumType
 import jakarta.persistence.FetchType
+import jakarta.persistence.PrePersist
+import jakarta.persistence.PreUpdate
 
 @Entity
 class Profile(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
     val id: Long = 0L,
-    @OneToOne
+    //member 엔티티에서 닉네임만 받아옵니다
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     val member: Member,
     var birth: Date,
     @Enumerated(EnumType.STRING)
-    var gender: GenderEnum?,
+    var gender: GenderEnum,
     var location: String?,
-    @Column(name = "self_description", length = 50)
+    @Column(name = "self_description", length = 100)
     var selfDescription: String?,
-    @Column(name = "target_description", length = 50)
-    var targetDescription: String?,
     @Enumerated(EnumType.STRING)
     var mbti: MbtiEnum?,
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "interest_tag", length = 225)
     var interestTag: MutableSet<String> = mutableSetOf(),
-    @Column(name = "hobby_tag", length = 225)
-    var hobbyTag: String?,
-) : BaseModifiableEntity()
+    //기본이미지가 있기 때문에 null이 될 수 없습니다
+    @Column(name = "image_url")
+    var imageUrl: String,
+) : BaseModifiableEntity() {
+
+    @PrePersist
+    @PreUpdate
+    fun validate() {
+        if(interestTag.isEmpty()){
+            throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
+        }
+    }
+
+}
