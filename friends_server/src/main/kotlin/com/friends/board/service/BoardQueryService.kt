@@ -15,6 +15,7 @@ class BoardQueryService  (
     private val boardHashtagRepository: BoardHashtagRepository
 ){
     //상세조회
+    @Transactional(readOnly = true)
     fun getBoard(id: Long): Pair<Board, List<String>>? {
 
         val board = boardRepository.findByIdOrNull(id) ?: return null
@@ -25,7 +26,6 @@ class BoardQueryService  (
     }
 
     //전체조회
-    @Transactional(readOnly = true)
     fun getBoardList(pageable: Pageable): Page<Board> {
         return boardRepository.findAll(pageable)
     }
