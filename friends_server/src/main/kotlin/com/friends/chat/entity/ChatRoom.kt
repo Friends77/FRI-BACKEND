@@ -1,6 +1,7 @@
 package com.friends.chat.entity
 
 import com.friends.common.entity.BaseMongoTimeEntity
+import com.friends.member.entity.Member
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -12,7 +13,7 @@ class ChatRoom(
     val createrId: Long,
     var imageUrl: String?, // 채팅방 이미지
     var categories: MutableList<String> = mutableListOf(),
-    var lastMessageId: Long = 0,
+    var lastMessageId: Long = 0L,
     private val mutableParticipants: MutableList<Long> = mutableListOf(createrId),
     private val mutableMessages: MutableList<Message> = mutableListOf(),
 ) : BaseMongoTimeEntity() {
@@ -43,7 +44,8 @@ class ChatRoom(
             createrId: Long,
             categories: MutableList<String> = mutableListOf(),
             imageUrl: String? = null,
-        ): ChatRoom = ChatRoom(title = title, createrId = createrId, categories = categories.toMutableList(), imageUrl = imageUrl)
+            id: String? = null,
+        ): ChatRoom = ChatRoom(title = title, createrId = createrId, categories = categories, imageUrl = imageUrl, chatRoomId = id)
     }
 }
 
@@ -62,10 +64,19 @@ class Message(
             content: String,
             type: MessageType,
         ): Message = Message(messageId = messageId, chatRoomId = chatRoomId, senderId = senderId, content = content, type = type)
+
+        fun addEnterMessage(
+            member: Member,
+            chatRoom: ChatRoom,
+        ): Message {
+            chatRoom.increaseLastMessageId()
+            return of(chatRoom.lastMessageId, chatRoom.chatRoomId!!, 0L, "${member.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
+        }
     }
 }
 
 enum class MessageType {
     TEXT, // 일반 텍스트 메시지 및 이모지
     IMAGE,
+    SYSTEM, // 시스템 메시지
 }

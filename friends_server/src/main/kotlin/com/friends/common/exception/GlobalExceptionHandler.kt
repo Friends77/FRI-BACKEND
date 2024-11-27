@@ -1,6 +1,8 @@
 package com.friends.common.exception
 
+import com.friends.chat.ChatException
 import com.friends.email.EmailException
+import com.friends.member.MemberException
 import com.friends.oauth2.OAuth2Exception
 import com.friends.security.securityException.InvalidJwtException
 import org.slf4j.Logger
@@ -36,5 +38,21 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(ChatException::class)
+    fun handleChatException(ex: ChatException): ResponseEntity<Any> {
+        log.error("Chat Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(MemberException::class)
+    fun handleMemberException(ex: MemberException): ResponseEntity<Any> {
+        log.error("Member Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.errorMessage ?: ex.message))
     }
 }
