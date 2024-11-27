@@ -1,7 +1,7 @@
 package com.friends.profile.service
 
 import com.friends.member.repository.MemberRepository
-import com.friends.profile.dto.ProfileDto
+import com.friends.profile.entity.Profile
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,19 +14,16 @@ class ProfileQueryService (
 
     //프로필 상세조회
     @Transactional(readOnly = true)
-    fun getProfile(requestMemberId: Long) : ProfileDto {
+    fun getProfile(requestMemberId: Long) : Profile {
         val member = memberRepository.findById(requestMemberId)
-//        if(member.isEmpty) {
-//            throw IllegalArgumentException(ErrorCode.NOT_FOUND_MEMBER)
-//        }
-            .orElseThrow { IllegalArgumentException("Member not found with id: $requestMemberId") }
 
-        val profileRes = ProfileDto(
-            nickname = member.name,
-            email = member.email,
+        if(member.isEmpty){
+            throw IllegalArgumentException()
+        }
 
-        )
-        return profileRes
+        val profile = profileRepository.findByMemberId(requestMemberId)
+
+        return profile
     }
 
 }
