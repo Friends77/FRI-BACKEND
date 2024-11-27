@@ -50,6 +50,9 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
+    // web client
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
     // email
     implementation("org.springframework.boot:spring-boot-starter-mail")
     // thyemleaf

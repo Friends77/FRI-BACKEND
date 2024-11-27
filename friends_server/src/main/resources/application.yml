@@ -60,3 +60,17 @@ auth :
   refresh-token-expiration: 604800 # 1 week
   email-code-expiration: 180 #3min
   email-jwt-expiration: 300 #5min
+
+oauth2:
+  google:
+    client-id: ...
+    client-secret: ...
+    redirect-url: http://localhost:3000/oauth2/callback/google
+    token-url: https://www.googleapis.com/oauth2/v4/token
+    user-info-url: https://www.googleapis.com/oauth2/v3/userinfo
+  naver:
+    client_id: ...
+    client-secret: ...
+    redirect-url: http://localhost:3000/oauth2/callback/naver
+    token-url: https://nid.naver.com/oauth2.0/token
+    user-info-url: https://openapi.naver.com/v1/nid/me

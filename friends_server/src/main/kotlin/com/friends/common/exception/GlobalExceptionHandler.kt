@@ -1,6 +1,7 @@
 package com.friends.common.exception
 
 import com.friends.email.EmailException
+import com.friends.oauth2.OAuth2Exception
 import com.friends.security.securityException.InvalidJwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -24,6 +25,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(EmailException::class)
     fun handleEmailException(ex: EmailException): ResponseEntity<Any> {
         log.error("Email Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(OAuth2Exception::class)
+    fun handleOAuth2Exception(ex: OAuth2Exception): ResponseEntity<Any> {
+        log.error("OAuth2 Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
