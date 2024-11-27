@@ -1,4 +1,4 @@
-package com.friends
+package com.friends.support.config
 
 import io.kotest.core.config.AbstractProjectConfig
 
