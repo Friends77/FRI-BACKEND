@@ -35,6 +35,8 @@ spring:
       host: ${SPRING_DATA_MONGODB_HOST}
       username: ${SPRING_DATA_MONGODB_USERNAME}
       password: ${SPRING_DATA_MONGODB_PASSWORD}
+      authentication-database: ${SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE}
+      auto-index-creation: true
 
 logging:
   pattern:

@@ -34,6 +34,8 @@ spring:
       host: localhost
       username: myuser
       password: mypassword
+      authentication-database: admin
+      auto-index-creation: true
   mail:
     host: smtp.gmail.com
     port: 587
