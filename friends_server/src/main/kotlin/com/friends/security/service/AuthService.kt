@@ -4,6 +4,7 @@ import com.friends.common.exception.ErrorCode
 import com.friends.jwt.AtRtService
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.security.AtRtDto
 import com.friends.security.securityException.InvalidJwtException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager

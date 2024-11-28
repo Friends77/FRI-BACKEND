@@ -1,7 +1,7 @@
 package com.friends.jwt
 
 import com.friends.config.AuthProperties
-import com.friends.security.service.AtRtDto
+import com.friends.security.AtRtDto
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
