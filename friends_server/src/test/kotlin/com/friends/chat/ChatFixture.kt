@@ -10,7 +10,7 @@ const val CHAT_ROOM_CATEGORIES = "it"
 const val CREATE_CHAT_ROOM_REQUEST = "chatRoomRequest"
 
 fun createTestChatRoom(
-    id: String = CHAT_ROOM_ID,
+    id: String? = null,
     title: String = CHAT_ROOM_TITLE,
     createrId: Long = MEMBER_ID,
     categories: MutableList<String> = mutableListOf(CHAT_ROOM_CATEGORIES),

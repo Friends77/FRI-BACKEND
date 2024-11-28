@@ -19,7 +19,7 @@ class ChatRoomRepositoryKtTest(
             val member = memberRepository.save(createTestMember())
             val chatRoom1 = chatRoomRepository.save(createTestChatRoom(createrId = member.id))
 
-            afterEach { chatRoomRepository.deleteAll() }
+            afterEach { chatRoomRepository.delete(chatRoom1) }
 
             describe("getById 메서드는") {
                 context("존재하는 채팅방 ID를 받으면") {

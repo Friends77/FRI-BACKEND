@@ -1,5 +1,6 @@
 package com.friends.chat.service
 
+import com.friends.chat.CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomRequest
 import com.friends.chat.repository.ChatRoomRepository
@@ -23,7 +24,7 @@ class ChatRoomCommandServiceTest :
             val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository)
             given("createChatRoom 테스트") {
                 val requst = createTestChatRoomRequest()
-                every { chatRoomRepository.save(any()) } returns createTestChatRoom()
+                every { chatRoomRepository.save(any()) } returns createTestChatRoom(id = CHAT_ROOM_ID)
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
                 `when`("정상적인 데이터가 들어올 경우") {
