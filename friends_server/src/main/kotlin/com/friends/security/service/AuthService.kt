@@ -7,14 +7,15 @@ import com.friends.member.repository.MemberRepository
 import com.friends.security.AtRtDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.InvalidRefreshTokenException
-import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val atRtService: AtRtService,
@@ -22,6 +23,7 @@ class AuthService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
+    @Transactional(readOnly = true)
     fun login(
         email: String,
         password: String,
@@ -31,6 +33,7 @@ class AuthService(
         return atRtService.createAtRt(userDetails.memberId, userDetails.authorities)
     }
 
+    @Transactional(readOnly = true)
     fun refresh(refreshToken: String): AtRtDto {
         if (!atRtService.validateRefreshToken(refreshToken)) {
             throw InvalidRefreshTokenException()
@@ -54,9 +57,9 @@ class AuthService(
         name: String,
     ) {
         // emailAuthToken 검증
-        if (!jwtService.validate(emailAuthToken)) {
-            throw InvalidTokenException()
-        }
+//        if (!jwtService.validate(emailAuthToken)) {
+//            throw InvalidTokenException()
+//        }
         if (memberRepository.existsByEmail(email)) {
             throw EmailDuplicateException()
         }
