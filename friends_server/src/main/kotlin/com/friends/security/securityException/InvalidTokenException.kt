@@ -2,16 +2,18 @@ package com.friends.security.securityException
 
 import com.friends.common.exception.ErrorCode
 
-open class InvalidJwtException(
+open class AuthenticationException(
     val errorCode: ErrorCode,
 ) : RuntimeException(errorCode.errorMessage)
 
-class InvalidTokenException : InvalidJwtException(ErrorCode.INVALID_TOKEN)
+class InvalidTokenException : AuthenticationException(ErrorCode.INVALID_TOKEN)
 
-class InvalidAccessTokenException : InvalidJwtException(ErrorCode.INVALID_ACCESS_TOKEN)
+class InvalidAccessTokenException : AuthenticationException(ErrorCode.INVALID_ACCESS_TOKEN)
 
-class InvalidRefreshTokenException : InvalidJwtException(ErrorCode.INVALID_REFRESH_TOKEN)
+class InvalidRefreshTokenException : AuthenticationException(ErrorCode.INVALID_REFRESH_TOKEN)
 
-class MissingSocialAccessTokenException : InvalidJwtException(ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN)
+class MissingSocialAccessTokenException : AuthenticationException(ErrorCode.MISSING_SOCIAL_ACCESS_TOKEN)
 
-class MissingRefreshTokenException : InvalidJwtException(ErrorCode.MISSING_REFRESH_TOKEN)
+class MissingRefreshTokenException : AuthenticationException(ErrorCode.MISSING_REFRESH_TOKEN)
+
+class EmailNotFoundException : AuthenticationException(ErrorCode.EMAIL_NOT_FOUND)

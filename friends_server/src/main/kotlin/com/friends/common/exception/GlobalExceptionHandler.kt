@@ -2,7 +2,7 @@ package com.friends.common.exception
 
 import com.friends.email.EmailException
 import com.friends.oauth2.OAuth2Exception
-import com.friends.security.securityException.InvalidJwtException
+import com.friends.security.securityException.AuthenticationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
@@ -14,8 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     private val log: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
 
-    @ExceptionHandler(InvalidJwtException::class)
-    fun handleInvalidJwtException(ex: InvalidJwtException): ResponseEntity<Any> {
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleInvalidJwtException(ex: AuthenticationException): ResponseEntity<Any> {
         log.error("Invalid JWT", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
