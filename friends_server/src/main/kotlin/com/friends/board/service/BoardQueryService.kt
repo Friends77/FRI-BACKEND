@@ -16,10 +16,10 @@ class BoardQueryService  (
 ){
     //상세조회
     @Transactional(readOnly = true)
-    fun getBoard(id: Long): Pair<Board, String>? {
+    fun getBoard(id: Long): Pair<Board, List<String>>? {
 
         val board = boardRepository.findByIdOrNull(id) ?: return null
-        val hashtags = boardHashtagRepository.findByBoardId(id).hashtag.tag
+        val hashtags = boardHashtagRepository.findByBoardId(id).map { it.hashtag.tag }
 
         return Pair(board, hashtags)
     }

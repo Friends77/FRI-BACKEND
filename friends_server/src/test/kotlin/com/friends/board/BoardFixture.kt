@@ -20,4 +20,4 @@ fun createTestHashtags(): Hashtag = Hashtag(id = HASHTAG_ID, tag = "testTag")
 val testHashtags = listOf("friends", "kotlin")
 val boardFormDto = BoardFormDto(content = createTestBoard().content, hashtags = testHashtags)
 
-fun createBoardHashtag(): BoardHashtag = BoardHashtag(id = BOARD_HASHTAG_ID, board = createTestBoard(), hashtag = createTestHashtags())
+fun createBoardHashtag(): List<BoardHashtag> = listOf(BoardHashtag(id = BOARD_HASHTAG_ID, board = createTestBoard(), hashtag = createTestHashtags()))

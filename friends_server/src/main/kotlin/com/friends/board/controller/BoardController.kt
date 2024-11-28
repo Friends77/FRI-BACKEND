@@ -38,7 +38,7 @@ class BoardController(
         fun getBoard(
             @PathVariable id: Long,
         ): ResponseEntity<BoardFormDto> {
-            var (board, hashtags) = boardQueryService.getBoard(id)
+            val (board, hashtags) = boardQueryService.getBoard(id)
                 ?: return ResponseEntity.notFound().build()
 
             val boardDto = BoardFormDto(

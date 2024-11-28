@@ -47,9 +47,7 @@ class BoardCommandService(
                 hashtag = hashtag,
             )
         }
-
         boardHashtagRepository.saveAll(boardHashtags)
-
         return board
     }
 
