@@ -25,7 +25,7 @@ interface ChatControllerSpec {
         @RequestPart
         @Valid
         chatRoomRequest: ChatRoomRequest,
-        @RequestPart
+        @RequestPart(required = false)
         backgroundImage: MultipartFile?,
         @AuthenticationPrincipal
         memberId: Long,
