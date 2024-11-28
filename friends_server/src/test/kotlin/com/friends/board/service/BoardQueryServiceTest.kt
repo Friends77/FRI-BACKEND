@@ -2,7 +2,9 @@ package com.friends.board.service
 
 import com.friends.board.BOARD_ID
 import com.friends.board.INVALID_BOARD_ID
+import com.friends.board.createBoardHashtag
 import com.friends.board.createTestBoard
+import com.friends.board.createTestHashtags
 import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.testHashtags
@@ -24,7 +26,7 @@ class BoardQueryServiceTest :
 
             given("getBoard 메서드를 호출할 때"){
                 every { boardRepository.findByIdOrNull(BOARD_ID) } returns createTestBoard()
-                every { boardHashtagRepository.findByBoard(createTestBoard()) } returns testHashtags
+                every { boardHashtagRepository.findByBoardId(BOARD_ID) } returns createBoardHashtag()
                 every { boardQueryService.getBoard(BOARD_ID) } returns Pair(createTestBoard(), testHashtags)
 
                 `when`("존재하는 boardId가 주어졌다면"){

@@ -42,7 +42,7 @@ class BoardCommandServiceTest :
                 `when` ("유효한 작성자가 글을 작성했으면") {
                     val result = boardCommandService.createBoard(boardFormDto, REQUEST_MEMBER_ID)
 
-                    then("게면글이 저장되고 반환되어야 한다.") {
+                    then("게시글이 저장되고 반환되어야 한다.") {
                         result.content shouldBe boardFormDto.content
                         result.member shouldBe createTestMember()
                     }
