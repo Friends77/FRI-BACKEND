@@ -2,6 +2,7 @@ package com.friends.profile.entity
 
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import com.friends.profile.dto.ProfileResponseDto
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -58,6 +59,20 @@ class Profile(
         this.mbti = mbti
         this.interestTag = interestTag ?: mutableSetOf()
         this.imageUrl = imageUrl
+    }
+
+    fun toResponseDto(): ProfileResponseDto {
+        return ProfileResponseDto(
+            nickname = this.member.name,
+            email = this.member.email,
+            birth = this.birth,
+            gender = this.gender,
+            location = this.location,
+            selfDescription = this.selfDescription,
+            mbti = this.mbti,
+            interestTag = this.interestTag?.toList(),
+            imageUrl = this.imageUrl,
+        )
     }
 
     companion object {
