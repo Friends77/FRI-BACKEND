@@ -12,15 +12,16 @@ class DBConnectionTest(
     private val jdbcTemplate: JdbcTemplate,
     private val redissonClient: RedissonClient,
     private val mongoClients: MongoClient,
-) : BehaviorSpec({
-        given("PostgreSQL 연결 정보가 주어지면") {
-            `when`("PostgreSQL 연결 테스트를 수행하면") {
-                then("Query가 정상적으로 수행되어야 한다") {
-                    shouldNotThrowAny {
-                        jdbcTemplate.execute("SELECT 1")
+) : BehaviorSpec(
+        {
+            given("PostgreSQL 연결 정보가 주어지면") {
+                `when`("PostgreSQL 연결 테스트를 수행하면") {
+                    then("Query가 정상적으로 수행되어야 한다") {
+                        shouldNotThrowAny {
+                            jdbcTemplate.execute("SELECT 1")
+                        }
                     }
                 }
-            }
         }
 
         given("Redis 연결 정보가 주어지면") {
@@ -38,8 +39,9 @@ class DBConnectionTest(
                 then("Database 목록을 조회할 수 있어야 한다") {
                     shouldNotThrowAny {
                         mongoClients.listDatabaseNames()
+                        }
+                    }
                 }
             }
-        }
-    }
-})
+    },
+)
