@@ -1,5 +1,6 @@
 package com.friends.profile.service
 
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.ProfileNullResponseException
 import com.friends.profile.dto.ProfileUpdateDto
@@ -17,7 +18,7 @@ class ProfileCommandService (
     //프로필 초기 작성
     fun createProfile(requestMemberId: Long, profileUpdateDto: ProfileUpdateDto) {
         val member = memberRepository.findById(requestMemberId)
-            .orElseThrow{ IllegalArgumentException("멤버를 찾을 수 없습니다.") }
+            .orElseThrow { MemberNotFoundException() }
 
         profileRepository.save(profileUpdateDto.toEntity(profileUpdateDto, member))
     }

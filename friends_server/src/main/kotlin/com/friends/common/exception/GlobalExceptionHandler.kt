@@ -1,6 +1,7 @@
 package com.friends.common.exception
 
 import com.friends.email.EmailException
+import com.friends.member.MemberExceptions
 import com.friends.oauth2.OAuth2Exception
 import com.friends.profile.ProfileExceptions
 import com.friends.security.securityException.InvalidJwtException
@@ -42,6 +43,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(ProfileExceptions::class)
     fun handleProfileException(ex: ProfileExceptions): ResponseEntity<Any> {
         log.error("Profile Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(MemberExceptions::class)
+    fun handleMemberException(ex: MemberExceptions): ResponseEntity<Any> {
+        log.error("Member Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
