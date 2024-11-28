@@ -2,6 +2,7 @@ package com.friends.jwt
 
 import com.friends.config.AuthProperties
 import com.friends.security.AtRtDto
+import com.friends.security.securityException.InvalidTokenException
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
@@ -28,7 +29,7 @@ class AtRtService(
         authorities: Collection<GrantedAuthority>,
     ): String =
         jwtService.createToken(
-            "memberId" to memberId,
+            "memberId" to memberId.toString(),
             "authorities" to authorities.map { it.authority },
             expirationSeconds = authProperties.accessTokenExpiration,
         )
@@ -38,15 +39,15 @@ class AtRtService(
         authorities: Collection<GrantedAuthority>,
     ): String =
         jwtService.createToken(
-            "memberId" to memberId,
+            "memberId" to memberId.toString(),
             "authorities" to authorities.map { it.authority },
             expirationSeconds = authProperties.refreshTokenExpiration,
         )
 
-    fun getMemberId(token: String): Long = jwtService.getClaim(token, "memberId", Long::class.java) as Long
+    fun getMemberId(token: String): Long = jwtService.getClaim(token, "memberId", String::class.java)?.toLong() ?: throw InvalidTokenException()
 
     fun getAuthorities(token: String): List<GrantedAuthority> {
-        val authorities = jwtService.getClaim(token, "authorities", List::class.java) as List<String>
+        val authorities: List<String> = jwtService.getClaim(token, "authorities", List::class.java)?.filterIsInstance<String>() ?: throw InvalidTokenException()
         return authorities.map { SimpleGrantedAuthority(it) }
     }
 
