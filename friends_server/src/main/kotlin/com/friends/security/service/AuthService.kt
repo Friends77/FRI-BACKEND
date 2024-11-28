@@ -7,6 +7,7 @@ import com.friends.member.repository.MemberRepository
 import com.friends.security.AtRtDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.InvalidRefreshTokenException
+import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -56,10 +57,10 @@ class AuthService(
         password: String,
         name: String,
     ) {
-        // emailAuthToken 검증
-//        if (!jwtService.validate(emailAuthToken)) {
-//            throw InvalidTokenException()
-//        }
+//         emailAuthToken 검증
+        if (!jwtService.validate(emailAuthToken)) {
+            throw InvalidTokenException()
+        }
         if (memberRepository.existsByEmail(email)) {
             throw EmailDuplicateException()
         }
