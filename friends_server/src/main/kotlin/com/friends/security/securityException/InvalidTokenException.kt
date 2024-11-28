@@ -17,3 +17,5 @@ class MissingSocialAccessTokenException : AuthenticationException(ErrorCode.MISS
 class MissingRefreshTokenException : AuthenticationException(ErrorCode.MISSING_REFRESH_TOKEN)
 
 class EmailNotFoundException : AuthenticationException(ErrorCode.EMAIL_NOT_FOUND)
+
+class EmailDuplicateException : AuthenticationException(ErrorCode.EMAIL_ALREADY_EXISTS)

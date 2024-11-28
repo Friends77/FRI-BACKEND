@@ -5,6 +5,7 @@ import com.friends.jwt.JwtService
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.security.AtRtDto
+import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
@@ -55,6 +56,9 @@ class AuthService(
         // emailAuthToken 검증
         if (!jwtService.validate(emailAuthToken)) {
             throw InvalidTokenException()
+        }
+        if (memberRepository.existsByEmail(email)) {
+            throw EmailDuplicateException()
         }
         val user =
             Member.createUser(

@@ -18,6 +18,7 @@ enum class ErrorCode(
     MISSING_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, -11002, "RefreshToken 이 존재하지 않습니다."),
     MISSING_SOCIAL_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "SocialAccessToken 이 존재하지 않습니다."),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, -11004, "존재하지 않는 이메일입니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, -11005, "이미 존재하는 이메일입니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
