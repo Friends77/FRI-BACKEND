@@ -47,19 +47,24 @@ class AuthController(
 
         return ResponseEntity
             .ok()
+            // refresh token 을 쿠키로 전달합니다.
             .header(COOKIE_HEARER, getRefreshTokenCookie(atRtDto.refreshToken).toString())
             .body(LoginResponseDto(memberId, atRtDto.accessToken))
     }
 
+    /**
+     * cookie 를 생성하여 문자열로 변환시 아래와 같은 형태로 변환됩니다.
+     * "refreshToken=abc123; Max-Age=3600; Path=/; HttpOnly"
+     */
     private fun getRefreshTokenCookie(refreshToken: String): HttpCookie {
         val expiration = atRtService.getExpiration(refreshToken)
         val expirationFromNowInSeconds = (expiration.time - System.currentTimeMillis()) / 1000
         return ResponseCookie
             .from("refreshToken", refreshToken)
-            .httpOnly(true)
-            .maxAge(expirationFromNowInSeconds)
-//            .secure(true) // https 에서 적용
-            .path("/")
+            .httpOnly(true) // JavaScript 에서 쿠키에 접근할 수 없도록 하는 보안 설정입니다.
+            .maxAge(expirationFromNowInSeconds) // 쿠키의 만료 시간을 설정합니다.
+//            .secure(true) // cookie 가 https 에서만 전송되도록 하는 보안 설정입니다.
+            .path("/api/auth") // 쿠키의 유효 범위를 설정합니다. (브라우저가 서버에 쿠키를 자동으로 전달하는 경로를 의미합니다.)
             .build()
     }
 }
