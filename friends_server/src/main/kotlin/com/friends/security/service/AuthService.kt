@@ -61,6 +61,14 @@ class AuthService(
         if (!jwtService.validate(emailAuthToken)) {
             throw InvalidTokenException()
         }
+
+        // emailAuthToken 에서 email 추출하여 인증 받은 이메일과 일치하는지 검증
+        val emailFromToken = jwtService.getClaim(emailAuthToken, "email", String::class.java)
+        if (emailFromToken != email) {
+            throw InvalidTokenException()
+        }
+
+        // 이메일이 중복되는지 검증
         if (memberRepository.existsByEmail(email)) {
             throw EmailDuplicateException()
         }
