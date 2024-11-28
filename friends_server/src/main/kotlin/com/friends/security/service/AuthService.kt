@@ -1,11 +1,12 @@
 package com.friends.security.service
 
-import com.friends.common.exception.ErrorCode
 import com.friends.jwt.AtRtService
+import com.friends.jwt.JwtService
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.security.AtRtDto
-import com.friends.security.securityException.InvalidJwtException
+import com.friends.security.securityException.InvalidRefreshTokenException
+import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service
 class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val atRtService: AtRtService,
+    private val jwtService: JwtService,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
@@ -30,7 +32,7 @@ class AuthService(
 
     fun refresh(refreshToken: String): AtRtDto {
         if (!atRtService.validateRefreshToken(refreshToken)) {
-            throw InvalidJwtException(ErrorCode.INVALID_TOKEN)
+            throw InvalidRefreshTokenException()
         }
 
         // refresh 될 때 기존의 access token 과 refresh token 을 삭제합니다.
@@ -50,6 +52,10 @@ class AuthService(
         password: String,
         name: String,
     ) {
+        // emailAuthToken 검증
+        if (!jwtService.validate(emailAuthToken)) {
+            throw InvalidTokenException()
+        }
         val user =
             Member.createUser(
                 name = name,

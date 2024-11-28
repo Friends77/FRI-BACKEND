@@ -13,6 +13,8 @@ enum class ErrorCode(
 
     // Auth API error 11000대
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, -11001, "유효하지 않은 토큰입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, -11002, "유효하지 않은 Refresh Token입니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "유효하지 않은 Access Token입니다."),
     MISSING_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, -11002, "RefreshToken 이 존재하지 않습니다."),
     MISSING_SOCIAL_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "SocialAccessToken 이 존재하지 않습니다."),
 
