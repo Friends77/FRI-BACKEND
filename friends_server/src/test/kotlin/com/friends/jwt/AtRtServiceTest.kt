@@ -34,7 +34,7 @@ class AtRtServiceTest :
 
             every {
                 jwtService.createToken(
-                    "memberId" to memberId,
+                    "memberId" to memberId.toString(),
                     "authorities" to authorities.map { it.authority },
                     expirationSeconds = authProperties.accessTokenExpiration,
                 )
@@ -42,7 +42,7 @@ class AtRtServiceTest :
 
             every {
                 jwtService.createToken(
-                    "memberId" to memberId,
+                    "memberId" to memberId.toString(),
                     "authorities" to authorities.map { it.authority },
                     expirationSeconds = authProperties.refreshTokenExpiration,
                 )
@@ -66,7 +66,7 @@ class AtRtServiceTest :
             val token = "mockToken"
             val memberId = 123L
 
-            every { jwtService.getClaim(token, "memberId", Long::class.java) } returns memberId
+            every { jwtService.getClaim(token, "memberId", String::class.java) } returns memberId.toString()
 
             `when`("getMemberId를 호출하면") {
                 val result = atRtService.getMemberId(token)
