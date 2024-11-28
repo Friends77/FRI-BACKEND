@@ -5,6 +5,7 @@ import com.friends.security.AtRtDto
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
+import java.util.Date
 
 @Service
 class AtRtService(
@@ -60,4 +61,6 @@ class AtRtService(
     fun getAccessToken(refreshToken: String): String? = authJwtRepository.getAccessToken(refreshToken)
 
     fun getRefreshToken(accessToken: String): String? = authJwtRepository.getRefreshToken(accessToken)
+
+    fun getExpiration(token: String): Date = jwtService.getExpiration(token)
 }
