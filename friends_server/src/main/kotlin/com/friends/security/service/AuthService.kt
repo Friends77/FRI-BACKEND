@@ -57,7 +57,7 @@ class AuthService(
         password: String,
         name: String,
     ) {
-//         emailAuthToken 검증
+        // emailAuthToken 검증
         if (!jwtService.validate(emailAuthToken)) {
             throw InvalidTokenException()
         }

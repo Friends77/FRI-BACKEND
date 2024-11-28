@@ -29,7 +29,7 @@ class AtRtService(
         authorities: Collection<GrantedAuthority>,
     ): String =
         jwtService.createToken(
-            "memberId" to memberId.toString(),
+            "memberId" to memberId,
             "authorities" to authorities.map { it.authority },
             expirationSeconds = authProperties.accessTokenExpiration,
         )
@@ -39,15 +39,15 @@ class AtRtService(
         authorities: Collection<GrantedAuthority>,
     ): String =
         jwtService.createToken(
-            "memberId" to memberId.toString(),
+            "memberId" to memberId,
             "authorities" to authorities.map { it.authority },
             expirationSeconds = authProperties.refreshTokenExpiration,
         )
 
-    fun getMemberId(token: String): Long = jwtService.getClaim(token, "memberId", String::class.java)?.toLong() ?: throw InvalidTokenException()
+    fun getMemberId(token: String): Long = jwtService.getClaim(token, "memberId", Long::class.javaObjectType) ?: throw InvalidTokenException()
 
     fun getAuthorities(token: String): List<GrantedAuthority> {
-        val authorities: List<String> = jwtService.getClaim(token, "authorities", List::class.java)?.filterIsInstance<String>() ?: throw InvalidTokenException()
+        val authorities: List<String> = jwtService.getClaim(token, "authorities", List::class.javaObjectType)?.filterIsInstance<String>() ?: throw InvalidTokenException()
         return authorities.map { SimpleGrantedAuthority(it) }
     }
 
