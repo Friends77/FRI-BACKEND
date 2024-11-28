@@ -1,6 +1,7 @@
 package com.friends.profile.service
 
 import com.friends.member.repository.MemberRepository
+import com.friends.profile.ProfileNullResponseException
 import com.friends.profile.dto.ProfileUpdateDto
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.stereotype.Service
@@ -24,7 +25,10 @@ class ProfileCommandService (
     //프로필 수정
     fun updateProfile(requestMemberId: Long, profileUpdateDto: ProfileUpdateDto) {
         val profile = profileRepository.findByMemberId(requestMemberId)
-            ?: throw IllegalArgumentException("해당 멤버의 프로필이 존재하지 않습니다.")
+
+        if (profile == null) {
+            throw ProfileNullResponseException()
+        }
 
         profile.update(
             birth = profileUpdateDto.birth,
