@@ -2,7 +2,7 @@ package com.friends.chat.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
-import com.friends.chat.createTestChatRoomRequest
+import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.support.annotation.ControllerTest
 import com.friends.support.createMultipartFile
@@ -28,12 +28,12 @@ class ChatControllerTest(
 
         given("POST $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
-                val chatRoomRequest = createTestChatRoomRequest()
+                val request = createTestChatRoomCreateRequestDto()
                 every { chatRoomCommandService.createChatRoom(any(), any(), any()) } returns Unit
                 then("채팅방을 생성한다.") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(chatRoomRequest).inputStream())),
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
                         ).andExpect(
                             status().isCreated,
                         )
@@ -41,11 +41,11 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 제목이 공백인 경우") {
-                val chatRoomRequest = createTestChatRoomRequest(title = " ")
+                val request = createTestChatRoomCreateRequestDto(title = " ")
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(chatRoomRequest).inputStream())),
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
                         ).andExpect(
                             status().isBadRequest,
                         )
@@ -53,11 +53,11 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 제목이 0자 인 경우") {
-                val chatRoomRequest = createTestChatRoomRequest(title = "")
+                val request = createTestChatRoomCreateRequestDto(title = "")
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(chatRoomRequest).inputStream())),
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
                         ).andExpect(
                             status().isBadRequest,
                         )
@@ -65,11 +65,11 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 제목이 30자 이상인 경우") {
-                val chatRoomRequest = createTestChatRoomRequest(title = "랄".repeat(30))
+                val request = createTestChatRoomCreateRequestDto(title = "랄".repeat(30))
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(chatRoomRequest).inputStream())),
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
                         ).andExpect(
                             status().isBadRequest,
                         )
@@ -77,11 +77,11 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 카테고리가 없는 경우") {
-                val chatRoomRequest = createTestChatRoomRequest(categories = mutableListOf())
+                val request = createTestChatRoomCreateRequestDto(categories = mutableListOf())
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(chatRoomRequest).inputStream())),
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
                         ).andExpect(
                             status().isBadRequest,
                         )

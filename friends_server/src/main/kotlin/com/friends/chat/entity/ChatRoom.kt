@@ -32,9 +32,6 @@ class ChatRoom(
 
     fun addMessage(message: Message) {
         mutableMessages.add(message)
-    }
-
-    fun increaseLastMessageId() {
         lastMessageId++
     }
 
@@ -65,13 +62,10 @@ class Message(
             type: MessageType,
         ): Message = Message(messageId = messageId, chatRoomId = chatRoomId, senderId = senderId, content = content, type = type)
 
-        fun addEnterMessage(
+        fun createEnterMessage(
             member: Member,
             chatRoom: ChatRoom,
-        ): Message {
-            chatRoom.increaseLastMessageId()
-            return of(chatRoom.lastMessageId, chatRoom.chatRoomId!!, 0L, "${member.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
-        }
+        ): Message = of(chatRoom.lastMessageId + 1, chatRoom.chatRoomId!!, 0L, "${member.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
     }
 }
 
