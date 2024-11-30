@@ -1,6 +1,6 @@
 package com.friends.chat.controller
 
-import com.friends.chat.dto.ChatRoomRequest
+import com.friends.chat.dto.ChatRoomCreateRequestDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -24,7 +24,7 @@ interface ChatControllerSpec {
     fun createChatRoom(
         @RequestPart
         @Valid
-        chatRoomRequest: ChatRoomRequest,
+        chatRoomCreateRequestDto: ChatRoomCreateRequestDto,
         @RequestPart(required = false)
         backgroundImage: MultipartFile?,
         @AuthenticationPrincipal

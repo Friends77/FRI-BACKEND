@@ -1,6 +1,7 @@
 package com.friends.chat.service
 
-import com.friends.chat.dto.ChatRoomRequest
+import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.member.entity.ChatRoomMember
@@ -18,7 +19,7 @@ class ChatRoomCommandService(
 ) {
     @Transactional
     fun createChatRoom(
-        request: ChatRoomRequest,
+        request: ChatRoomCreateRequestDto,
         memberId: Long,
         backgroundImage: MultipartFile?,
     ) {
@@ -26,9 +27,10 @@ class ChatRoomCommandService(
             backgroundImage?.let {
                 /* 이미지 업로드 로직 */ backgroundImage.name
             }
-        val chatRoom = chatRoomRepository.save(request.toEntity(memberId, imageUrl))
         val member = memberRepository.findById(memberId).get()
-        chatRoom.addMessage(Message.addEnterMessage(member, chatRoom))
+        var chatRoom = ChatRoom.of(request.title, memberId, request.categories, imageUrl)
+        chatRoom.addMessage(Message.createEnterMessage(member, chatRoom))
+        chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, memberId, request.categories, imageUrl))
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom.chatRoomId!!, member))
     }
 }
