@@ -1,6 +1,7 @@
 package com.friends.chat.repository
 
 import com.friends.chat.createTestChatRoom
+import com.friends.chat.entity.Message
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
 import com.friends.support.annotation.MongoRepositoryTest
@@ -17,8 +18,11 @@ class ChatRoomRepositoryKtTest(
 
             isolationMode = IsolationMode.InstancePerLeaf
             val member = memberRepository.save(createTestMember())
-            val chatRoom1 = chatRoomRepository.save(createTestChatRoom(createrId = member.id))
-
+            val chatRoom1 =
+                chatRoomRepository.save(createTestChatRoom(createrId = member.id)).let {
+                    it.addMessage(Message.createEnterMessage(member, it))
+                    chatRoomRepository.save(it)
+                }
             afterEach { chatRoomRepository.delete(chatRoom1) }
 
             describe("getById 메서드는") {
@@ -26,6 +30,7 @@ class ChatRoomRepositoryKtTest(
                     it("chatRoom을 반환한다") {
                         val chatRoom = chatRoomRepository.getById(chatRoom1.chatRoomId!!)
                         chatRoom.createrId shouldBe member.id
+                        chatRoom.messages.size shouldBe 1
                     }
                 }
             }
