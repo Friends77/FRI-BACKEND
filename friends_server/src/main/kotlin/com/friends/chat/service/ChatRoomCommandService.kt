@@ -28,9 +28,11 @@ class ChatRoomCommandService(
                 /* 이미지 업로드 로직 */ backgroundImage.name
             }
         val member = memberRepository.findById(memberId).get()
-        var chatRoom = ChatRoom.of(request.title, memberId, request.categories, imageUrl)
-        chatRoom.addMessage(Message.createEnterMessage(member, chatRoom))
-        chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, memberId, request.categories, imageUrl))
+        val chatRoom =
+            chatRoomRepository.save(ChatRoom.of(request.title, memberId, request.categories, imageUrl)).let {
+                it.addMessage(Message.createEnterMessage(member, it))
+                chatRoomRepository.save(it)
+            }
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom.chatRoomId!!, member))
     }
 }
