@@ -10,21 +10,28 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class ProfileCommandService (
+class ProfileCommandService(
     private val profileRepository: ProfileRepository,
-    private val memberRepository: MemberRepository
-){
+    private val memberRepository: MemberRepository,
+) {
 
     //프로필 초기 작성
-    fun createProfile(requestMemberId: Long, profileUpdateDto: ProfileUpdateDto) {
-        val member = memberRepository.findById(requestMemberId)
-            .orElseThrow { MemberNotFoundException() }
+    fun createProfile(
+        requestMemberId: Long,
+        profileUpdateDto: ProfileUpdateDto,
+    ) {
+        val member =
+            memberRepository.findById(requestMemberId)
+                .orElseThrow { MemberNotFoundException() }
 
         profileRepository.save(profileUpdateDto.toEntity(profileUpdateDto, member))
     }
 
     //프로필 수정
-    fun updateProfile(requestMemberId: Long, profileUpdateDto: ProfileUpdateDto) {
+    fun updateProfile(
+        requestMemberId: Long,
+        profileUpdateDto: ProfileUpdateDto,
+    ) {
         val profile = profileRepository.findByMemberId(requestMemberId)
 
         if (profile == null) {
@@ -40,7 +47,5 @@ class ProfileCommandService (
             interestTag = profileUpdateDto.interestTag?.toMutableSet(),
             imageUrl = profileUpdateDto.imageUrl,
         )
-
     }
-
 }

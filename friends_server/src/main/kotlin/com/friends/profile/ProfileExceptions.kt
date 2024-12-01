@@ -2,7 +2,7 @@ package com.friends.profile
 
 import com.friends.common.exception.ErrorCode
 
-abstract class ProfileExceptions (
+abstract class ProfileExceptions(
     val errorCode: ErrorCode,
 ) : RuntimeException(errorCode.errorMessage)
 

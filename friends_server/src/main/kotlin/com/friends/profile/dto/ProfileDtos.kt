@@ -7,7 +7,7 @@ import com.friends.profile.entity.Profile
 import java.util.Date
 
 //수정가능한 필드 dto
-data class ProfileUpdateDto (
+data class ProfileUpdateDto(
     var birth: Date,
     var gender: GenderEnum,
     var location: String? = null,
@@ -15,8 +15,11 @@ data class ProfileUpdateDto (
     var mbti: MbtiEnum? = null,
     var interestTag: List<String>? = null,
     var imageUrl: String,
-){
-    fun toEntity(profileUpdateDto: ProfileUpdateDto, member: Member): Profile {
+) {
+    fun toEntity(
+        profileUpdateDto: ProfileUpdateDto,
+        member: Member,
+    ): Profile {
         return Profile.build(
             member = member,
             birth = profileUpdateDto.birth,
@@ -25,14 +28,13 @@ data class ProfileUpdateDto (
             selfDescription = profileUpdateDto.selfDescription,
             mbti = profileUpdateDto.mbti,
             interestTag = profileUpdateDto.interestTag?.toMutableSet() ?: mutableSetOf(),
-            imageUrl = profileUpdateDto.imageUrl
+            imageUrl = profileUpdateDto.imageUrl,
         )
     }
-
 }
 
 //조회용 dto
-data class ProfileResponseDto (
+data class ProfileResponseDto(
     val nickname: String,
     val email: String,
     var birth: Date,
@@ -43,4 +45,3 @@ data class ProfileResponseDto (
     var interestTag: List<String>?,
     var imageUrl: String,
 )
-

@@ -9,21 +9,21 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class ProfileQueryService (
+class ProfileQueryService(
     val profileRepository: ProfileRepository,
     val memberRepository: MemberRepository,
 ) {
-
     //프로필 상세조회
     @Transactional(readOnly = true)
-    fun getProfile(requestMemberId: Long) : ProfileResponseDto {
-        val member = memberRepository.findById(requestMemberId)
-            .orElseThrow { MemberNotFoundException() }
+    fun getProfile(requestMemberId: Long): ProfileResponseDto {
+        val member =
+            memberRepository.findById(requestMemberId)
+                .orElseThrow { MemberNotFoundException() }
 
-        val profile = profileRepository.findByMemberId(requestMemberId)
-            ?: throw ProfileNullResponseException()
+        val profile =
+            profileRepository.findByMemberId(requestMemberId)
+                ?: throw ProfileNullResponseException()
 
         return profile.toResponseDto()
     }
-
 }

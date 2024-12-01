@@ -3,20 +3,20 @@ package com.friends.profile.entity
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import com.friends.profile.dto.ProfileResponseDto
+import jakarta.persistence.Column
+import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
-import jakarta.persistence.OneToOne
 import jakarta.persistence.JoinColumn
-import java.util.Date
-import jakarta.persistence.Enumerated
-import jakarta.persistence.EnumType
-import jakarta.persistence.FetchType
+import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
+import java.util.Date
 
 @Entity
 class Profile(
@@ -42,16 +42,23 @@ class Profile(
     @Column(name = "image_url")
     var imageUrl: String,
 ) : BaseModifiableEntity() {
-
     @PrePersist
     @PreUpdate
     fun validate() {
-        if(interestTag.isEmpty()){
+        if (interestTag.isEmpty()) {
             throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
         }
     }
 
-    fun update(birth: Date, gender: GenderEnum, location: String?, selfDescription: String?, mbti: MbtiEnum?, interestTag: MutableSet<String>?, imageUrl: String ) {
+    fun update(
+        birth: Date,
+        gender: GenderEnum,
+        location: String?,
+        selfDescription: String?,
+        mbti: MbtiEnum?,
+        interestTag: MutableSet<String>?,
+        imageUrl: String,
+    ) {
         this.birth = birth
         this.gender = gender
         this.location = location

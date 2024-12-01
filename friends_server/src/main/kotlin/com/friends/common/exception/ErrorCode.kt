@@ -30,5 +30,5 @@ enum class ErrorCode(
     OAUTH2_NULL_RESPONSE(HttpStatus.BAD_GATEWAY, -14003, "OAuth2 API로부터 응답이 없습니다."),
 
     // Profile API error 15000대
-    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다.")
+    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
 }
