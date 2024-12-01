@@ -2,9 +2,9 @@ package com.friends.board.service
 
 import com.friends.board.BOARD_ID
 import com.friends.board.INVALID_BOARD_ID
+import com.friends.board.PAGEABLE
 import com.friends.board.createBoardHashtag
 import com.friends.board.createTestBoard
-import com.friends.board.createTestHashtags
 import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
 import io.kotest.core.spec.IsolationMode
@@ -26,7 +26,6 @@ class BoardQueryServiceTest :
             given("getBoard 메서드를 호출할 때"){
 
                 val testBoard = createTestBoard()
-                val testHashtags = createTestHashtags()
                 val testBoardHashtags = createBoardHashtag()
 
                 every { boardRepository.findByIdOrNull(BOARD_ID) } returns testBoard
@@ -49,6 +48,20 @@ class BoardQueryServiceTest :
 
                     then("null을 반환해야 한다.") {
                         result?.first shouldBe null
+                    }
+                }
+            }
+
+            given("getBoardList 메서드를 호출할 때"){
+                val testBoard = createTestBoard()
+
+                every { boardRepository.findAll() } returns listOf(testBoard)
+
+                `when`("board의 개수가 0이 아니라면"){
+                    val result = boardQueryService.getBoardList(PAGEABLE)
+
+                    then("boardList를 반환해야한다.") {
+                        result shouldBe listOf(testBoard)
                     }
                 }
             }

@@ -53,28 +53,36 @@ class BoardCommandServiceTest :
             }
 
             given("deleteBoard 메서드를 호출할 때") {
-                every { boardRepository.findById(createTestBoard().id!!) } returns Optional.of(createTestBoard())
-                every { boardRepository.deleteById(createTestBoard().id!!) } returns Unit
+                every { boardRepository.findById(createTestBoard().id) } returns Optional.of(createTestBoard())
+                every { boardRepository.deleteById(createTestBoard().id) } returns Unit
 
                 `when`("삭제하려는 회원이 해당 게시글의 작성자라면") {
-                    boardCommandService.deleteBoard(createTestBoard().id!!, REQUEST_MEMBER_ID)
+                    boardCommandService.deleteBoard(createTestBoard().id, REQUEST_MEMBER_ID)
 
                     then("게시글이 삭제되어야 한다.") {
-                        io.mockk.verify { boardRepository.deleteById(createTestBoard().id!!) }
+                        io.mockk.verify { boardRepository.deleteById(createTestBoard().id) }
+                    }
+                }
+
+                `when`("boardId가 존재하지 않다면"){
+                    every { boardRepository.findById(any()) } returns Optional.empty()
+
+                    then("예외가 발생해야 한다.") {
+
                     }
                 }
             }
 
             given("updateBoard 메서드를 호출할 때") {
-                every { boardRepository.findById(createTestBoard().id!!) } returns Optional.of(createTestBoard())
-                every { boardRepository.deleteById(createTestBoard().id!!) } returns Unit
+                every { boardRepository.findById(createTestBoard().id) } returns Optional.of(createTestBoard())
+                every { boardRepository.deleteById(createTestBoard().id) } returns Unit
 
                 `when`("수정하려는 회원이 해당 게시글의 작성자라면") {
                     val updatedContent = "Updated content"
                     val updatedDto = boardFormDto.copy(content = updatedContent)
                     createTestBoard().content = updatedContent
 
-                    val result = boardCommandService.updateBoard(createTestBoard().id!!, updatedDto, REQUEST_MEMBER_ID)
+                    val result = boardCommandService.updateBoard(createTestBoard().id, updatedDto, REQUEST_MEMBER_ID)
 
                     then("게시글의 내용이 수정되어야 한다.") {
                         result.content shouldBe updatedContent
