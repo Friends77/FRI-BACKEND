@@ -18,6 +18,8 @@ class AtRtServiceTest :
             AuthProperties(
                 accessTokenExpiration = 3600L,
                 refreshTokenExpiration = 7200L,
+                0,
+                0,
             )
         val authJwtRepository = mockk<AuthJwtRepository>(relaxed = true)
         val atRtService = AtRtService(jwtService, authProperties, authJwtRepository)
