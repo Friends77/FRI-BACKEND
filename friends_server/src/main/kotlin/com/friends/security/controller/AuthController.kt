@@ -6,6 +6,7 @@ import com.friends.security.LoginResponseDto
 import com.friends.security.RegisterRequestDto
 import com.friends.security.service.AuthService
 import org.springframework.http.HttpCookie
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -31,7 +32,7 @@ class AuthController(
             registerRequestDto.password,
             registerRequestDto.nickname,
         )
-        return ResponseEntity.ok("회원가입이 완료되었습니다.")
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.")
     }
 
     @PostMapping("/login")
