@@ -3,6 +3,7 @@ package com.friends.profile.entity
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import com.friends.profile.dto.ProfileResponseDto
+import com.friends.profile.dto.ProfileUpdateDto
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
@@ -51,21 +52,15 @@ class Profile(
     }
 
     fun update(
-        birth: Date,
-        gender: GenderEnum,
-        location: String?,
-        selfDescription: String?,
-        mbti: MbtiEnum?,
-        interestTag: MutableSet<String>?,
-        imageUrl: String,
+        profileUpdateDto: ProfileUpdateDto
     ) {
-        this.birth = birth
-        this.gender = gender
-        this.location = location
-        this.selfDescription = selfDescription
-        this.mbti = mbti
-        this.interestTag = interestTag ?: mutableSetOf()
-        this.imageUrl = imageUrl
+        this.birth = profileUpdateDto.birth
+        this.gender = profileUpdateDto.gender
+        this.location = profileUpdateDto.location
+        this.selfDescription = profileUpdateDto.selfDescription
+        this.mbti = profileUpdateDto.mbti
+        this.interestTag = profileUpdateDto.interestTag!!.toMutableSet()
+        this.imageUrl = profileUpdateDto.imageUrl
     }
 
     fun toResponseDto(): ProfileResponseDto {
@@ -79,28 +74,6 @@ class Profile(
             mbti = this.mbti,
             interestTag = this.interestTag?.toList(),
             imageUrl = this.imageUrl,
-        )
-    }
-
-    companion object {
-        fun build(
-            member: Member,
-            birth: Date,
-            gender: GenderEnum,
-            location: String?,
-            selfDescription: String?,
-            mbti: MbtiEnum?,
-            interestTag: MutableSet<String>,
-            imageUrl: String,
-        ) = Profile(
-            member = member,
-            birth = birth,
-            gender = gender,
-            location = location,
-            selfDescription = selfDescription,
-            mbti = mbti,
-            interestTag = interestTag,
-            imageUrl = imageUrl,
         )
     }
 }

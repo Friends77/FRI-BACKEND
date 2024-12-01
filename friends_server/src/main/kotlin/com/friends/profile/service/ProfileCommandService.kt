@@ -3,7 +3,9 @@ package com.friends.profile.service
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.ProfileNullResponseException
+import com.friends.profile.dto.ProfileCreateDto
 import com.friends.profile.dto.ProfileUpdateDto
+import com.friends.profile.entity.Profile
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,13 +20,23 @@ class ProfileCommandService(
     //프로필 초기 작성
     fun createProfile(
         requestMemberId: Long,
-        profileUpdateDto: ProfileUpdateDto,
+        profileCreateDto: ProfileCreateDto,
     ) {
         val member =
             memberRepository.findById(requestMemberId)
                 .orElseThrow { MemberNotFoundException() }
 
-        profileRepository.save(profileUpdateDto.toEntity(profileUpdateDto, member))
+        val profile = Profile(
+            birth = profileCreateDto.birth,
+            gender = profileCreateDto.gender,
+            location = profileCreateDto.location,
+            selfDescription = profileCreateDto.selfDescription,
+            mbti = profileCreateDto.mbti,
+            interestTag = profileCreateDto.interestTag!!.toMutableSet(),
+            imageUrl = profileCreateDto.imageUrl,
+            member = member
+        )
+        profileRepository.save(profile)
     }
 
     //프로필 수정
@@ -33,19 +45,7 @@ class ProfileCommandService(
         profileUpdateDto: ProfileUpdateDto,
     ) {
         val profile = profileRepository.findByMemberId(requestMemberId)
-
-        if (profile == null) {
-            throw ProfileNullResponseException()
-        }
-
-        profile.update(
-            birth = profileUpdateDto.birth,
-            gender = profileUpdateDto.gender,
-            location = profileUpdateDto.location,
-            selfDescription = profileUpdateDto.selfDescription,
-            mbti = profileUpdateDto.mbti,
-            interestTag = profileUpdateDto.interestTag?.toMutableSet(),
-            imageUrl = profileUpdateDto.imageUrl,
-        )
+            ?: throw ProfileNullResponseException()
+        profile.update(profileUpdateDto)
     }
 }
