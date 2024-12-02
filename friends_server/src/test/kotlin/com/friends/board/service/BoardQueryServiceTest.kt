@@ -13,7 +13,9 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.repository.findByIdOrNull
+import java.awt.print.Pageable
 
 class BoardQueryServiceTest :
     BehaviorSpec({
@@ -55,13 +57,13 @@ class BoardQueryServiceTest :
         given("getBoardList 메서드를 호출할 때") {
             val testBoard = createTestBoard()
 
-            every { boardRepository.findAll() } returns listOf(testBoard)
+            every { boardRepository.findAll(PAGEABLE) } returns PageImpl(listOf(testBoard))
 
             `when`("board의 개수가 0이 아니라면") {
                 val result = boardQueryService.getBoardList(PAGEABLE)
 
                 then("boardList를 반환해야한다.") {
-                    result shouldBe listOf(testBoard)
+                    result.content shouldBe listOf(testBoard)
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.friends.board.service
 
+import com.friends.board.BoardNotFoundException
+import com.friends.board.InvalidBoardAccessException
 import com.friends.board.dto.BoardFormDto
 import com.friends.board.entity.Board
 import com.friends.board.entity.BoardHashtag
@@ -27,6 +29,7 @@ class BoardCommandService(
     ): Board {
         val member =
             memberRepository.findById(requestMemberId)
+                //머지 후 membernotfoundexception으로 대체
                 .orElseThrow {
                     ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found with id: $requestMemberId")
                 }
@@ -62,12 +65,12 @@ class BoardCommandService(
     ) {
         val board =
             boardRepository.findById(id).orElseThrow {
-                ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+                BoardNotFoundException()
             }
 
         //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Must be able to delete member.")
+            throw InvalidBoardAccessException()
         }
 
         boardRepository.deleteById(id)
@@ -80,12 +83,12 @@ class BoardCommandService(
     ): Board {
         val board =
             boardRepository.findById(id).orElseThrow {
-                ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+                BoardNotFoundException()
             }
 
         //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Member with id: $requestMemberId not found")
+            throw InvalidBoardAccessException()
         }
 
         board.updateBoard(boardFormDto)
