@@ -32,4 +32,7 @@ enum class ErrorCode(
     OAUTH2_ACCESS_TOKEN_FETCH_FAILED(HttpStatus.UNAUTHORIZED, -14001, "OAuth2 Access Token 획득에 실패했습니다."),
     OAUTH2_USER_INFO_FETCH_FAILED(HttpStatus.UNAUTHORIZED, -14002, "OAuth2 User 정보 획득에 실패했습니다."),
     OAUTH2_NULL_RESPONSE(HttpStatus.BAD_GATEWAY, -14003, "OAuth2 API로부터 응답이 없습니다."),
+
+    // Profile API error 15000대
+    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
 }

@@ -19,47 +19,57 @@ class BoardCommandService(
     private val boardRepository: BoardRepository,
     private val memberRepository: MemberRepository,
     private val hashtagRepository: HashtagRepository,
-    private val boardHashtagRepository: BoardHashtagRepository
-){
+    private val boardHashtagRepository: BoardHashtagRepository,
+) {
 
-    fun createBoard(boardFormDto: BoardFormDto, requestMemberId: Long): Board {
+    fun createBoard(
+        boardFormDto: BoardFormDto,
+        requestMemberId: Long,
+    ): Board {
         val member =
             memberRepository.findById(requestMemberId)
                 .orElseThrow {
-                    ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found with id: ${requestMemberId}")
+                    ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found with id: $requestMemberId")
                 }
 
-        val board = Board(
+        val board =
+            Board(
                 member = member,
                 content = boardFormDto.content,
             )
 
         boardRepository.save(board)
 
-        val hashtags = boardFormDto.hashtags.map { tag ->
-            hashtagRepository.findByTag(tag) ?: hashtagRepository.save(Hashtag(tag = tag))
-        }
+        val hashtags =
+            boardFormDto.hashtags.map { tag ->
+                hashtagRepository.findByTag(tag) ?: hashtagRepository.save(Hashtag(tag = tag))
+            }
 
         // 게시글-해시태그 관계 설정
-        val boardHashtags = hashtags.map { hashtag ->
-            BoardHashtag(
-                board = board,
-                hashtag = hashtag,
-            )
-        }
+        val boardHashtags =
+            hashtags.map { hashtag ->
+                BoardHashtag(
+                    board = board,
+                    hashtag = hashtag,
+                )
+            }
 
         boardHashtagRepository.saveAll(boardHashtags)
 
         return board
     }
 
-    fun deleteBoard(id: Long, requestMemberId: Long)  {
-        val board = boardRepository.findById(id).orElseThrow {
-            ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
-        }
+    fun deleteBoard(
+        id: Long,
+        requestMemberId: Long,
+    ) {
+        val board =
+            boardRepository.findById(id).orElseThrow {
+                ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+            }
 
         //요청자와 작성자 비교
-        if(board.member.id != requestMemberId) {
+        if (board.member.id != requestMemberId) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "Must be able to delete member.")
         }
 
@@ -69,14 +79,15 @@ class BoardCommandService(
     fun updateBoard(
         id: Long,
         boardFormDto: BoardFormDto,
-        requestMemberId: Long
+        requestMemberId: Long,
     ): Board {
-        val board = boardRepository.findById(id).orElseThrow{
-            ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
-        }
+        val board =
+            boardRepository.findById(id).orElseThrow {
+                ResponseStatusException(HttpStatus.NOT_FOUND, "Board not found with id: $id")
+            }
 
         //요청자와 작성자 비교
-        if(board.member.id != requestMemberId) {
+        if (board.member.id != requestMemberId) {
             throw ResponseStatusException(HttpStatus.NOT_FOUND, "Member with id: $requestMemberId not found")
         }
 
