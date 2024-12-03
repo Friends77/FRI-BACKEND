@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 @Service
-class ImageUploadService(
+class S3ClientService(
     private val s3Client: AmazonS3,
 ) {
     @Value("\${cloud.aws.s3.bucket}")
@@ -17,7 +17,7 @@ class ImageUploadService(
     @Value("\${cloud.aws.s3.region.static}")
     private lateinit var region: String
 
-    fun uploadImage(multipartFile: MultipartFile): String {
+    fun upload(multipartFile: MultipartFile): String {
         val filename =
             java.util.UUID
                 .randomUUID()
