@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val atRtService: AtRtService,
@@ -51,6 +50,7 @@ class AuthService(
         return atRtService.createAtRt(memberId, authorities)
     }
 
+    @Transactional
     fun register(
         emailAuthToken: String,
         email: String,
