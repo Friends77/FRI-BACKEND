@@ -6,10 +6,13 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "chat_room_member", indexes = [Index(name = "chat_room_member_member_id", columnList = "member_id")], uniqueConstraints = [jakarta.persistence.UniqueConstraint(columnNames = ["chat_room_id", "member_id"], name = "chat_room_member_unique")])
 class ChatRoomMember(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
