@@ -29,7 +29,13 @@ enum class ErrorCode(
     OAUTH2_USER_INFO_FETCH_FAILED(HttpStatus.UNAUTHORIZED, -14002, "OAuth2 User 정보 획득에 실패했습니다."),
     OAUTH2_NULL_RESPONSE(HttpStatus.BAD_GATEWAY, -14003, "OAuth2 API로부터 응답이 없습니다."),
 
+    // Profile API error 15000대
+    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
+
     // Board API error 16000대
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
+
 }
+
+

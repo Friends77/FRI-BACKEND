@@ -2,7 +2,9 @@ package com.friends.common.exception
 
 import com.friends.board.BoardException
 import com.friends.email.EmailException
+import com.friends.member.MemberExceptions
 import com.friends.oauth2.OAuth2Exception
+import com.friends.profile.ProfileExceptions
 import com.friends.security.securityException.InvalidJwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -42,6 +44,22 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(BoardException::class)
     fun handleBoardException(ex: BoardException): ResponseEntity<Any> {
         log.error("Board Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(ProfileExceptions::class)
+    fun handleProfileException(ex: ProfileExceptions): ResponseEntity<Any> {
+        log.error("Profile Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(MemberExceptions::class)
+    fun handleMemberException(ex: MemberExceptions): ResponseEntity<Any> {
+        log.error("Member Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
