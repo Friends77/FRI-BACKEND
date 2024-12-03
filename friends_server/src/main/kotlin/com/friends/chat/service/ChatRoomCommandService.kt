@@ -2,8 +2,12 @@ package com.friends.chat.service
 
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.entity.ChatRoom
+import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.Message
+import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.chat.repository.ChatSubjectCategoryRepository
+import com.friends.chat.repository.MessageRepository
 import com.friends.member.entity.ChatRoomMember
 import com.friends.member.repository.ChatRoomMemberRepository
 import com.friends.member.repository.MemberRepository
@@ -16,6 +20,9 @@ class ChatRoomCommandService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val memberRepository: MemberRepository,
+    private val chatSubjectCategoryRepository: ChatSubjectCategoryRepository,
+    private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
+    private val messageRepository: MessageRepository,
 ) {
     @Transactional
     fun createChatRoom(
@@ -28,11 +35,9 @@ class ChatRoomCommandService(
                 /* 이미지 업로드 로직 */ backgroundImage.name
             }
         val member = memberRepository.findById(memberId).get()
-        val chatRoom =
-            chatRoomRepository.save(ChatRoom.of(request.title, memberId, request.categories, imageUrl)).let {
-                it.addMessage(Message.createEnterMessage(member, it))
-                chatRoomRepository.save(it)
-            }
-        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom.chatRoomId!!, member))
+        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
+        chatRoomCategoryRepository.saveAll(chatSubjectCategoryRepository.findByIdIn(request.categoryIdList).map { ChatRoomCategory(chatRoom, it) })
+        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member))
+        messageRepository.save(Message.createEnterMessage(member, chatRoom))
     }
 }

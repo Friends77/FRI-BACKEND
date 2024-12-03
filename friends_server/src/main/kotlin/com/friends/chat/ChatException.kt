@@ -7,4 +7,5 @@ abstract class ChatException(
 ) : RuntimeException(errorCode.errorMessage)
 
 class PositiveLikeCountException : ChatException(ErrorCode.CHAT_ROOM_POSITIVE_LIKE_COUNT)
+
 class ChatRoomNotFoundException : ChatException(ErrorCode.NOT_FOUND_CHAT_ROOM)
