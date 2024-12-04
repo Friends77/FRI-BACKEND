@@ -20,6 +20,7 @@ class Board(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
+    @Column(length = 500, nullable = false)
     var content: String,
 ) : BaseModifiableEntity() {
     fun updateBoard(boardFormDto: BoardFormDto) {

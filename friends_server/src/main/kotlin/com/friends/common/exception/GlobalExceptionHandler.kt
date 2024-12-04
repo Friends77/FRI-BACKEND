@@ -1,5 +1,6 @@
 package com.friends.common.exception
 
+import com.friends.board.BoardException
 import com.friends.email.EmailException
 import com.friends.member.MemberExceptions
 import com.friends.oauth2.OAuth2Exception
@@ -35,6 +36,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(OAuth2Exception::class)
     fun handleOAuth2Exception(ex: OAuth2Exception): ResponseEntity<Any> {
         log.error("OAuth2 Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(BoardException::class)
+    fun handleBoardException(ex: BoardException): ResponseEntity<Any> {
+        log.error("Board Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
