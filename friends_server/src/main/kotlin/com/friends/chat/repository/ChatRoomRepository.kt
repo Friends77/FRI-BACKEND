@@ -2,10 +2,10 @@ package com.friends.chat.repository
 
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.entity.ChatRoom
-import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
-fun ChatRoomRepository.getById(chatRoomId: String) = findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+fun ChatRoomRepository.getByChatRoomId(chatRoomId: Long) = findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
 
 @Repository
-interface ChatRoomRepository : MongoRepository<ChatRoom, String>
+interface ChatRoomRepository : JpaRepository<ChatRoom, Long>
