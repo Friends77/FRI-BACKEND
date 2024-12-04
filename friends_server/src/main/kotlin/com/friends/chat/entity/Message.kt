@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
 @Entity
@@ -17,9 +18,10 @@ class Message(
     @Column(name = "message_id")
     val id: Long = 0L,
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id", nullable = false, updatable = false)
     val chatRoom: ChatRoom,
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(nullable = false)
+    @JoinColumn(name = "sender_id", nullable = false, updatable = false)
     val sender: Member,
     @Column(nullable = false)
     val content: String,
