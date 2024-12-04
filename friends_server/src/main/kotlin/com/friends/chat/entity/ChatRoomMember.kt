@@ -1,6 +1,6 @@
-package com.friends.member.entity
+package com.friends.chat.entity
 
-import com.friends.chat.entity.ChatRoom
+import com.friends.member.entity.Member
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -20,7 +20,7 @@ class ChatRoomMember(
     @Column(name = "chat_room_member_id")
     val id: Long = 0L,
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "chat_room_id", updatable = false, nullable = false)
+    @JoinColumn(name = "chat_room_id", updatable = false, nullable = false)
     val chatRoom: ChatRoom,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
