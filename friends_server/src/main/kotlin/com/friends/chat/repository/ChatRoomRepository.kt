@@ -5,7 +5,7 @@ import com.friends.chat.entity.ChatRoom
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
-fun ChatRoomRepository.getById(chatRoomId: String) = findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+fun ChatRoomRepository.getByChatRoomId(chatRoomId: Long) = findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
 
 @Repository
-interface ChatRoomRepository : JpaRepository<ChatRoom, String>
+interface ChatRoomRepository : JpaRepository<ChatRoom, Long>

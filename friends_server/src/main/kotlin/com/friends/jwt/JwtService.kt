@@ -35,11 +35,11 @@ class JwtService(
             .compact()
     }
 
-    fun getClaim(
+    fun <T> getClaim(
         token: String,
         key: String,
-        type: Class<*>,
-    ): Any? =
+        type: Class<T>,
+    ): T? =
         Jwts
             .parser()
             .verifyWith(secretKey)

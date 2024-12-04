@@ -10,17 +10,15 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
-class BoardQueryService  (
+class BoardQueryService(
     private val boardRepository: BoardRepository,
-    private val boardHashtagRepository: BoardHashtagRepository
-){
+    private val boardHashtagRepository: BoardHashtagRepository,
+) {
     //상세조회
+    @Transactional(readOnly = true)
     fun getBoard(id: Long): Pair<Board, List<String>>? {
-
         val board = boardRepository.findByIdOrNull(id) ?: return null
-        val hashtags = boardHashtagRepository.findByBoard(board)
-            .map { it.hashtag.tag }
+        val hashtags = boardHashtagRepository.findByBoardId(id).map { it.hashtag.tag }
 
         return Pair(board, hashtags)
     }

@@ -26,5 +26,5 @@ class ChatRoomCategory(
     @JoinColumn(name = "chat_subject_category_id", nullable = false, updatable = false)
     val chatSubjectCategory: ChatSubjectCategory,
 ) : BaseTimeEntity() {
-    constructor(chatRoom: ChatRoom, chatSubjectCategory: ChatSubjectCategory) : this(0, chatRoom, chatSubjectCategory)
+    constructor(chatRoom: ChatRoom, chatSubjectCategory: ChatSubjectCategory) : this(0L, chatRoom, chatSubjectCategory)
 }
