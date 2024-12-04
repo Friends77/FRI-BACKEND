@@ -1,15 +1,14 @@
 package com.friends.chat.repository
 
 import com.friends.chat.createTestChatRoom
-import com.friends.chat.entity.Message
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
-import com.friends.support.annotation.MongoRepositoryTest
+import com.friends.support.annotation.RepositoryTest
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
-@MongoRepositoryTest
+@RepositoryTest
 class ChatRoomRepositoryKtTest(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
@@ -19,18 +18,14 @@ class ChatRoomRepositoryKtTest(
             isolationMode = IsolationMode.InstancePerLeaf
             val member = memberRepository.save(createTestMember())
             val chatRoom1 =
-                chatRoomRepository.save(createTestChatRoom(createrId = member.id)).let {
-                    it.addMessage(Message.createEnterMessage(member, it))
-                    chatRoomRepository.save(it)
-                }
-            afterEach { chatRoomRepository.delete(chatRoom1) }
+                chatRoomRepository.save(createTestChatRoom(manager = member))
 
-            describe("getById 메서드는") {
+            describe("getByChatRoomId 메서드는") {
                 context("존재하는 채팅방 ID를 받으면") {
                     it("chatRoom을 반환한다") {
-                        val chatRoom = chatRoomRepository.getById(chatRoom1.chatRoomId!!)
-                        chatRoom.createrId shouldBe member.id
-                        chatRoom.messages.size shouldBe 1
+                        val chatRoom = chatRoomRepository.getByChatRoomId(chatRoom1.id)
+                        chatRoom.id shouldBe chatRoom1.id
+                        chatRoom.manager.id shouldBe member.id
                     }
                 }
             }
