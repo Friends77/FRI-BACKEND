@@ -34,8 +34,8 @@ class JwtServiceTest :
                 }
 
                 then("토큰은 주어진 클레임을 가지고 있어야 한다.") {
-                    val number = jwtService.getClaim(token, "number", String::class.java) as String
-                    val array = jwtService.getClaim(token, "array", List::class.java) as List<String>
+                    val number = jwtService.getClaim(token, "number", String::class.java)
+                    val array = jwtService.getClaim(token, "array", List::class.java)
 
                     number shouldBe claims["number"]
                     array shouldBe claims["array"]
