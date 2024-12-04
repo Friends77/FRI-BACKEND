@@ -23,7 +23,7 @@ class ProfileController (
     //프로필 조회
     @GetMapping("api/user/profile/{memberId}")
     fun getProfile(
-        @AuthenticationPrincipal @PathVariable memberId: Long
+        @PathVariable memberId: Long
     ): ResponseEntity<ProfileResponseDto>{
         val profile = profileQueryService.getProfile(memberId)
         return ResponseEntity.ok(profile)
@@ -40,9 +40,9 @@ class ProfileController (
     }
 
     //프로필 수정
-    @PutMapping("api/user/profile/{memberId}")
+    @PutMapping("api/user/profile")
     fun updateProfile(
-        @AuthenticationPrincipal @PathVariable memberId: Long,
+        @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto
     ): ResponseEntity<ProfileUpdateDto>{
         profileCommandService.updateProfile(memberId, profileUpdateDto)
