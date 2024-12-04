@@ -24,7 +24,7 @@ class ChatRoom(
     val id: Long = 0L,
     @Column(nullable = false)
     var title: String,
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id", nullable = false)
     var manager: Member,
     var imageUrl: String?, // 채팅방 이미지
