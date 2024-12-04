@@ -3,6 +3,7 @@ package com.friends.chat.entity
 import com.friends.chat.PositiveLikeCountException
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -31,7 +32,7 @@ class ChatRoom(
     @Column(nullable = false)
     var likeCount: Int = 0,
     @Column(nullable = false)
-    @OneToMany(mappedBy = "chatRoom")
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
     var categories: MutableList<ChatRoomCategory> = mutableListOf(),
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(nullable = true)
