@@ -1,6 +1,5 @@
 package com.friends
 
-import com.mongodb.client.MongoClient
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.spec.style.BehaviorSpec
 import org.redisson.api.RedissonClient
@@ -11,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 class DBConnectionTest(
     private val jdbcTemplate: JdbcTemplate,
     private val redissonClient: RedissonClient,
-    private val mongoClients: MongoClient,
 ) : BehaviorSpec(
         {
             given("PostgreSQL 연결 정보가 주어지면") {
