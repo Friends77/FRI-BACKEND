@@ -33,12 +33,12 @@ class Message(
             content: String,
             type: MessageType,
         ): Message = Message(0L, chatRoom, sender, content, type)
-    }
 
-    fun createEnterMessage(
-        sender: Member,
-        chatRoom: ChatRoom,
-    ): Message = of(chatRoom, sender, "${sender.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
+        fun createEnterMessage(
+            sender: Member,
+            chatRoom: ChatRoom,
+        ): Message = of(chatRoom, sender, "${sender.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
+    }
 }
 
 enum class MessageType {

@@ -1,5 +1,6 @@
 package com.friends.member.entity
 
+import com.friends.chat.entity.ChatRoom
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -18,8 +19,9 @@ class ChatRoomMember(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_room_member_id")
     val id: Long = 0L,
+    @ManyToOne(fetch = FetchType.LAZY)
     @Column(name = "chat_room_id", updatable = false, nullable = false)
-    val chatRoomId: String,
+    val chatRoom: ChatRoom,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
@@ -28,11 +30,11 @@ class ChatRoomMember(
 ) {
     companion object {
         fun of(
-            chatRoomId: String,
+            chatRoom: ChatRoom,
             member: Member,
         ): ChatRoomMember =
             ChatRoomMember(
-                chatRoomId = chatRoomId,
+                chatRoom = chatRoom,
                 member = member,
             )
     }
