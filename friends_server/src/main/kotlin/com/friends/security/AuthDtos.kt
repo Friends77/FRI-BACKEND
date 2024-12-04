@@ -1,4 +1,4 @@
-package com.friends.security.service
+package com.friends.security
 
 data class LoginRequestDto(
     val email: String,
@@ -8,6 +8,13 @@ data class LoginRequestDto(
 data class LoginResponseDto(
     val memberId: Long,
     val accessToken: String,
+)
+
+data class RegisterRequestDto(
+    val emailAuthToken: String,
+    val email: String,
+    val password: String,
+    val nickname: String,
 )
 
 data class AtRtDto(

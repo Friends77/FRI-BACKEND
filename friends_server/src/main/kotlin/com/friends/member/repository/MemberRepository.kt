@@ -10,4 +10,6 @@ fun MemberRepository.getByMemberId(memberId: Long): Member = findById(memberId).
 @Repository
 interface MemberRepository : JpaRepository<Member, Long> {
     fun findByEmail(email: String): Member?
+
+    fun existsByEmail(email: String): Boolean
 }
