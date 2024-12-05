@@ -3,6 +3,7 @@ package com.friends.security.controller
 import com.friends.jwt.AtRtService
 import com.friends.security.LoginRequestDto
 import com.friends.security.LoginResponseDto
+import com.friends.security.LogoutRequestDto
 import com.friends.security.OAuth2LoginRequestDto
 import com.friends.security.OAuth2LoginResponseDto
 import com.friends.security.RefreshResponseDto
@@ -84,6 +85,19 @@ class AuthController(
             .body(RefreshResponseDto(atRtDto.accessToken))
     }
 
+    @PostMapping("/logout")
+    fun logout(
+        @RequestBody logoutRequestDto: LogoutRequestDto,
+        @CookieValue refreshToken: String,
+    ): ResponseEntity<String> {
+        // accessToken 과 refreshToken 을 삭제합니다.
+        authService.logout(logoutRequestDto.accessToken, refreshToken)
+        return ResponseEntity
+            .ok()
+            .header(COOKIE_HEARER, getExpiredCookie().toString())
+            .body("로그아웃이 완료되었습니다.")
+    }
+
     /**
      * cookie 를 생성하여 문자열로 변환시 아래와 같은 형태로 변환됩니다.
      * "refreshToken=abc123; Max-Age=3600; Path=/; HttpOnly"
@@ -99,4 +113,12 @@ class AuthController(
             .path("/api/auth") // 쿠키의 유효 범위를 설정합니다. (브라우저가 서버에 쿠키를 자동으로 전달하는 경로를 의미합니다.)
             .build()
     }
+
+    private fun getExpiredCookie(): HttpCookie =
+        ResponseCookie
+            .from("refreshToken", "")
+            .httpOnly(true)
+            .maxAge(0)
+            .path("/api/auth")
+            .build()
 }

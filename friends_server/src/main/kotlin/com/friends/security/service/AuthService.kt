@@ -117,4 +117,12 @@ class AuthService(
         val atRtDto = atRtService.createAtRt(user.id, user.authorities.map { SimpleGrantedAuthority(it.role.name) })
         return OAuth2LoginSuccessDto(firstLogin, atRtDto.accessToken, atRtDto.refreshToken)
     }
+
+    fun logout(
+        accessToken: String,
+        refreshToken: String,
+    ) {
+        atRtService.deleteAccessToken(accessToken)
+        atRtService.deleteRefreshToken(refreshToken)
+    }
 }

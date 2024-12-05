@@ -44,3 +44,7 @@ data class OAuth2LoginResponseDto(
 data class RefreshResponseDto(
     val accessToken: String,
 )
+
+data class LogoutRequestDto(
+    val accessToken: String,
+)
