@@ -9,6 +9,7 @@ import com.friends.oauth2.OAuth2Service
 import com.friends.security.AtRtDto
 import com.friends.security.OAuth2LoginSuccessDto
 import com.friends.security.securityException.EmailDuplicateException
+import com.friends.security.securityException.EmailNotFoundException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
@@ -124,5 +125,23 @@ class AuthService(
     ) {
         atRtService.deleteAccessToken(accessToken)
         atRtService.deleteRefreshToken(refreshToken)
+    }
+
+    @Transactional
+    fun resetPassword(
+        emailAuthToken: String,
+        newPassword: String,
+    ) {
+        // emailAuthToken 검증
+        if (!jwtService.validate(emailAuthToken)) {
+            throw InvalidTokenException()
+        }
+
+        // jwt 에서 email 을 추출하고 해당 email 을 가진 사용자의 비밀번호를 변경합니다.
+        val emailFromToken = jwtService.getClaim(emailAuthToken, "email", String::class.java) ?: throw InvalidTokenException()
+        memberRepository.findByEmail(emailFromToken)?.apply {
+            password = passwordEncoder.encode(newPassword)
+            memberRepository.save(this)
+        } ?: throw EmailNotFoundException()
     }
 }

@@ -6,6 +6,7 @@ import com.friends.security.LoginResponseDto
 import com.friends.security.LogoutRequestDto
 import com.friends.security.OAuth2LoginRequestDto
 import com.friends.security.OAuth2LoginResponseDto
+import com.friends.security.PasswordResetRequestDto
 import com.friends.security.RefreshResponseDto
 import com.friends.security.RegisterRequestDto
 import com.friends.security.service.AuthService
@@ -96,6 +97,14 @@ class AuthController(
             .ok()
             .header(COOKIE_HEARER, getExpiredCookie().toString())
             .body("로그아웃이 완료되었습니다.")
+    }
+
+    @PostMapping
+    fun resetPassword(
+        @RequestBody passwordResetRequestDto: PasswordResetRequestDto,
+    ): ResponseEntity<String> {
+        authService.resetPassword(passwordResetRequestDto.emailAuthToken, passwordResetRequestDto.newPassword)
+        return ResponseEntity.ok("비밀번호가 변경되었습니다.")
     }
 
     /**

@@ -48,3 +48,8 @@ data class RefreshResponseDto(
 data class LogoutRequestDto(
     val accessToken: String,
 )
+
+data class PasswordResetRequestDto(
+    val emailAuthToken: String,
+    val newPassword: String,
+)
