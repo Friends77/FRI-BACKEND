@@ -1,71 +1,65 @@
 package com.friends.chat.entity
 
-import com.friends.common.entity.BaseMongoTimeEntity
-import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
+import com.friends.chat.PositiveLikeCountException
+import com.friends.common.entity.BaseModifiableEntity
+import com.friends.member.entity.Member
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 
-@Document("chat_room")
+@Entity
+@Table(name = "chat_room")
 class ChatRoom(
     @Id
-    val chatRoomId: String? = null,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "chat_room_id")
+    val id: Long = 0L,
+    @Column(nullable = false)
     var title: String,
-    val createrId: Long,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id", nullable = false)
+    var manager: Member,
     var imageUrl: String?, // 채팅방 이미지
-    var categories: MutableList<String> = mutableListOf(),
-    var lastMessageId: Long = 0,
-    private val mutableParticipants: MutableList<Long> = mutableListOf(createrId),
-    private val mutableMessages: MutableList<Message> = mutableListOf(),
-) : BaseMongoTimeEntity() {
-    val participants: List<Long>
-        get() = mutableParticipants
-    val messages: List<Message>
-        get() = mutableMessages
-
-    fun addParticipant(memberId: Long) {
-        mutableParticipants.add(memberId)
+    @Column(nullable = false)
+    var likeCount: Int = 0,
+    @Column(nullable = false)
+    @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var categories: MutableList<ChatRoomCategory> = mutableListOf(),
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(nullable = true)
+    var lastMessage: Message? = null,
+) : BaseModifiableEntity() {
+    fun increaseLikeCount() {
+        this.likeCount++
     }
 
-    fun removeParticipant(memberId: Long) {
-        mutableParticipants.remove(memberId)
+    fun decreaseLikeCount() {
+        require(this.likeCount > 0) { throw PositiveLikeCountException() }
+        this.likeCount--
     }
 
-    fun addMessage(message: Message) {
-        mutableMessages.add(message)
+    fun changeManager(manager: Member) {
+        this.manager = manager
     }
 
-    fun increaseLastMessageId() {
-        lastMessageId++
+    fun changeLastMessage(message: Message) {
+        this.lastMessage = message
     }
 
     companion object {
         fun of(
             title: String,
-            createrId: Long,
-            categories: MutableList<String> = mutableListOf(),
+            manager: Member,
             imageUrl: String? = null,
-        ): ChatRoom = ChatRoom(title = title, createrId = createrId, categories = categories.toMutableList(), imageUrl = imageUrl)
+        ): ChatRoom = ChatRoom(title = title, manager = manager, imageUrl = imageUrl)
     }
-}
-
-class Message(
-    val messageId: Long,
-    val chatRoomId: String,
-    val senderId: Long,
-    val content: String,
-    val type: MessageType,
-) : BaseMongoTimeEntity() {
-    companion object {
-        fun of(
-            messageId: Long,
-            chatRoomId: String,
-            senderId: Long,
-            content: String,
-            type: MessageType,
-        ): Message = Message(messageId = messageId, chatRoomId = chatRoomId, senderId = senderId, content = content, type = type)
-    }
-}
-
-enum class MessageType {
-    TEXT, // 일반 텍스트 메시지 및 이모지
-    IMAGE,
 }
