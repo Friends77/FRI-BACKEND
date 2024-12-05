@@ -26,7 +26,7 @@ class Member(
     // 이메일은 중복되지 않아야 하며 수정되지 않아야 합니다.
     @Column(unique = true, updatable = false)
     val email: String,
-    var password: String,
+    var password: String? = null,
     @Enumerated(EnumType.STRING)
     var oauth2Provider: OAuth2Provider?,
     var imageUrl: String?,
@@ -44,7 +44,7 @@ class Member(
         fun createUser(
             name: String,
             email: String,
-            password: String,
+            password: String? = null,
             oauth2Provider: OAuth2Provider? = null,
             imageUrl: String? = null,
         ): Member =
