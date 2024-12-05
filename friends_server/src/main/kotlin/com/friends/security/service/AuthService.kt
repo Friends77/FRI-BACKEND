@@ -39,7 +39,6 @@ class AuthService(
         return atRtService.createAtRt(userDetails.memberId, userDetails.authorities)
     }
 
-    @Transactional(readOnly = true)
     fun refresh(refreshToken: String): AtRtDto {
         if (!atRtService.validateRefreshToken(refreshToken)) {
             throw InvalidRefreshTokenException()
