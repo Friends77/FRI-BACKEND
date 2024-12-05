@@ -3,14 +3,18 @@ package com.friends.security.service
 import com.friends.jwt.AtRtService
 import com.friends.jwt.JwtService
 import com.friends.member.entity.Member
+import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
+import com.friends.oauth2.OAuth2Service
 import com.friends.security.AtRtDto
+import com.friends.security.OAuth2LoginSuccessDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,6 +26,7 @@ class AuthService(
     private val jwtService: JwtService,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val oAuth2Service: OAuth2Service,
 ) {
     @Transactional(readOnly = true)
     fun login(
@@ -79,5 +84,37 @@ class AuthService(
                 password = passwordEncoder.encode(password),
             )
         memberRepository.save(user)
+    }
+
+    @Transactional
+    fun loginByOAuth2(
+        code: String,
+        oAuth2Provider: OAuth2Provider,
+    ): OAuth2LoginSuccessDto {
+        val userProfile = oAuth2Service.getUserProfile(code, oAuth2Provider)
+
+        var firstLogin = false
+
+        // 이미 가입되어 있다면 유저를 불러오고 없다면 새로 생성합니다.
+        var user = memberRepository.findByEmail(userProfile.email)
+        if (user == null) {
+            user =
+                Member.createUser(
+                    name = userProfile.name,
+                    email = userProfile.email,
+                    oauth2Provider = oAuth2Provider,
+                    imageUrl = userProfile.imageUrl,
+                )
+            memberRepository.save(user)
+            firstLogin = true
+        }
+
+        // 이미 가입된 이메일의 소셜 서비스가 요청된 소셜 서비스와 다르다면 예외를 발생시킵니다.
+        if (user.oauth2Provider != oAuth2Provider) {
+            throw EmailDuplicateException()
+        }
+
+        val atRtDto = atRtService.createAtRt(user.id, user.authorities.map { SimpleGrantedAuthority(it.role.name) })
+        return OAuth2LoginSuccessDto(firstLogin, atRtDto.accessToken, atRtDto.refreshToken)
     }
 }
