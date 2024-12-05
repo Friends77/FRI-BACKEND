@@ -99,7 +99,7 @@ class AuthController(
             .body("로그아웃이 완료되었습니다.")
     }
 
-    @PostMapping
+    @PostMapping("/reset-password")
     fun resetPassword(
         @RequestBody passwordResetRequestDto: PasswordResetRequestDto,
     ): ResponseEntity<String> {
