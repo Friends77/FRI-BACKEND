@@ -40,3 +40,7 @@ data class OAuth2LoginResponseDto(
     val accessToken: String,
     val firstLogin: Boolean,
 )
+
+data class RefreshResponseDto(
+    val accessToken: String,
+)

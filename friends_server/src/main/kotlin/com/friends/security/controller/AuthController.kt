@@ -5,12 +5,14 @@ import com.friends.security.LoginRequestDto
 import com.friends.security.LoginResponseDto
 import com.friends.security.OAuth2LoginRequestDto
 import com.friends.security.OAuth2LoginResponseDto
+import com.friends.security.RefreshResponseDto
 import com.friends.security.RegisterRequestDto
 import com.friends.security.service.AuthService
 import org.springframework.http.HttpCookie
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -67,6 +69,19 @@ class AuthController(
             // refresh token 을 쿠키로 전달합니다.
             .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginSuccessDto.refreshToken).toString())
             .body(OAuth2LoginResponseDto(memberId, oauth2LoginSuccessDto.accessToken, oauth2LoginSuccessDto.firstLogin))
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(
+        @CookieValue refreshToken: String,
+    ): ResponseEntity<RefreshResponseDto> {
+        val atRtDto = authService.refresh(refreshToken)
+
+        return ResponseEntity
+            .ok()
+            // refresh token 을 쿠키로 전달합니다.
+            .header(COOKIE_HEARER, getRefreshTokenCookie(atRtDto.refreshToken).toString())
+            .body(RefreshResponseDto(atRtDto.accessToken))
     }
 
     /**
