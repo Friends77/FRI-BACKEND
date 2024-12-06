@@ -19,6 +19,7 @@ enum class ErrorCode(
     MISSING_SOCIAL_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "SocialAccessToken 이 존재하지 않습니다."),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, -11004, "존재하지 않는 이메일입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, -11005, "이미 존재하는 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -11006, "유효하지 않은 비밀번호입니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
@@ -39,7 +40,4 @@ enum class ErrorCode(
     // Board API error 16000대
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
-
 }
-
-

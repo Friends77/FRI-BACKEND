@@ -10,6 +10,7 @@ import com.friends.security.AtRtDto
 import com.friends.security.OAuth2LoginSuccessDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.EmailNotFoundException
+import com.friends.security.securityException.InvalidPasswordException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
 import com.friends.security.userDetails.CustomUserDetails
@@ -77,6 +78,12 @@ class AuthService(
         if (memberRepository.existsByEmail(email)) {
             throw EmailDuplicateException()
         }
+
+        // 비밀번호 규칙 검증
+        if (!validatePassword(password)) {
+            throw InvalidPasswordException()
+        }
+
         val user =
             Member.createUser(
                 name = name,
@@ -84,6 +91,20 @@ class AuthService(
                 password = passwordEncoder.encode(password),
             )
         memberRepository.save(user)
+    }
+
+    fun validatePassword(password: String): Boolean {
+        val lengthRegex = Regex(".{8,20}") // 길이 제한
+        val lowerCaseRegex = Regex(".*[a-z].*") // 소문자 포함
+        val digitRegex = Regex(".*[0-9].*") // 숫자 포함
+        val specialCharRegex = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*") // 특수문자 포함
+        val noWhiteSpaceRegex = Regex("^[^\\s]*\$") // 공백 금지
+
+        return lengthRegex.matches(password) &&
+            lowerCaseRegex.containsMatchIn(password) &&
+            digitRegex.containsMatchIn(password) &&
+            specialCharRegex.containsMatchIn(password) &&
+            noWhiteSpaceRegex.matches(password)
     }
 
     @Transactional

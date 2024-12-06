@@ -19,3 +19,5 @@ class MissingRefreshTokenException : AuthenticationException(ErrorCode.MISSING_R
 class EmailNotFoundException : AuthenticationException(ErrorCode.EMAIL_NOT_FOUND)
 
 class EmailDuplicateException : AuthenticationException(ErrorCode.EMAIL_ALREADY_EXISTS)
+
+class InvalidPasswordException : AuthenticationException(ErrorCode.INVALID_PASSWORD)
