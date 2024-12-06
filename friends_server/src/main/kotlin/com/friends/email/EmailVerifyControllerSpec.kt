@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 
-@Tag(name = "EmailVerify")
+@Tag(name = "EmailVerify", description = "이메일 인증 API")
 interface EmailVerifyControllerSpec {
     @Operation(
         description = "이메일 인증 API",
@@ -37,6 +37,7 @@ interface EmailVerifyControllerSpec {
         emailDto: EmailDto,
     ): ResponseEntity<String>
 
+    //TODO: 작성해야함
     fun verifyEmail(
         @RequestBody emailVerifyDto: EmailVerifyRequestDto,
     ): ResponseEntity<EmailVerifyResponseDto>
