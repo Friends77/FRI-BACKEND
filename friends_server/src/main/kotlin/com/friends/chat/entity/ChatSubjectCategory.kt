@@ -14,6 +14,6 @@ class ChatSubjectCategory(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_subject_category_id")
     val id: Long,
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, unique = true)
     val name: String,
 )
