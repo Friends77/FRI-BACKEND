@@ -7,10 +7,10 @@ import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomCategoryRepository
+import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.repository.ChatSubjectCategoryRepository
 import com.friends.chat.repository.MessageRepository
-import com.friends.member.repository.ChatRoomMemberRepository
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

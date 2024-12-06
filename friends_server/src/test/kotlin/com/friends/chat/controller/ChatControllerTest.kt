@@ -16,7 +16,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ControllerTest
-@WebMvcTest(ChatController::class)
+@WebMvcTest(ChatRoomController::class)
 class ChatControllerTest(
     @MockkBean private val chatRoomCommandService: ChatRoomCommandService,
     private val mockMvc: MockMvc,
