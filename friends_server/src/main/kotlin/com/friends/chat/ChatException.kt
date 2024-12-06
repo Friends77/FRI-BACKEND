@@ -11,3 +11,7 @@ class PositiveLikeCountException : ChatException(ErrorCode.CHAT_ROOM_POSITIVE_LI
 class ChatRoomNotFoundException : ChatException(ErrorCode.CHAT_ROOM_NOT_FOUND)
 
 class ChatRoomCategoryNotFoundException : ChatException(ErrorCode.CHAT_ROOM_CATEGORY_NOT_FOUND)
+
+class NotChatRoomManagerException : ChatException(ErrorCode.NOT_CHAT_ROOM_MANAGER)
+
+class NotChatRoomMemberException : ChatException(ErrorCode.NOT_A_MEMBER_OF_CHAT_ROOM)

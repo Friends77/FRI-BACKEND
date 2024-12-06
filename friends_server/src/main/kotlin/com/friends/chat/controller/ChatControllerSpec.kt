@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 
@@ -40,4 +41,46 @@ interface ChatControllerSpec {
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void>
+
+    @Operation(
+        description = "채팅방 삭제 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 삭제 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.NOT_A_MEMBER_OF_CHAT_ROOM,
+        ],
+    )
+    fun deleteChatRoom(
+        @PathVariable
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>
+
+    /*@Operation(
+        description = "채팅방 수정 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 수정 성공",
+            ),
+        ],
+    )
+    fun updateChatRoom(
+        @PathVariable
+        chatRoomId: Long,
+        @RequestPart
+        @Valid
+        chatRoomCreateRequestDto: ChatRoomCreateRequestDto,
+        @RequestPart(required = false)
+        backgroundImage: MultipartFile?,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>*/
 }

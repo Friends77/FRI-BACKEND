@@ -11,6 +11,7 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.repository.ChatSubjectCategoryRepository
 import com.friends.chat.repository.MessageRepository
+import com.friends.chat.repository.getByMemberIdAndChatRoomId
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,5 +41,18 @@ class ChatRoomCommandService(
         chatRoomCategoryRepository.saveAll(chatSubjectCategoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory(chatRoom, it) })
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member))
         messageRepository.save(Message.createEnterMessage(member, chatRoom))
+    }
+
+    fun deleteChatRoom(
+        chatRoomId: Long,
+        memberId: Long,
+    ) {
+        val chatRoomMember = chatRoomMemberRepository.getByMemberIdAndChatRoomId(memberId, chatRoomId)
+        chatRoomRepository.deleteById(chatRoomMember.id)
+        if (chatRoomMemberRepository.countByChatRoomId(chatRoomId) == 0) {
+            messageRepository.deleteByChatRoomId(chatRoomId)
+            chatRoomCategoryRepository.deleteByChatRoomId(chatRoomId)
+            chatRoomRepository.deleteById(chatRoomId)
+        }
     }
 }

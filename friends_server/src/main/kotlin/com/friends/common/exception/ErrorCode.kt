@@ -47,4 +47,6 @@ enum class ErrorCode(
     CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
     CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
     CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "존재하지 않는 채팅방 카테고리입니다."),
+    NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17007, "참여중인 채팅방이 아닙니다."),
+    NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17008, "채팅방 관리자가 아닙니다."),
 }
