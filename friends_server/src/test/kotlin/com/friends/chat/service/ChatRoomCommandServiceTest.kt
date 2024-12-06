@@ -8,12 +8,12 @@ import com.friends.chat.createTestChatSubjectCategory
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomCategoryRepository
+import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.repository.ChatSubjectCategoryRepository
 import com.friends.chat.repository.MessageRepository
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
-import com.friends.member.repository.ChatRoomMemberRepository
 import com.friends.member.repository.MemberRepository
 import com.friends.support.createTestImageFile
 import io.kotest.assertions.throwables.shouldThrow

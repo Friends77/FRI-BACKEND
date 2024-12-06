@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/user/chat")
-class ChatController(
+class ChatRoomController(
     private val chatRoomCommandService: ChatRoomCommandService,
 ) : ChatControllerSpec {
     @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE])
