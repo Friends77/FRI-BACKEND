@@ -29,6 +29,7 @@ interface BoardControllerSpec {
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void>
 
+    //TODO: 여기서부턴 작성해야함
     fun getBoard(
         @PathVariable id: Long,
     ): ResponseEntity<BoardFormDto>
