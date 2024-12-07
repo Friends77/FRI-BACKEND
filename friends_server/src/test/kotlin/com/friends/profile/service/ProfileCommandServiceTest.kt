@@ -7,8 +7,10 @@ import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileCreateDto
 import com.friends.profile.entity.Profile
 import com.friends.profile.repository.ProfileRepository
+import com.friends.profile.updateTestProfile
 import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.ints.exactly
 import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -41,13 +43,18 @@ class ProfileCommandServiceTest :
 
             given("updateProfile 메서드를 호출할 때") {
                 val existingProfile = createTestProfile()
-//                val updatedProfile = createTestProfile().
+                val updatedProfile = updateTestProfile()
 
-                every { profileRepository.findById(existingProfile.id!!) } returns Optional.of(existingProfile)
+                every { profileRepository.findById(existingProfile.id) } returns Optional.of(existingProfile)
                 every { profileRepository.findByMemberId(MEMBER_ID) } returns createTestProfile()
                 every { profileRepository.save(any()) } answers {firstArg<Profile>() }
 
+                `when`("존재하는 프로필을 수정하면") {
+                    val savedProfile = profileCommandService.updateProfile(existingProfile.id, updatedProfile)
 
+                    then("수정된 프로필이 저장되어야 한다.") {
+                        savedProfile shouldBe updatedProfile
+                    }
+                }
             }
-
         })
