@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/auth")
 class EmailVerifyController(
     private val emailVerifyService: EmailVerifyService,
-) {
+) : EmailVerifyControllerSpec {
     @PostMapping("/send-verification-code")
-    fun sendVerifyEmail(
+    override fun sendVerifyEmail(
         @RequestBody emailDto: EmailDto,
     ): ResponseEntity<String> {
         emailVerifyService.sendVerifyEmail(emailDto.email)
@@ -20,7 +20,7 @@ class EmailVerifyController(
     }
 
     @PostMapping("/verify-email")
-    fun verifyEmail(
+    override fun verifyEmail(
         @RequestBody emailVerifyDto: EmailVerifyRequestDto,
     ): ResponseEntity<EmailVerifyResponseDto> {
         val token = emailVerifyService.verifyEmail(emailVerifyDto.email, emailVerifyDto.code)
