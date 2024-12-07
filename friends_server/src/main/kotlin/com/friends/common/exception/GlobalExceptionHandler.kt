@@ -1,6 +1,7 @@
 package com.friends.common.exception
 
 import com.friends.board.BoardException
+import com.friends.chat.ChatException
 import com.friends.email.EmailException
 import com.friends.member.MemberExceptions
 import com.friends.oauth2.OAuth2Exception
@@ -60,6 +61,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(MemberExceptions::class)
     fun handleMemberException(ex: MemberExceptions): ResponseEntity<Any> {
         log.error("Member Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(ChatException::class)
+    fun handleChatException(ex: ChatException): ResponseEntity<Any> {
+        log.error("Chat Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
