@@ -1,6 +1,7 @@
 package com.friends.security.controller
 
 import com.friends.jwt.AtRtService
+import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.LoginRequestDto
 import com.friends.security.LoginResponseDto
 import com.friends.security.LogoutRequestDto
@@ -15,9 +16,11 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CookieValue
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 const val COOKIE_HEARER = "Set-Cookie"
@@ -106,6 +109,11 @@ class AuthController(
         authService.resetPassword(passwordResetRequestDto.emailAuthToken, passwordResetRequestDto.newPassword)
         return ResponseEntity.ok("비밀번호가 변경되었습니다.")
     }
+
+    @GetMapping("/check-nickname")
+    fun checkNickname(
+        @RequestParam nickname: String,
+    ): ResponseEntity<CheckNicknameResponseDto> = ResponseEntity.ok(authService.validateNickname(nickname))
 
     /**
      * cookie 를 생성하여 문자열로 변환시 아래와 같은 형태로 변환됩니다.

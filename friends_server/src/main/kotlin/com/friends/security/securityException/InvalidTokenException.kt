@@ -22,4 +22,4 @@ class EmailDuplicateException : AuthenticationException(ErrorCode.EMAIL_ALREADY_
 
 class InvalidPasswordException : AuthenticationException(ErrorCode.INVALID_PASSWORD)
 
-class NicknameDuplicateException : AuthenticationException(ErrorCode.NICKNAME_ALREADY_EXISTS)
+class InvalidNicknameException : AuthenticationException(ErrorCode.INVALID_NICKNAME)

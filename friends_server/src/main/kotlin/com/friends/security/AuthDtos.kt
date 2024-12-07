@@ -49,6 +49,11 @@ data class LogoutRequestDto(
     val accessToken: String,
 )
 
+data class CheckNicknameResponseDto(
+    val isValid: Boolean,
+    val message: String,
+)
+
 data class PasswordResetRequestDto(
     val emailAuthToken: String,
     val newPassword: String,

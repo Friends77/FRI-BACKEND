@@ -7,13 +7,14 @@ import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
 import com.friends.oauth2.OAuth2Service
 import com.friends.security.AtRtDto
+import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.OAuth2LoginSuccessDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.EmailNotFoundException
+import com.friends.security.securityException.InvalidNicknameException
 import com.friends.security.securityException.InvalidPasswordException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
-import com.friends.security.securityException.NicknameDuplicateException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -85,9 +86,9 @@ class AuthService(
             throw InvalidPasswordException()
         }
 
-        // 닉네임 중복 검사
-        if (memberRepository.existsByNickname(nickname)) {
-            throw NicknameDuplicateException()
+        // 닉네임 유효성 검사
+        if (!validateNickname(nickname).isValid) {
+            throw InvalidNicknameException()
         }
 
         val user =
@@ -111,6 +112,18 @@ class AuthService(
             digitRegex.containsMatchIn(password) &&
             specialCharRegex.containsMatchIn(password) &&
             noWhiteSpaceRegex.matches(password)
+    }
+
+    fun validateNickname(nickname: String): CheckNicknameResponseDto {
+        val lengthRegex = Regex("^[가-힣a-zA-Z0-9]{2,20}\$") // 한글, 숫자, 영문 포함 2~20자
+
+        return if (memberRepository.existsByNickname(nickname)) {
+            CheckNicknameResponseDto(false, "이미 사용 중인 닉네임입니다.")
+        } else if (!lengthRegex.matches(nickname)) {
+            CheckNicknameResponseDto(false, "2~20자의 한글, 영문, 숫자만 사용 가능합니다.")
+        } else {
+            CheckNicknameResponseDto(true, "사용 가능한 닉네임입니다.")
+        }
     }
 
     @Transactional

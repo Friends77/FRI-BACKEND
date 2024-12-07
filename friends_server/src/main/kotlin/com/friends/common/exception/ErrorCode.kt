@@ -20,7 +20,7 @@ enum class ErrorCode(
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, -11004, "존재하지 않는 이메일입니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, -11005, "이미 존재하는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -11006, "유효하지 않은 비밀번호입니다."),
-    NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, -11007, "이미 존재하는 닉네임입니다."),
+    INVALID_NICKNAME(HttpStatus.BAD_REQUEST, -11007, "유효하지 않은 닉네임입니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
