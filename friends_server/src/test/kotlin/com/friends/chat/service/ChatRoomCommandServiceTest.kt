@@ -1,6 +1,8 @@
 package com.friends.chat.service
 
+import com.friends.chat.CHAT_ROOM_ID
 import com.friends.chat.ChatRoomCategoryNotFoundException
+import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.createTestChatRoomMember
@@ -17,9 +19,11 @@ import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
 import com.friends.support.createTestImageFile
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Optional
 
 class ChatRoomCommandServiceTest :
@@ -32,6 +36,8 @@ class ChatRoomCommandServiceTest :
             val chatRoomCategoryRepository = mockk<ChatRoomCategoryRepository>()
             val messageRepository = mockk<MessageRepository>()
             val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, chatSubjectCategoryRepository, chatRoomCategoryRepository, messageRepository)
+
+            isolationMode = IsolationMode.InstancePerLeaf
 
             given("createChatRoom 테스트") {
                 val request = createTestChatRoomCreateRequestDto()
@@ -73,13 +79,35 @@ class ChatRoomCommandServiceTest :
                 every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방 멤버가 저장된다.") {
-                        chatRoomCommandService.enterChatRoom(1L, MEMBER_ID)
+                        chatRoomCommandService.enterChatRoom(CHAT_ROOM_ID, MEMBER_ID)
+                        verify(exactly = 1) {
+                            chatRoomMemberRepository.save(any())
+                            messageRepository.save(any())
+                        }
                     }
                 }
+
                 `when`("이미 채팅방 멤버인 경우") {
                     every { chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any()) } returns true
                     then("채팅방 멤버가 저장되지 않는다.") {
-                        chatRoomCommandService.enterChatRoom(1L, MEMBER_ID)
+                        chatRoomCommandService.enterChatRoom(CHAT_ROOM_ID, MEMBER_ID)
+                        verify(exactly = 1) {
+                            chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any())
+                        }
+                        verify(exactly = 0) {
+                            chatRoomMemberRepository.save(any())
+                            messageRepository.save(any())
+                        }
+                    }
+                }
+
+                `when`("존재하지 않는 채팅방 ID가 들어올 경우") {
+                    then("예외가 발생한다.") {
+                        every { chatRoomRepository.findById(any()) } returns Optional.empty()
+                        shouldThrow<ChatRoomNotFoundException> {
+                            chatRoomCommandService.enterChatRoom(CHAT_ROOM_ID, MEMBER_ID)
+                            verify(exactly = 0) { messageRepository.findById(any()) }
+                        }
                     }
                 }
             }
