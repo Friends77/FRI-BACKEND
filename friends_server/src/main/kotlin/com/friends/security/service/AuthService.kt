@@ -13,6 +13,7 @@ import com.friends.security.securityException.EmailNotFoundException
 import com.friends.security.securityException.InvalidPasswordException
 import com.friends.security.securityException.InvalidRefreshTokenException
 import com.friends.security.securityException.InvalidTokenException
+import com.friends.security.securityException.NicknameDuplicateException
 import com.friends.security.userDetails.CustomUserDetails
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -82,6 +83,11 @@ class AuthService(
         // 비밀번호 규칙 검증
         if (!validatePassword(password)) {
             throw InvalidPasswordException()
+        }
+
+        // 닉네임 중복 검사
+        if (memberRepository.existsByNickname(nickname)) {
+            throw NicknameDuplicateException()
         }
 
         val user =
