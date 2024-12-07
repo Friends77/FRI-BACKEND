@@ -2,6 +2,7 @@ package com.friends.profile
 
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
+import com.friends.profile.dto.ProfileCreateDto
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.MbtiEnum
@@ -19,3 +20,5 @@ fun createTestProfile(): Profile = Profile(id = PROFILE_ID, member = createTestM
 fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(nickname = createTestMember().name, email = "test@test.com", birth = LocalDate.now(), gender = GenderEnum.MAN, location = "test location", selfDescription = "test self description", imageUrl = "test imageurl" , mbti = MbtiEnum.ENFJ)
 
 fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, name = "test name2", email = "test@test2.com", password= "12345", oauth2Provider = OAuth2Provider.NAVER, imageUrl = "test imageurl2" )
+
+fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = "test location", selfDescription = "test self description", imageUrl = "test imageurl" )
