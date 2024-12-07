@@ -52,7 +52,7 @@ class Profile(
     }
 
     fun update(
-        profileUpdateDto: ProfileUpdateDto
+        profileUpdateDto: ProfileUpdateDto,
     ) {
         this.birth = profileUpdateDto.birth
         this.gender = profileUpdateDto.gender

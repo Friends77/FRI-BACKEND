@@ -16,15 +16,24 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ProfileController (
+class ProfileController(
     val profileCommandService: ProfileCommandService,
-    val profileQueryService: ProfileQueryService
+    val profileQueryService: ProfileQueryService,
 ) {
-    //프로필 조회
-    @GetMapping("api/user/profile/{memberId}")
-    fun getProfile(
-        @PathVariable memberId: Long
-    ): ResponseEntity<ProfileResponseDto>{
+    //내 프로필 조회
+    @GetMapping("api/user/profile")
+    fun getMyProfile(
+        @AuthenticationPrincipal memberId: Long,
+    ): ResponseEntity<ProfileResponseDto> {
+        val profile = profileQueryService.getProfile(memberId)
+        return ResponseEntity.ok(profile)
+    }
+
+    //다른 사람 프로필 조회
+    @GetMapping("api/global/profile/{memberId}")
+    fun getOtherProfile(
+        @PathVariable memberId: Long,
+    ): ResponseEntity<ProfileResponseDto> {
         val profile = profileQueryService.getProfile(memberId)
         return ResponseEntity.ok(profile)
     }
@@ -33,8 +42,8 @@ class ProfileController (
     @PostMapping("api/user/profile")
     fun createProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileCreateDto: ProfileCreateDto
-    ): ResponseEntity<Void>{
+        @RequestBody @Valid profileCreateDto: ProfileCreateDto,
+    ): ResponseEntity<Void> {
         profileCommandService.createProfile(memberId, profileCreateDto)
         return ResponseEntity.noContent().build()
     }
@@ -43,8 +52,8 @@ class ProfileController (
     @PutMapping("api/user/profile")
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto
-    ): ResponseEntity<ProfileUpdateDto>{
+        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
+    ): ResponseEntity<ProfileUpdateDto> {
         profileCommandService.updateProfile(memberId, profileUpdateDto)
         return ResponseEntity.ok(profileUpdateDto)
     }

@@ -21,7 +21,6 @@ class BoardCommandService(
     private val hashtagRepository: HashtagRepository,
     private val boardHashtagRepository: BoardHashtagRepository,
 ) {
-
     fun createBoard(
         boardFormDto: BoardFormDto,
         requestMemberId: Long,
