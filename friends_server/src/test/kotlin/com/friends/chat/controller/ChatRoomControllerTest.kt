@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ControllerTest
 @WebMvcTest(ChatRoomController::class)
-class ChatControllerTest(
+class ChatRoomControllerTest(
     @MockkBean private val chatRoomCommandService: ChatRoomCommandService,
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
@@ -77,7 +77,7 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 카테고리가 없는 경우") {
-                val request = createTestChatRoomCreateRequestDto(categories = mutableListOf())
+                val request = createTestChatRoomCreateRequestDto(categories = setOf())
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
