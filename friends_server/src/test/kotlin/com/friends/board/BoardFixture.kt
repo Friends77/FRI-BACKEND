@@ -17,7 +17,7 @@ val BOARD_HASHTAG_ID = 1L
 val HASHTAG_ID = 1L
 val PAGEABLE = PageRequest.of(0, 10, Sort.by("id").ascending())
 
-fun createTestMember(): Member = Member(id = REQUEST_MEMBER_ID, name = "Test Name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE, imageUrl = "test imageurl")
+fun createTestMember(): Member = Member(id = REQUEST_MEMBER_ID, nickname = "Test Name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE, imageUrl = "test imageurl")
 
 fun createTestBoard(): Board = Board(id = BOARD_ID, member = createTestMember(), content = "Test content")
 

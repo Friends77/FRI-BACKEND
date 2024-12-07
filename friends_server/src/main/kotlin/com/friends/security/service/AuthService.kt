@@ -61,7 +61,7 @@ class AuthService(
         emailAuthToken: String,
         email: String,
         password: String,
-        name: String,
+        nickname: String,
     ) {
         // emailAuthToken 검증
         if (!jwtService.validate(emailAuthToken)) {
@@ -86,7 +86,7 @@ class AuthService(
 
         val user =
             Member.createUser(
-                name = name,
+                nickname = nickname,
                 email = email,
                 password = passwordEncoder.encode(password),
             )
@@ -121,7 +121,7 @@ class AuthService(
         if (user == null) {
             user =
                 Member.createUser(
-                    name = userProfile.name,
+                    nickname = userProfile.name,
                     email = userProfile.email,
                     oauth2Provider = oAuth2Provider,
                     imageUrl = userProfile.imageUrl,
