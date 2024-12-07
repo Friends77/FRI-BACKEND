@@ -65,7 +65,7 @@ class Profile(
 
     fun toResponseDto(): ProfileResponseDto =
         ProfileResponseDto(
-            nickname = this.member.name,
+            nickname = this.member.nickname,
             email = this.member.email,
             birth = this.birth,
             gender = this.gender,
