@@ -43,8 +43,12 @@ class SpringSecurityConfig(
 
         http.authorizeHttpRequests {
             it
-                .requestMatchers("/api/auth/**", "/api/global/**")
-                .permitAll()
+                .requestMatchers(
+                    "/api/auth/**",
+                    "/api/global/**",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                ).permitAll()
                 .requestMatchers("/api/user/**")
                 .hasAuthority(Role.ROLE_USER.name)
                 .requestMatchers("/api/admin/**")
