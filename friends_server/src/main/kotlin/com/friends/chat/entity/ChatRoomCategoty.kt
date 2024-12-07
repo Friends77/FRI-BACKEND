@@ -25,4 +25,6 @@ class ChatRoomCategory(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_subject_category_id", nullable = false, updatable = false)
     val chatSubjectCategory: ChatSubjectCategory,
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    constructor(chatRoom: ChatRoom, chatSubjectCategory: ChatSubjectCategory) : this(0L, chatRoom, chatSubjectCategory)
+}

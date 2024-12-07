@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(
     val boardCommandService: BoardCommandService,
     val boardQueryService: BoardQueryService,
-) {
+) : BoardControllerSpec {
     // 게시글 등록
     @PostMapping("api/user/board")
-    fun createBoard(
+    override fun createBoard(
         @RequestBody @Valid boardFormDto: BoardFormDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void> {
@@ -35,7 +35,7 @@ class BoardController(
 
     // 게시글 상세조회
     @GetMapping("api/board/{id}")
-    fun getBoard(
+    override fun getBoard(
         @PathVariable id: Long,
     ): ResponseEntity<BoardFormDto> {
         var (board, hashtags) =
@@ -52,7 +52,7 @@ class BoardController(
 
     // 게시글 삭제
     @DeleteMapping("api/user/board/{id}")
-    fun deleteBoard(
+    override fun deleteBoard(
         @PathVariable id: Long,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void> {
@@ -62,7 +62,7 @@ class BoardController(
 
     // 게시글 수정
     @PutMapping("api/user/board/{id}")
-    fun updateBoard(
+    override fun updateBoard(
         @PathVariable id: Long,
         @RequestBody boardFormDto: BoardFormDto,
         @AuthenticationPrincipal memberId: Long,
@@ -73,7 +73,7 @@ class BoardController(
 
     // 게시글 전체조회
     @GetMapping("api/board/list")
-    fun getBoards(
+    override fun getBoards(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): Page<Board> {

@@ -1,6 +1,7 @@
 package com.friends.config
 
 import com.friends.member.entity.Role
+import com.friends.security.authentication.AuthenticationCreator
 import com.friends.security.filter.JwtFilter
 import com.friends.security.securityException.JwtFilterAccessDeniedHandler
 import com.friends.security.securityException.JwtFilterAuthenticationEntryPoint
@@ -23,7 +24,7 @@ class SpringSecurityConfig(
     private val customUserDetailsService: CustomUserDetailsService,
     private val jwtFilterAccessDeniedHandler: JwtFilterAccessDeniedHandler,
     private val jwtFilterAuthenticationEntryPoint: JwtFilterAuthenticationEntryPoint,
-    private val jwtFilter: JwtFilter,
+    private val authenticationCreator: AuthenticationCreator,
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -33,7 +34,7 @@ class SpringSecurityConfig(
         http.csrf { it.disable() }
 
         http
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtFilter(authenticationCreator), UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling {
                 it
                     .accessDeniedHandler(jwtFilterAccessDeniedHandler)
@@ -42,8 +43,12 @@ class SpringSecurityConfig(
 
         http.authorizeHttpRequests {
             it
-                .requestMatchers("/api/auth/**", "/api/global/**")
-                .permitAll()
+                .requestMatchers(
+                    "/api/auth/**",
+                    "/api/global/**",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                ).permitAll()
                 .requestMatchers("/api/user/**")
                 .hasAuthority(Role.ROLE_USER.name)
                 .requestMatchers("/api/admin/**")
