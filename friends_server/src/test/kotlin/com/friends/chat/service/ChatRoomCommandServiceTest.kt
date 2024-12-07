@@ -64,5 +64,24 @@ class ChatRoomCommandServiceTest :
                     }
                 }
             }
+
+            given("enterChatRoom 테스트") {
+                every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom())
+                every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
+                every { chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any()) } returns false
+                every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
+                every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                `when`("정상적인 데이터가 들어올 경우") {
+                    then("채팅방 멤버가 저장된다.") {
+                        chatRoomCommandService.enterChatRoom(1L, MEMBER_ID)
+                    }
+                }
+                `when`("이미 채팅방 멤버인 경우") {
+                    every { chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any()) } returns true
+                    then("채팅방 멤버가 저장되지 않는다.") {
+                        chatRoomCommandService.enterChatRoom(1L, MEMBER_ID)
+                    }
+                }
+            }
         },
     )

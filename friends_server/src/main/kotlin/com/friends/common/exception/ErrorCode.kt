@@ -10,6 +10,7 @@ enum class ErrorCode(
     // global error
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, -10000, "적절하지 않은 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, -10001, "서버 내부 오류입니다."),
+    POSITIVE_ID(HttpStatus.BAD_REQUEST, -11002, "Id는 0보다 커야 합니다."),
 
     // Auth API error 11000대
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, -11001, "유효하지 않은 토큰입니다."),

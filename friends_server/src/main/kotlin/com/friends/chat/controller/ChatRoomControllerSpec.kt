@@ -7,8 +7,10 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 
@@ -37,6 +39,29 @@ interface ChatRoomControllerSpec {
         chatRoomCreateRequestDto: ChatRoomCreateRequestDto,
         @RequestPart(required = false)
         backgroundImage: MultipartFile?,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>
+
+    @Operation(
+        description = "채팅방 입장 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 입장 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.POSITIVE_ID,
+        ],
+    )
+    fun enterChatRoom(
+        @PathVariable
+        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
+        chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void>
