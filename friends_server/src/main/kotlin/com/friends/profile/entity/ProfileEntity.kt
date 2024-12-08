@@ -59,7 +59,7 @@ class Profile(
         this.location = profileUpdateDto.location
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
-        this.interestTag = profileUpdateDto.interestTag!!.toMutableSet()
+        this.interestTag = profileUpdateDto.interestTag
         this.imageUrl = profileUpdateDto.imageUrl
     }
 

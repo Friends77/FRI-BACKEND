@@ -32,7 +32,7 @@ class ProfileCommandService(
             location = profileCreateDto.location,
             selfDescription = profileCreateDto.selfDescription,
             mbti = profileCreateDto.mbti,
-            interestTag = profileCreateDto.interestTag!!.toMutableSet(),
+            interestTag = profileCreateDto.interestTag,
             imageUrl = profileCreateDto.imageUrl,
             member = member
         )
