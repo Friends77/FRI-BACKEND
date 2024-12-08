@@ -1,11 +1,11 @@
 package com.friends.profile.service
 
+import com.friends.member.MEMBER_ID
+import com.friends.member.MEMBER_ID_WITHOUT_PROFILE
+import com.friends.member.createTestMemberWithoutProfile
 import com.friends.member.repository.MemberRepository
-import com.friends.profile.MEMBER_ID
-import com.friends.profile.MEMBER_ID_WITHOUT_PROFILE
 import com.friends.profile.ProfileNullResponseException
 import com.friends.profile.createTestMember
-import com.friends.profile.createTestMemberWithoutProfile
 import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileResponseDto
 import com.friends.profile.repository.ProfileRepository
