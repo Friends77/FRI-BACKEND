@@ -61,7 +61,7 @@ class ChatRoomCommandService(
         memberId: Long,
     ) {
         val chatRoomMember = chatRoomMemberRepository.getByMemberIdAndChatRoomId(memberId, chatRoomId)
-        chatRoomRepository.deleteById(chatRoomMember.id)
+        chatRoomMemberRepository.deleteById(chatRoomMember.id)
         if (chatRoomMemberRepository.countByChatRoomId(chatRoomId) == 0) {
             messageRepository.deleteByChatRoomId(chatRoomId)
             chatRoomCategoryRepository.deleteByChatRoomId(chatRoomId)

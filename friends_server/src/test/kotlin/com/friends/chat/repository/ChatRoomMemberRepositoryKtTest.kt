@@ -2,11 +2,13 @@ package com.friends.chat.repository
 
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomMember
+import com.friends.chat.entity.ChatRoom
+import com.friends.chat.entity.ChatRoomMember
 import com.friends.member.createTestMember
+import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -17,11 +19,14 @@ class ChatRoomMemberRepositoryKtTest(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
 ) : DescribeSpec(
         {
-            isolationMode = IsolationMode.InstancePerLeaf
-            val member = memberRepository.save(createTestMember())
-            val chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member))
-            val chatRoomMember1 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
-
+            lateinit var member: Member
+            lateinit var chatRoom1: ChatRoom
+            lateinit var chatRoomMember1: ChatRoomMember
+            beforeEach {
+                member = memberRepository.save(createTestMember())
+                chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member))
+                chatRoomMember1 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
+            }
             afterEach {
                 chatRoomMemberRepository.delete(chatRoomMember1)
                 chatRoomRepository.delete(chatRoom1)
