@@ -52,7 +52,7 @@ class Profile(
     }
 
     fun update(
-        profileUpdateDto: ProfileUpdateDto
+        profileUpdateDto: ProfileUpdateDto,
     ) {
         this.birth = profileUpdateDto.birth
         this.gender = profileUpdateDto.gender
@@ -63,17 +63,16 @@ class Profile(
         this.imageUrl = profileUpdateDto.imageUrl
     }
 
-    fun toResponseDto(): ProfileResponseDto {
-        return ProfileResponseDto(
-            nickname = this.member.name,
+    fun toResponseDto(): ProfileResponseDto =
+        ProfileResponseDto(
+            nickname = this.member.nickname,
             email = this.member.email,
             birth = this.birth,
             gender = this.gender,
             location = this.location,
             selfDescription = this.selfDescription,
             mbti = this.mbti,
-            interestTag = this.interestTag?.toList(),
+            interestTag = this.interestTag.toList(),
             imageUrl = this.imageUrl,
         )
-    }
 }

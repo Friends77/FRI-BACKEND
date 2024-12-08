@@ -39,7 +39,7 @@ class Message(
         fun createEnterMessage(
             sender: Member,
             chatRoom: ChatRoom,
-        ): Message = of(chatRoom, sender, "${sender.name} 님이 입장하셨습니다.", MessageType.SYSTEM)
+        ): Message = of(chatRoom, sender, "${sender.nickname} 님이 입장하셨습니다.", MessageType.SYSTEM)
     }
 }
 

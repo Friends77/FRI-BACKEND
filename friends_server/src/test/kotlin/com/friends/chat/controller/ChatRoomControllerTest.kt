@@ -1,6 +1,7 @@
 package com.friends.chat.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.friends.chat.CHAT_ROOM_ID
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
 import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.service.ChatRoomCommandService
@@ -17,7 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @ControllerTest
 @WebMvcTest(ChatRoomController::class)
-class ChatControllerTest(
+class ChatRoomControllerTest(
     @MockkBean private val chatRoomCommandService: ChatRoomCommandService,
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
@@ -77,11 +78,36 @@ class ChatControllerTest(
             }
 
             `when`("채팅방 카테고리가 없는 경우") {
-                val request = createTestChatRoomCreateRequestDto(categories = mutableListOf())
+                val request = createTestChatRoomCreateRequestDto(categories = setOf())
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
                             multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+        }
+
+        given("POST $requestPath/{chatRoomId} Test") {
+            `when`("정상적인 요청이 들어올 경우") {
+                every { chatRoomCommandService.enterChatRoom(any(), any()) } returns Unit
+                then("채팅방에 입장한다.") {
+                    mockMvc
+                        .perform(
+                            multipartWithAuthentication("$requestPath/$CHAT_ROOM_ID"),
+                        ).andExpect(
+                            status().isNoContent,
+                        )
+                }
+            }
+
+            `when`("채팅방 ID가 0인 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            multipartWithAuthentication("$requestPath/0"),
                         ).andExpect(
                             status().isBadRequest,
                         )

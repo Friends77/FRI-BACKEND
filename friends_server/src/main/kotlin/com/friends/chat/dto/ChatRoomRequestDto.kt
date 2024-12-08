@@ -12,7 +12,7 @@ data class ChatRoomCreateRequestDto(
     val title: String,
     @Schema(description = "1개 이상 선택해주세요.")
     @field:Size(min = 1, message = "채팅방 카테고리는 최소 1개 이상 선택해주세요.") //TODO: 카테고리 최대 개수 제한
-    val categoryIdList: List<Long>,
+    val categoryIdList: Set<Long>,
 )
 
 data class ChatRoomUpdateRequestDto(

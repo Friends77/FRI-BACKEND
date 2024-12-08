@@ -12,6 +12,11 @@ fun ChatRoomMemberRepository.getByMemberIdAndChatRoomId(
 
 @Repository
 interface ChatRoomMemberRepository : JpaRepository<ChatRoomMember, Long> {
+    fun existsByMemberIdAndChatRoomId(
+        memberId: Long,
+        chatRoomId: Long,
+    ): Boolean
+
     fun findChatRoomByMemberIdAndChatRoomId(
         memberId: Long,
         chatRoomId: Long,
