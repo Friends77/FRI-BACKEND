@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/user/chat")
 class ChatRoomController(
     private val chatRoomCommandService: ChatRoomCommandService,
-) : ChatControllerSpec {
+) : ChatRoomControllerSpec {
     @PostMapping(consumes = [MULTIPART_FORM_DATA_VALUE])
     override fun createChatRoom(
         chatRoomCreateRequestDto: ChatRoomCreateRequestDto,

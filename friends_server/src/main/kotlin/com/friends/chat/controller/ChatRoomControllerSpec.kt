@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Chat")
-interface ChatControllerSpec {
+interface ChatRoomControllerSpec {
     @Operation(
         description = "채팅방 생성 API",
         responses = [

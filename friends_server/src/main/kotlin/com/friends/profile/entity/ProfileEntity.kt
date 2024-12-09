@@ -72,7 +72,7 @@ class Profile(
             location = this.location,
             selfDescription = this.selfDescription,
             mbti = this.mbti,
-            interestTag = this.interestTag?.toList(),
+            interestTag = this.interestTag.toList(),
             imageUrl = this.imageUrl,
         )
 }
