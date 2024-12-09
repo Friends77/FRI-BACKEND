@@ -17,7 +17,7 @@ class CustomUserDetails(
 
     override fun getAuthorities(): Collection<GrantedAuthority> = authorities
 
-    override fun getPassword(): String = member.password
+    override fun getPassword(): String? = member.password
 
     override fun getUsername(): String = member.email
 

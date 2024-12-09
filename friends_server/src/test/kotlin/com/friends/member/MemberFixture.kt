@@ -9,6 +9,7 @@ const val MEMBER_NAME = "test"
 const val MEMBER_EMAIL = "test@gmail.com"
 const val MEMBER_PASSWORD = "test1234"
 val MEMBER_ID = 123L
+val MEMBER_ID_WITHOUT_PROFILE = 123L
 
 fun makeUserAuthorities(): Collection<GrantedAuthority> =
     listOf(
@@ -28,3 +29,5 @@ fun createTestMember(
     oauth2Provider: OAuth2Provider? = null,
     imageUrl: String? = null,
 ) = Member.createUser(name, email, password, oauth2Provider, imageUrl)
+
+fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password= "12345", oauth2Provider = OAuth2Provider.NAVER, imageUrl = "test imageurl2" )

@@ -17,7 +17,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
-import java.util.Date
+import java.time.LocalDate
 
 @Entity
 class Profile(
@@ -28,7 +28,7 @@ class Profile(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     val member: Member,
-    var birth: Date,
+    var birth: LocalDate,
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
     var location: String?,
@@ -52,28 +52,27 @@ class Profile(
     }
 
     fun update(
-        profileUpdateDto: ProfileUpdateDto
+        profileUpdateDto: ProfileUpdateDto,
     ) {
         this.birth = profileUpdateDto.birth
         this.gender = profileUpdateDto.gender
         this.location = profileUpdateDto.location
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
-        this.interestTag = profileUpdateDto.interestTag!!.toMutableSet()
+        this.interestTag = profileUpdateDto.interestTag
         this.imageUrl = profileUpdateDto.imageUrl
     }
 
-    fun toResponseDto(): ProfileResponseDto {
-        return ProfileResponseDto(
-            nickname = this.member.name,
+    fun toResponseDto(): ProfileResponseDto =
+        ProfileResponseDto(
+            nickname = this.member.nickname,
             email = this.member.email,
             birth = this.birth,
             gender = this.gender,
             location = this.location,
             selfDescription = this.selfDescription,
             mbti = this.mbti,
-            interestTag = this.interestTag?.toList(),
+            interestTag = this.interestTag,
             imageUrl = this.imageUrl,
         )
-    }
 }

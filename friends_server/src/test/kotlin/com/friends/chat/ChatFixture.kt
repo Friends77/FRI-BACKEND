@@ -7,7 +7,6 @@ import com.friends.chat.entity.ChatSubjectCategory
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 
-const val CHAT_ROOM_ID = "test"
 const val CHAT_ROOM_TITLE = "테스트 채팅방"
 const val CHAT_ROOM_CATEGORY_ID = 1L
 const val CHAT_ROOM_CATEGORIES = "it"
@@ -21,7 +20,7 @@ fun createTestChatRoom(
 
 fun createTestChatRoomCreateRequestDto(
     title: String = CHAT_ROOM_TITLE,
-    categories: List<Long> = listOf(CHAT_ROOM_CATEGORY_ID),
+    categories: Set<Long> = setOf(CHAT_ROOM_CATEGORY_ID),
 ) = ChatRoomCreateRequestDto(title, categories)
 
 fun createTestChatSubjectCategory(
