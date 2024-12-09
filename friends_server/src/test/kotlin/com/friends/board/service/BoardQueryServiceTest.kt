@@ -15,7 +15,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.repository.findByIdOrNull
-import java.awt.print.Pageable
 
 class BoardQueryServiceTest :
     BehaviorSpec({

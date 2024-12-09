@@ -44,8 +44,9 @@ class ProfileCommandService(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
     ) {
-        val profile = profileRepository.findByMemberId(requestMemberId)
-            ?: throw ProfileNullResponseException()
+        val profile =
+            profileRepository.findByMemberId(requestMemberId)
+                ?: throw ProfileNullResponseException()
         profile.update(profileUpdateDto)
     }
 }
