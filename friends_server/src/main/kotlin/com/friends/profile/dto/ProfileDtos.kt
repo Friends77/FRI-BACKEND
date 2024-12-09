@@ -8,7 +8,7 @@ import java.util.Date
 data class ProfileCreateDto(
     var birth: Date,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: LocationDto? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: List<String>? = null,
@@ -19,11 +19,16 @@ data class ProfileCreateDto(
 data class ProfileUpdateDto(
     var birth: Date,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: LocationDto? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: List<String>? = null,
     var imageUrl: String,
+)
+
+data class LocationDto(
+    val longitude: Double,
+    val latitude: Double,
 )
 
 //조회용 dto
@@ -32,7 +37,6 @@ data class ProfileResponseDto(
     val email: String,
     var birth: Date,
     var gender: GenderEnum,
-    var location: String?,
     var selfDescription: String?,
     var mbti: MbtiEnum?,
     var interestTag: List<String>?,

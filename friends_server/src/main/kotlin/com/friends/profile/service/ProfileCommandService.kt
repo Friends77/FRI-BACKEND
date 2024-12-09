@@ -22,14 +22,14 @@ class ProfileCommandService(
         profileCreateDto: ProfileCreateDto,
     ) {
         val member =
-            memberRepository.findById(requestMemberId)
+            memberRepository
+                .findById(requestMemberId)
                 .orElseThrow { MemberNotFoundException() }
 
         val profile =
             Profile(
                 birth = profileCreateDto.birth,
                 gender = profileCreateDto.gender,
-                location = profileCreateDto.location,
                 selfDescription = profileCreateDto.selfDescription,
                 mbti = profileCreateDto.mbti,
                 interestTag = profileCreateDto.interestTag!!.toMutableSet(),
