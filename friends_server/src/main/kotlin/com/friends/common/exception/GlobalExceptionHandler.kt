@@ -5,8 +5,8 @@ import com.friends.chat.ChatException
 import com.friends.email.EmailException
 import com.friends.member.MemberExceptions
 import com.friends.oauth2.OAuth2Exception
-import com.friends.security.securityException.AuthenticationException
 import com.friends.profile.ProfileExceptions
+import com.friends.security.securityException.AuthenticationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
