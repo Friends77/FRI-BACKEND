@@ -61,9 +61,9 @@ class Profile(
             member: Member,
             birth: LocalDate,
             gender: GenderEnum,
-            location: LocationDto?,
-            selfDescription: String?,
-            mbti: MbtiEnum?,
+            location: LocationDto? = null,
+            selfDescription: String? = null,
+            mbti: MbtiEnum? = null,
             interestTag: MutableSet<String>,
             imageUrl: String,
         ): Profile =
