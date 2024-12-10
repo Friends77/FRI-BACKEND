@@ -4,7 +4,6 @@ import com.friends.jwt.AUTHORIZATION_HEADER
 import com.friends.jwt.INVALID_TOKEN
 import com.friends.jwt.VALID_TOKEN
 import com.friends.security.authentication.AuthenticationCreator
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -20,8 +19,6 @@ class JwtFilterTest :
     BehaviorSpec({
         val authenticationCreator = mockk<AuthenticationCreator>()
         val jwtFilter = JwtFilter(authenticationCreator)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         /**
          * Type이 Test인 테스트(여기서는 then) 이 끝난 뒤 실행됩니다.

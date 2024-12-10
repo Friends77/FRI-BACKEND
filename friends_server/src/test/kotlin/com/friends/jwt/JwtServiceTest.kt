@@ -1,7 +1,6 @@
 package com.friends.jwt
 
 import com.friends.config.JwtProperties
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.comparables.shouldBeLessThan
 import io.kotest.matchers.shouldBe
@@ -14,8 +13,6 @@ class JwtServiceTest :
         val jwtSecret = "sample-secret-key-1234123412341234123412341234123412341234"
         val jwtProperties = JwtProperties(secretKey = jwtSecret)
         val jwtService = JwtService(jwtProperties)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("유효한 jwtService 가 주어졌을 때") {
             val claims = mapOf("number" to "12345", "array" to listOf(1, 2, 3))
