@@ -2,6 +2,7 @@ package com.friends.profile.entity
 
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import com.friends.profile.dto.LocationDto
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import jakarta.persistence.Column
@@ -35,7 +36,7 @@ class Profile(
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
     @Column(columnDefinition = "geometry(Point, 4326)")
-    var location: Point?,
+    var location: Point? = null,
     @Column(name = "self_description", length = 100)
     var selfDescription: String?,
     @Enumerated(EnumType.STRING)
@@ -53,6 +54,32 @@ class Profile(
         if (interestTag.isEmpty()) {
             throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
         }
+    }
+
+    companion object {
+        fun of(
+            member: Member,
+            birth: LocalDate,
+            gender: GenderEnum,
+            location: LocationDto?,
+            selfDescription: String?,
+            mbti: MbtiEnum?,
+            interestTag: MutableSet<String>,
+            imageUrl: String,
+        ): Profile =
+            Profile(
+                member = member,
+                birth = birth,
+                gender = gender,
+                location =
+                    location?.let {
+                        GeometryFactory().createPoint(Coordinate(it.longitude, it.latitude))
+                    },
+                selfDescription = selfDescription,
+                mbti = mbti,
+                interestTag = interestTag,
+                imageUrl = imageUrl,
+            )
     }
 
     fun update(

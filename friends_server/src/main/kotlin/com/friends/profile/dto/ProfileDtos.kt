@@ -8,7 +8,7 @@ import java.time.LocalDate
 data class ProfileCreateDto(
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: LocationDto? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<String> = mutableSetOf(),

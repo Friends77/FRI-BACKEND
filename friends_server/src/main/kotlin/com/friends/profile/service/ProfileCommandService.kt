@@ -16,26 +16,27 @@ class ProfileCommandService(
     private val profileRepository: ProfileRepository,
     private val memberRepository: MemberRepository,
 ) {
-
     //프로필 초기 작성
     fun createProfile(
         requestMemberId: Long,
         profileCreateDto: ProfileCreateDto,
     ) {
         val member =
-            memberRepository.findById(requestMemberId)
+            memberRepository
+                .findById(requestMemberId)
                 .orElseThrow { MemberNotFoundException() }
 
-        val profile = Profile(
-            birth = profileCreateDto.birth,
-            gender = profileCreateDto.gender,
-            location = profileCreateDto.location,
-            selfDescription = profileCreateDto.selfDescription,
-            mbti = profileCreateDto.mbti,
-            interestTag = profileCreateDto.interestTag,
-            imageUrl = profileCreateDto.imageUrl,
-            member = member
-        )
+        val profile =
+            Profile.of(
+                member = member,
+                birth = profileCreateDto.birth,
+                gender = profileCreateDto.gender,
+                location = profileCreateDto.location,
+                selfDescription = profileCreateDto.selfDescription,
+                mbti = profileCreateDto.mbti,
+                interestTag = profileCreateDto.interestTag,
+                imageUrl = profileCreateDto.imageUrl,
+            )
         profileRepository.save(profile)
     }
 
