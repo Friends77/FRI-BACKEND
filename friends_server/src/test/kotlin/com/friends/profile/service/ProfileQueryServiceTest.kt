@@ -51,6 +51,5 @@ class ProfileQueryServiceTest :
                     exception.message shouldBe "해당 멤버의 프로필이 존재하지 않습니다."
                 }
             }
-
         }
     })
