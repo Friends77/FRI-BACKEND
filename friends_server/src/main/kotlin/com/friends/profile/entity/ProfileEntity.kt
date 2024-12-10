@@ -17,6 +17,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
+import org.locationtech.jts.geom.Coordinate
+import org.locationtech.jts.geom.GeometryFactory
+import org.locationtech.jts.geom.Point
 import java.time.LocalDate
 
 @Entity
@@ -31,7 +34,8 @@ class Profile(
     var birth: LocalDate,
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
-    var location: String?,
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    var location: Point?,
     @Column(name = "self_description", length = 100)
     var selfDescription: String?,
     @Enumerated(EnumType.STRING)
@@ -56,7 +60,10 @@ class Profile(
     ) {
         this.birth = profileUpdateDto.birth
         this.gender = profileUpdateDto.gender
-        this.location = profileUpdateDto.location
+        this.location =
+            profileUpdateDto.location?.let {
+                GeometryFactory().createPoint(Coordinate(it.latitude, it.longitude))
+            }
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
         this.interestTag = profileUpdateDto.interestTag
@@ -69,7 +76,6 @@ class Profile(
             email = this.member.email,
             birth = this.birth,
             gender = this.gender,
-            location = this.location,
             selfDescription = this.selfDescription,
             mbti = this.mbti,
             interestTag = this.interestTag,

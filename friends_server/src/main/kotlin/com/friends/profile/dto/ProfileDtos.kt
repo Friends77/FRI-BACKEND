@@ -19,11 +19,16 @@ data class ProfileCreateDto(
 data class ProfileUpdateDto(
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: LocationDto? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<String> = mutableSetOf(),
     var imageUrl: String,
+)
+
+data class LocationDto(
+    val latitude: Double,
+    val longitude: Double,
 )
 
 //조회용 dto
@@ -32,7 +37,6 @@ data class ProfileResponseDto(
     val email: String,
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String?,
     var selfDescription: String?,
     var mbti: MbtiEnum?,
     var interestTag: MutableSet<String> = mutableSetOf(),
