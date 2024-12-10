@@ -15,16 +15,16 @@ import jakarta.persistence.ManyToOne
 class Comment (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private val id: Long = 0L,
-    @Column(nullable = false)
-    var comment: String,
+    @Column(nullable = false, length = 1000)
+    var text: String,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_ic", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false)
     val board: Board,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
 ) : BaseModifiableEntity(){
-    fun updateComment(comment: String) {
-        this.comment = comment
+    fun updateComment(text: String) {
+        this.text = text
     }
 }
