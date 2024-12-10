@@ -10,6 +10,7 @@ enum class ErrorCode(
     // global error
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, -10000, "적절하지 않은 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, -10001, "서버 내부 오류입니다."),
+    INVALID_SIZE(HttpStatus.BAD_REQUEST, -10002, "size는 양수여야 합니다."),
 
     // Auth API error 11000대
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, -11001, "유효하지 않은 토큰입니다."),
@@ -49,4 +50,5 @@ enum class ErrorCode(
     CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
     CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
     CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "존재하지 않는 채팅방 카테고리입니다."),
+    INVALID_LAST_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17007, "lastChatRoomId는는 양수여야 합니다."),
 }
