@@ -12,7 +12,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
 @Entity
-class Comment (
+class Comment(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private val id: Long = 0L,
     @Column(nullable = false, length = 1000)
@@ -23,7 +23,7 @@ class Comment (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
-) : BaseModifiableEntity(){
+) : BaseModifiableEntity() {
     fun updateComment(text: String) {
         this.text = text
     }
