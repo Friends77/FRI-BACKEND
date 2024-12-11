@@ -3,7 +3,6 @@ package com.friends.jwt
 import com.friends.config.AuthProperties
 import com.friends.member.MEMBER_ID
 import com.friends.member.makeUserAuthorities
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -23,8 +22,6 @@ class AtRtServiceTest :
             )
         val authJwtRepository = mockk<AuthJwtRepository>(relaxed = true)
         val atRtService = AtRtService(jwtService, authProperties, authJwtRepository)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("createAtRt 호출") {
             val memberId = MEMBER_ID

@@ -7,7 +7,6 @@ import com.friends.board.createBoardHashtag
 import com.friends.board.createTestBoard
 import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -21,8 +20,6 @@ class BoardQueryServiceTest :
         val boardRepository = mockk<BoardRepository>()
         val boardHashtagRepository = mockk<BoardHashtagRepository>()
         val boardQueryService = BoardQueryService(boardRepository, boardHashtagRepository)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("getBoard 메서드를 호출할 때") {
 

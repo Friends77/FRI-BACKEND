@@ -4,7 +4,6 @@ import com.friends.chat.createTestChatRoom
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
 import com.friends.support.annotation.RepositoryTest
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -15,7 +14,6 @@ class ChatRoomRepositoryKtTest(
 ) : DescribeSpec(
         {
 
-            isolationMode = IsolationMode.InstancePerLeaf
             val member = memberRepository.save(createTestMember())
             val chatRoom1 =
                 chatRoomRepository.save(createTestChatRoom(manager = member))

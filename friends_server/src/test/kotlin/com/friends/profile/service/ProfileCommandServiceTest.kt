@@ -7,7 +7,6 @@ import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileCreateDto
 import com.friends.profile.repository.ProfileRepository
 import com.friends.profile.updateTestProfile
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -20,8 +19,6 @@ class ProfileCommandServiceTest :
         val profileRepository = mockk<ProfileRepository>()
         val memberRepository = mockk<MemberRepository>()
         val profileCommandService = ProfileCommandService(profileRepository, memberRepository)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("createProfile 메서드를 호출할 때") {
             every { memberRepository.findById(MEMBER_ID) } returns Optional.of(createTestMember())
