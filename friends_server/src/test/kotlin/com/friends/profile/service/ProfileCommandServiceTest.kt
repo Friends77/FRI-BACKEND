@@ -7,7 +7,6 @@ import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileCreateDto
 import com.friends.profile.repository.ProfileRepository
 import com.friends.profile.updateTestProfile
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every

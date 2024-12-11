@@ -8,7 +8,6 @@ import com.friends.support.annotation.ControllerTest
 import com.friends.support.createMultipartFile
 import com.friends.support.multipartWithAuthentication
 import com.ninjasquad.springmockk.MockkBean
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -23,8 +22,6 @@ class ChatRoomControllerTest(
     private val objectMapper: ObjectMapper,
 ) : BehaviorSpec({
         val requestPath = "/api/user/chat"
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("POST $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {

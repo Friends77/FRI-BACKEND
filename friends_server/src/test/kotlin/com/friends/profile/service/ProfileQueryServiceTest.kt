@@ -9,7 +9,6 @@ import com.friends.profile.createTestMember
 import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileResponseDto
 import com.friends.profile.repository.ProfileRepository
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -22,8 +21,6 @@ class ProfileQueryServiceTest :
         val profileRepository = mockk<ProfileRepository>()
         val memberRepository = mockk<MemberRepository>()
         val profileQueryService = ProfileQueryService(profileRepository, memberRepository)
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("getProfile 메서드를 호출할 때") {
             val testProfile = createTestProfile()
@@ -51,6 +48,5 @@ class ProfileQueryServiceTest :
                     exception.message shouldBe "해당 멤버의 프로필이 존재하지 않습니다."
                 }
             }
-
         }
     })
