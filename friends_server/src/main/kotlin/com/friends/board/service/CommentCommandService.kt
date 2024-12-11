@@ -1,8 +1,10 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.CommentAddDto
+import com.friends.board.exception.BoardNotFoundException
+import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment
+import com.friends.board.exception.CommentNotFoundException
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CommentRepository
 import com.friends.member.MemberNotFoundException
@@ -38,9 +40,28 @@ class CommentCommandService(
         return commentRepository.save(savedComment)
     }
 
-    //댓글 수정
-
     //댓글 삭제
+    fun deleteComment(
+        boardId: Long,
+        id: Long
+    ) {
+        val comment = commentRepository.findByBoardIdAndId(boardId, id)
+        if(comment == null) {
+            throw CommentNotFoundException()
+        }
+        commentRepository.delete(comment)
+    }
 
-
+    //댓글 수정
+    fun updateComment(
+        boardId: Long,
+        id: Long,
+        request: CommentUpdateDto
+    ) {
+        val comment = commentRepository.findByBoardIdAndId(boardId, id)
+        if(comment == null) {
+            throw CommentNotFoundException()
+        }
+        comment.updateComment(request.text)
+    }
 }

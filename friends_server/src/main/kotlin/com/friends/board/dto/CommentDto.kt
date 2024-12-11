@@ -9,3 +9,8 @@ data class CommentAddDto (
     var member: Member,
     var board: Board,
 ) : BaseModifiableEntity()
+
+data class CommentUpdateDto (
+    var text: String,
+)
+

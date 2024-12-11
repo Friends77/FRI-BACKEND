@@ -4,4 +4,5 @@ import com.friends.board.entity.Comment
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface CommentRepository : JpaRepository<Comment, Long> {
+    fun findByBoardIdAndId(boardId: Long, id: Long): Comment?
 }

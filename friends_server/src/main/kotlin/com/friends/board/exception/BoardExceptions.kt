@@ -1,4 +1,4 @@
-package com.friends.board
+package com.friends.board.exception
 
 import com.friends.common.exception.ErrorCode
 
