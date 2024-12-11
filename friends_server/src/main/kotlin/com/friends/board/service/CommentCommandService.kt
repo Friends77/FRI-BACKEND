@@ -19,7 +19,6 @@ class CommentCommandService(
     private val memberRepository: MemberRepository,
     private val boardRepository: BoardRepository,
 ) {
-
     //댓글 작성
     fun createComment(
         boardId: Long,
@@ -39,26 +38,24 @@ class CommentCommandService(
         )
         return commentRepository.save(savedComment)
     }
-
     //댓글 삭제
     fun deleteComment(
         boardId: Long,
-        id: Long
+        commentId: Long
     ) {
-        val comment = commentRepository.findByBoardIdAndId(boardId, id)
+        val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
         if(comment == null) {
             throw CommentNotFoundException()
         }
         commentRepository.delete(comment)
     }
-
     //댓글 수정
     fun updateComment(
         boardId: Long,
-        id: Long,
+        commentId: Long,
         request: CommentUpdateDto
     ) {
-        val comment = commentRepository.findByBoardIdAndId(boardId, id)
+        val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
         if(comment == null) {
             throw CommentNotFoundException()
         }

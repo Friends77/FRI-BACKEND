@@ -18,6 +18,6 @@ class CommentQueryService (
         val board = boardRepository.findById(boardId).orElseThrow{
             throw BoardNotFoundException()
         }
-        return board.comments
+        return board.comments.sortedBy { it.createdAt }
     }
 }
