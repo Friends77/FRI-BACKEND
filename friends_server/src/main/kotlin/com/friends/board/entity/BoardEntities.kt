@@ -22,10 +22,21 @@ class Board(
     val member: Member,
     @Column(length = 500, nullable = false)
     var content: String,
+    @Column(nullable = false)
+    var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
     fun updateBoard(boardFormDto: BoardFormDto) {
         content = boardFormDto.content
     }
+
+    fun increaseLikeCount(){
+        this.likeCount++;
+    }
+
+    fun decreaseLikeCount(){
+        this.likeCount--;
+    }
+
 }
 
 @Entity
