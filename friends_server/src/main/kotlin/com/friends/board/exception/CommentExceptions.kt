@@ -7,3 +7,5 @@ abstract class CommentException (
 ) : RuntimeException(errorCode.errorMessage)
 
 class CommentNotFoundException : CommentException(ErrorCode.NOT_FOUND_COMMENT)
+
+class InvalidCommentAccessException : CommentException(ErrorCode.INVALID_COMMENT_ACCESS)

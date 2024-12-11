@@ -5,6 +5,7 @@ import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment
 import com.friends.board.exception.CommentNotFoundException
+import com.friends.board.exception.InvalidCommentAccessException
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CommentRepository
 import com.friends.member.MemberNotFoundException
@@ -41,11 +42,13 @@ class CommentCommandService(
     //댓글 삭제
     fun deleteComment(
         boardId: Long,
-        commentId: Long
+        commentId: Long,
+        memberId: Long
     ) {
         val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
-        if(comment == null) {
-            throw CommentNotFoundException()
+            ?: throw CommentNotFoundException()
+        if(comment.member.id != memberId){
+            throw InvalidCommentAccessException()
         }
         commentRepository.delete(comment)
     }
@@ -53,11 +56,13 @@ class CommentCommandService(
     fun updateComment(
         boardId: Long,
         commentId: Long,
-        request: CommentUpdateDto
+        request: CommentUpdateDto,
+        memberId: Long,
     ) {
         val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
-        if(comment == null) {
-            throw CommentNotFoundException()
+            ?: throw CommentNotFoundException()
+        if(comment.member.id != memberId){
+            throw InvalidCommentAccessException()
         }
         comment.updateComment(request.text)
     }
