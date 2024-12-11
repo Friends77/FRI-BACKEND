@@ -28,7 +28,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 
     // Kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -60,6 +59,9 @@ dependencies {
 
     // configuration property
     implementation("org.springframework.boot:spring-boot-configuration-processor")
+
+    // aws
+    implementation("com.amazonaws:aws-java-sdk-s3:1.12.375")
 
     // Test
     testImplementation(platform("org.junit:junit-bom:5.10.2"))

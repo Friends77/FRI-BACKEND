@@ -13,8 +13,14 @@ enum class ErrorCode(
 
     // Auth API error 11000대
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, -11001, "유효하지 않은 토큰입니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, -11002, "유효하지 않은 Refresh Token입니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "유효하지 않은 Access Token입니다."),
     MISSING_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, -11002, "RefreshToken 이 존재하지 않습니다."),
     MISSING_SOCIAL_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, -11003, "SocialAccessToken 이 존재하지 않습니다."),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, -11004, "존재하지 않는 이메일입니다."),
+    EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, -11005, "이미 존재하는 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -11006, "유효하지 않은 비밀번호입니다."),
+    INVALID_NICKNAME(HttpStatus.BAD_REQUEST, -11007, "유효하지 않은 닉네임입니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
@@ -36,6 +42,11 @@ enum class ErrorCode(
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
 
+    // Chat API error 17000대
+    CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),
+    CHAT_ROOM_TITLE_BLANK(HttpStatus.BAD_REQUEST, -17002, "채팅방 제목은 공백일 수 없습니다."),
+    CHAT_ROOM_TITLE_INVALID_LENGTH(HttpStatus.BAD_REQUEST, -17003, "채팅방 제목은 1자 이상 20자 이하로 입력해주세요."),
+    CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
+    CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
+    CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "존재하지 않는 채팅방 카테고리입니다."),
 }
-
-
