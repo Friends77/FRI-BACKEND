@@ -5,8 +5,10 @@ import com.friends.member.entity.OAuth2Provider
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-const val MEMBER_NAME = "test"
+const val MEMBER_NICKNAME = "test"
+const val MEMBER_OTHER_NICKNAME = "test2"
 const val MEMBER_EMAIL = "test@gmail.com"
+const val MEMBER_OTHER_EMAIL = "test2@naver.com"
 const val MEMBER_PASSWORD = "test1234"
 val MEMBER_ID = 123L
 val MEMBER_ID_WITHOUT_PROFILE = 123L
@@ -23,11 +25,11 @@ fun makeAdminAuthorities(): Collection<GrantedAuthority> =
     )
 
 fun createTestMember(
-    name: String = MEMBER_NAME,
+    nickname: String = MEMBER_NICKNAME,
     email: String = MEMBER_EMAIL,
     password: String = MEMBER_PASSWORD,
     oauth2Provider: OAuth2Provider? = null,
     imageUrl: String? = null,
-) = Member.createUser(name, email, password, oauth2Provider, imageUrl)
+) = Member.createUser(nickname, email, password, oauth2Provider, imageUrl)
 
-fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password= "12345", oauth2Provider = OAuth2Provider.NAVER, imageUrl = "test imageurl2" )
+fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password = "12345", oauth2Provider = OAuth2Provider.NAVER, imageUrl = "test imageurl2")

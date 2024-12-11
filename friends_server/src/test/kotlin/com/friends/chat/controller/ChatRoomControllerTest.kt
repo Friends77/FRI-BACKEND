@@ -3,9 +3,12 @@ package com.friends.chat.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
 import com.friends.chat.createTestChatRoomCreateRequestDto
+import com.friends.chat.createTestSliceResponseChatRoom
 import com.friends.chat.service.ChatRoomCommandService
+import com.friends.chat.service.ChatRoomQueryService
 import com.friends.support.annotation.ControllerTest
 import com.friends.support.createMultipartFile
+import com.friends.support.getWithAuthentication
 import com.friends.support.multipartWithAuthentication
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
@@ -18,10 +21,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(ChatRoomController::class)
 class ChatRoomControllerTest(
     @MockkBean private val chatRoomCommandService: ChatRoomCommandService,
+    @MockkBean private val chatRoomQueryService: ChatRoomQueryService,
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : BehaviorSpec({
-        val requestPath = "/api/user/chat"
+        val requestPath = "/api/user/chat/room"
 
         given("POST $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
@@ -79,6 +83,42 @@ class ChatRoomControllerTest(
                     mockMvc
                         .perform(
                             multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+        }
+
+        given("GET $requestPath Test") {
+            `when`("정상적인 요청이 들어올 경우") {
+                every { chatRoomQueryService.getChatRooms(any(), any(), any(), any()) } returns createTestSliceResponseChatRoom()
+                then("채팅방을 조회한다.") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication(requestPath),
+                        ).andExpect(
+                            status().isOk,
+                        )
+                }
+            }
+
+            `when`("사이즈가 양수가 아닌 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication(requestPath).param("size", "0"),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+
+            `when`("lastChatRoomId가 양수가 아닌 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication(requestPath).param("lastChatRoomId", "-1"),
                         ).andExpect(
                             status().isBadRequest,
                         )
