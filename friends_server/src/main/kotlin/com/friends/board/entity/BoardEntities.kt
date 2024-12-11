@@ -3,6 +3,7 @@ package com.friends.board.entity
 import com.friends.board.dto.BoardFormDto
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -11,6 +12,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OrderBy
 
 @Entity
 class Board(
@@ -22,6 +25,9 @@ class Board(
     val member: Member,
     @Column(length = 500, nullable = false)
     var content: String,
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
+    @OrderBy("id asc")
+    var comments: List<Comment> = mutableListOf()
 ) : BaseModifiableEntity() {
     fun updateBoard(boardFormDto: BoardFormDto) {
         content = boardFormDto.content
