@@ -28,15 +28,9 @@ class JwtFilterAuthenticationEntryPoint : AuthenticationEntryPoint {
                     ErrorCode.UNAUTHORIZED,
                     authException?.message,
                 )
-            writer.write(toJson(errorResponse))
+            writer.write(errorResponse.toJson())
         }
     }
-
-    fun toJson(errorResponse: ErrorResponse): String =
-        """{
-        "code": ${errorResponse.code},
-        "errorMessage": "${errorResponse.errorMessage}"
-    }"""
 }
 
 @Component
@@ -56,13 +50,7 @@ class JwtFilterAccessDeniedHandler : AccessDeniedHandler {
                     ErrorCode.FORBIDDEN,
                     accessDeniedException?.message,
                 )
-            writer.write(toJson(errorResponse))
+            writer.write(errorResponse.toJson())
         }
     }
-
-    fun toJson(errorResponse: ErrorResponse): String =
-        """{
-        "code": ${errorResponse.code},
-        "errorMessage": "${errorResponse.errorMessage}"
-    }"""
 }
