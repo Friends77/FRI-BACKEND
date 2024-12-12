@@ -14,7 +14,7 @@ interface ProfileRepository : JpaRepository<Profile, Long> {
             SELECT *
             FROM Profile
             WHERE ST_DWithin(
-                ST_Transform(geometry_point, 3857), 
+                ST_Transform(location, 3857), 
                 ST_Transform(ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), 3857),
                 :distance
             )
