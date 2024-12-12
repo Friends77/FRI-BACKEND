@@ -20,8 +20,6 @@ class ProfileCommandServiceTest :
         val memberRepository = mockk<MemberRepository>()
         val profileCommandService = ProfileCommandService(profileRepository, memberRepository)
 
-        isolationMode = IsolationMode.InstancePerLeaf
-
         given("createProfile 메서드를 호출할 때") {
             every { memberRepository.findById(MEMBER_ID) } returns Optional.of(createTestMember())
             every { profileRepository.save(any()) } returns createTestProfile()
