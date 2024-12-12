@@ -23,7 +23,7 @@ class TestPoint(
     var location: Point? = null,
 ) {
     companion object {
-        fun of(locationDto: LocationDto): TestPoint = TestPoint(location = GeometryFactory().createPoint(Coordinate(locationDto.longitude, locationDto.latitude)))
+        fun of(locationDto: LocationDto): TestPoint = TestPoint(location = GeometryFactory().createPoint(Coordinate(locationDto.longitude, locationDto.latitude)).also { it.srid = SpatialReferenceSystem.WGS84 })
     }
 }
 

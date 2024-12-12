@@ -73,7 +73,7 @@ class Profile(
                 gender = gender,
                 location =
                     location?.let {
-                        GeometryFactory().createPoint(Coordinate(it.longitude, it.latitude))
+                        GeometryFactory().createPoint(Coordinate(it.longitude, it.latitude)).also { it.srid = SpatialReferenceSystem.WGS84 }
                     },
                 selfDescription = selfDescription,
                 mbti = mbti,
@@ -89,7 +89,7 @@ class Profile(
         this.gender = profileUpdateDto.gender
         this.location =
             profileUpdateDto.location?.let {
-                GeometryFactory().createPoint(Coordinate(it.latitude, it.longitude))
+                GeometryFactory().createPoint(Coordinate(it.longitude, it.latitude)).also { it.srid = SpatialReferenceSystem.WGS84 }
             }
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
