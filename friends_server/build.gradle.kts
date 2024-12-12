@@ -68,7 +68,7 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-spatial:6.4.4.Final")
 
     // flyway
-    implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-core:9.22.3")
 
     // Test
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
