@@ -67,6 +67,9 @@ dependencies {
     implementation("org.locationtech.jts:jts-core:1.19.0")
     implementation("org.hibernate.orm:hibernate-spatial:6.4.4.Final")
 
+    // flyway
+    implementation("org.flywaydb:flyway-core")
+
     // Test
     testImplementation(platform("org.junit:junit-bom:5.10.2"))
     testImplementation("org.springframework.boot:spring-boot-starter-test")
