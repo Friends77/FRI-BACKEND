@@ -24,3 +24,12 @@ enum class MbtiEnum {
     ENTJ,
     ESTJ,
 }
+
+enum class SpatialReferenceSystem {
+    ;
+
+    companion object {
+        const val WGS84 = 4326
+        const val WEBMERCATOR = 3857
+    }
+}

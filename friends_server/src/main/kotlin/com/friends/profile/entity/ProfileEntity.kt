@@ -35,7 +35,7 @@ class Profile(
     var birth: LocalDate,
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
-    @Column(columnDefinition = "geometry(Point, 4326)")
+    @Column(columnDefinition = "geometry(Point, ${SpatialReferenceSystem.WGS84})")
     var location: Point? = null,
     @Column(name = "self_description", length = 100)
     var selfDescription: String?,

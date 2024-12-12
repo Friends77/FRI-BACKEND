@@ -1,6 +1,7 @@
 package com.friends.profile.repository
 
 import com.friends.profile.dto.LocationDto
+import com.friends.profile.entity.SpatialReferenceSystem
 import io.lettuce.core.dynamic.annotation.Param
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Repository
 class TestPoint(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-    @Column(columnDefinition = "geometry(Point, 4326)")
+    @Column(columnDefinition = "geometry(Point, ${SpatialReferenceSystem.WGS84})")
     var location: Point? = null,
 ) {
     companion object {
@@ -33,8 +34,8 @@ interface TestPointRepository : JpaRepository<TestPoint, Long> {
             SELECT *
             FROM test_point
             WHERE ST_DWithin(
-                ST_Transform(location, 3857), 
-                ST_Transform(ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), 3857),
+                ST_Transform(location, ${SpatialReferenceSystem.WEBMERCATOR}), 
+                ST_Transform(ST_SetSRID(ST_MakePoint(:lng, :lat), ${SpatialReferenceSystem.WGS84}), ${SpatialReferenceSystem.WEBMERCATOR}),
                 :distance
             )
         """,

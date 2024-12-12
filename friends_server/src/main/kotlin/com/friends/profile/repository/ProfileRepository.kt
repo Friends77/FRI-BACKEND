@@ -1,6 +1,7 @@
 package com.friends.profile.repository
 
 import com.friends.profile.entity.Profile
+import com.friends.profile.entity.SpatialReferenceSystem
 import io.lettuce.core.dynamic.annotation.Param
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -14,8 +15,8 @@ interface ProfileRepository : JpaRepository<Profile, Long> {
             SELECT *
             FROM Profile
             WHERE ST_DWithin(
-                ST_Transform(location, 3857), 
-                ST_Transform(ST_SetSRID(ST_MakePoint(:lng, :lat), 4326), 3857),
+                ST_Transform(location, ${SpatialReferenceSystem.WEBMERCATOR}), 
+                ST_Transform(ST_SetSRID(ST_MakePoint(:lng, :lat), ${SpatialReferenceSystem.WGS84}), ${SpatialReferenceSystem.WEBMERCATOR}),
                 :distance
             )
         """,
