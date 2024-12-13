@@ -6,6 +6,8 @@ import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import jakarta.persistence.Column
 import jakarta.persistence.ElementCollection
+import jakarta.persistence.Embeddable
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -31,7 +33,8 @@ class Profile(
     var birth: LocalDate,
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
-    var location: String?,
+    @Embedded
+    var location: Location?,
     @Column(name = "self_description", length = 100)
     var selfDescription: String?,
     @Enumerated(EnumType.STRING)
@@ -76,3 +79,9 @@ class Profile(
             imageUrl = this.imageUrl,
         )
 }
+
+@Embeddable
+data class Location(
+    val latitude: Double,
+    val longitude: Double,
+)
