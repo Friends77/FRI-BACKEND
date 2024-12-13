@@ -34,11 +34,11 @@ class Profile(
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
     @Embedded
-    var location: Location?,
+    var location: Location? = null,
     @Column(name = "self_description", length = 100)
-    var selfDescription: String?,
+    var selfDescription: String? = null,
     @Enumerated(EnumType.STRING)
-    var mbti: MbtiEnum?,
+    var mbti: MbtiEnum? = null,
     @ElementCollection(fetch = FetchType.LAZY)
     @Column(name = "interest_tag", length = 225)
     var interestTag: MutableSet<String> = mutableSetOf(),
