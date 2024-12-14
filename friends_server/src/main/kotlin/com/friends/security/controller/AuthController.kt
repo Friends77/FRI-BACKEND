@@ -1,6 +1,7 @@
 package com.friends.security.controller
 
 import com.friends.jwt.AtRtService
+import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.LoginRequestDto
 import com.friends.security.LoginResponseDto
@@ -36,7 +37,7 @@ class AuthController(
         @RequestBody registerRequestDto: RegisterRequestDto,
     ): ResponseEntity<String> {
         authService.register(
-            registerRequestDto.emailAuthToken,
+            registerRequestDto.authToken,
             registerRequestDto.email,
             registerRequestDto.password,
             registerRequestDto.nickname,
@@ -126,6 +127,11 @@ class AuthController(
     fun checkNickname(
         @RequestParam nickname: String,
     ): ResponseEntity<CheckNicknameResponseDto> = ResponseEntity.ok(authService.validateNickname(nickname))
+
+    @GetMapping("/check-email")
+    fun checkEmail(
+        @RequestParam email: String,
+    ): ResponseEntity<CheckEmailResponseDto> = ResponseEntity.ok(authService.validateEmail(email))
 
     /**
      * cookie 를 생성하여 문자열로 변환시 아래와 같은 형태로 변환됩니다.

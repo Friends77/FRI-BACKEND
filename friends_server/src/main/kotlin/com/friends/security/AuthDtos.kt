@@ -13,7 +13,7 @@ data class LoginResponseDto(
 )
 
 data class RegisterRequestDto(
-    val emailAuthToken: String,
+    val authToken: String,
     val email: String,
     val password: String,
     val nickname: String,
@@ -57,6 +57,11 @@ data class LogoutRequestDto(
 )
 
 data class CheckNicknameResponseDto(
+    val isValid: Boolean,
+    val message: String,
+)
+
+data class CheckEmailResponseDto(
     val isValid: Boolean,
     val message: String,
 )

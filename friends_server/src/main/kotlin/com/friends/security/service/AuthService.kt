@@ -7,6 +7,7 @@ import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
 import com.friends.oauth2.OAuth2Service
 import com.friends.security.AtRtDto
+import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.OAuth2LoginDto
 import com.friends.security.securityException.EmailDuplicateException
@@ -125,6 +126,13 @@ class AuthService(
             CheckNicknameResponseDto(true, "사용 가능한 닉네임입니다.")
         }
     }
+
+    fun validateEmail(email: String): CheckEmailResponseDto =
+        if (memberRepository.existsByEmail(email)) {
+            CheckEmailResponseDto(false, "이미 사용 중인 이메일입니다.")
+        } else {
+            CheckEmailResponseDto(true, "사용 가능한 이메일입니다.")
+        }
 
     fun loginByOAuth2(
         code: String,
