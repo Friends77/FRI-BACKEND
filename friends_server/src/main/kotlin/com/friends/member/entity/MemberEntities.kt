@@ -10,12 +10,15 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "member", indexes = [Index(name = "member_nickname", columnList = "nickname")])
 class Member(
     // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
