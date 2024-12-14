@@ -92,7 +92,7 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(
         @RequestBody logoutRequestDto: LogoutRequestDto,
-        @CookieValue refreshToken: String,
+        @CookieValue(required = false) refreshToken: String,
     ): ResponseEntity<String> {
         // accessToken 과 refreshToken 을 삭제합니다.
         authService.logout(logoutRequestDto.accessToken, refreshToken)

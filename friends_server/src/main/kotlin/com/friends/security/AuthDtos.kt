@@ -46,7 +46,7 @@ data class RefreshResponseDto(
 )
 
 data class LogoutRequestDto(
-    val accessToken: String,
+    val accessToken: String?,
 )
 
 data class CheckNicknameResponseDto(
