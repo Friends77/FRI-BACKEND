@@ -24,10 +24,14 @@ data class AtRtDto(
     val refreshToken: String,
 )
 
-data class OAuth2LoginSuccessDto(
-    val firstLogin: Boolean,
-    val accessToken: String,
-    val refreshToken: String,
+data class OAuth2LoginDto(
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
 )
 
 data class OAuth2LoginRequestDto(
@@ -36,9 +40,12 @@ data class OAuth2LoginRequestDto(
 )
 
 data class OAuth2LoginResponseDto(
-    val memberId: Long,
-    val accessToken: String,
-    val firstLogin: Boolean,
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
 )
 
 data class RefreshResponseDto(

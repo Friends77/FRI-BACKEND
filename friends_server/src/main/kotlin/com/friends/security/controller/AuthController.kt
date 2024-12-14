@@ -62,18 +62,30 @@ class AuthController(
             .body(LoginResponseDto(memberId, atRtDto.accessToken))
     }
 
-    @PostMapping("/oauth2-login")
+    @PostMapping("/oauth2")
     fun oauth2Login(
         @RequestBody oauth2LoginRequestDto: OAuth2LoginRequestDto,
     ): ResponseEntity<OAuth2LoginResponseDto> {
-        val oauth2LoginSuccessDto = authService.loginByOAuth2(oauth2LoginRequestDto.code, oauth2LoginRequestDto.provider)
-        val memberId = atRtService.getMemberId(oauth2LoginSuccessDto.accessToken)
+        val oauth2LoginDto = authService.loginByOAuth2(oauth2LoginRequestDto.code, oauth2LoginRequestDto.provider)
+        if (oauth2LoginDto.isRegistered) {
+            val memberId = atRtService.getMemberId(oauth2LoginDto.accessToken!!)
 
-        return ResponseEntity
-            .ok()
-            // refresh token 을 쿠키로 전달합니다.
-            .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginSuccessDto.refreshToken).toString())
-            .body(OAuth2LoginResponseDto(memberId, oauth2LoginSuccessDto.accessToken, oauth2LoginSuccessDto.firstLogin))
+            return ResponseEntity
+                .ok()
+                .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginDto.refreshToken!!).toString())
+                .body(OAuth2LoginResponseDto(memberId = memberId, accessToken = oauth2LoginDto.accessToken, isRegistered = true))
+        } else {
+            return ResponseEntity
+                .ok()
+                .body(
+                    OAuth2LoginResponseDto(
+                        isRegistered = false,
+                        email = oauth2LoginDto.email,
+                        nickname = oauth2LoginDto.nickname,
+                        imageUrl = oauth2LoginDto.imageUrl,
+                    ),
+                )
+        }
     }
 
     @PostMapping("/refresh")
