@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne
 @Entity
 class Like (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id", nullable = false)
+    @Column(name = "like_id")
     val id: Long,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
