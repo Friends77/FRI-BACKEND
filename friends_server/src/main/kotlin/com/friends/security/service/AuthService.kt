@@ -7,8 +7,9 @@ import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
 import com.friends.oauth2.OAuth2Service
 import com.friends.security.AtRtDto
+import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
-import com.friends.security.OAuth2LoginSuccessDto
+import com.friends.security.OAuth2LoginDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.EmailNotFoundException
 import com.friends.security.securityException.InvalidNicknameException
@@ -126,44 +127,44 @@ class AuthService(
         }
     }
 
-    @Transactional
+    fun validateEmail(email: String): CheckEmailResponseDto =
+        if (memberRepository.existsByEmail(email)) {
+            CheckEmailResponseDto(false, "이미 사용 중인 이메일입니다.")
+        } else {
+            CheckEmailResponseDto(true, "사용 가능한 이메일입니다.")
+        }
+
     fun loginByOAuth2(
         code: String,
         oAuth2Provider: OAuth2Provider,
-    ): OAuth2LoginSuccessDto {
+    ): OAuth2LoginDto {
         val userProfile = oAuth2Service.getUserProfile(code, oAuth2Provider)
 
-        var firstLogin = false
-
-        // 이미 가입되어 있다면 유저를 불러오고 없다면 새로 생성합니다.
         var user = memberRepository.findByEmail(userProfile.email)
-        if (user == null) {
-            user =
-                Member.createUser(
-                    nickname = userProfile.name,
-                    email = userProfile.email,
-                    oauth2Provider = oAuth2Provider,
-                    imageUrl = userProfile.imageUrl,
-                )
-            memberRepository.save(user)
-            firstLogin = true
+        // 이미 가입된 사용자인 경우
+        if (user != null) {
+            if (user.oauth2Provider != oAuth2Provider) {
+                throw EmailDuplicateException()
+            }
+            val atRtoDto = atRtService.createAtRt(user.id, user.authorities.map { SimpleGrantedAuthority(it.role.name) })
+            return OAuth2LoginDto(isRegistered = true, memberId = user.id, accessToken = atRtoDto.accessToken, refreshToken = atRtoDto.refreshToken)
+        } else { // 가입되지 않은 사용자인 경우
+            return OAuth2LoginDto(isRegistered = false, email = userProfile.email, nickname = userProfile.name, imageUrl = userProfile.imageUrl)
         }
-
-        // 이미 가입된 이메일의 소셜 서비스가 요청된 소셜 서비스와 다르다면 예외를 발생시킵니다.
-        if (user.oauth2Provider != oAuth2Provider) {
-            throw EmailDuplicateException()
-        }
-
-        val atRtDto = atRtService.createAtRt(user.id, user.authorities.map { SimpleGrantedAuthority(it.role.name) })
-        return OAuth2LoginSuccessDto(firstLogin, atRtDto.accessToken, atRtDto.refreshToken)
     }
 
     fun logout(
-        accessToken: String,
-        refreshToken: String,
+        accessToken: String?,
+        refreshToken: String?,
     ) {
-        atRtService.deleteAccessToken(accessToken)
-        atRtService.deleteRefreshToken(refreshToken)
+        accessToken?.let { accessToken ->
+            atRtService.getRefreshToken(accessToken)?.let { atRtService.deleteRefreshToken(it) }
+            atRtService.deleteAccessToken(accessToken)
+        }
+        refreshToken?.let { refreshToken ->
+            atRtService.getAccessToken(refreshToken)?.let { atRtService.deleteAccessToken(it) }
+            atRtService.deleteRefreshToken(refreshToken)
+        }
     }
 
     @Transactional

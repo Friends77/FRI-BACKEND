@@ -1,7 +1,10 @@
 package com.friends.security.securityException
 
+import com.friends.common.exception.ErrorCode
+import com.friends.common.exception.ErrorResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.MediaType
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
@@ -15,7 +18,18 @@ class JwtFilterAuthenticationEntryPoint : AuthenticationEntryPoint {
         response: HttpServletResponse?,
         authException: AuthenticationException?,
     ) {
-        response?.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException?.message)
+        response?.apply {
+            contentType = MediaType.APPLICATION_JSON_VALUE
+            characterEncoding = "UTF-8"
+            status = HttpServletResponse.SC_UNAUTHORIZED
+
+            val errorResponse =
+                ErrorResponse.of(
+                    ErrorCode.UNAUTHORIZED,
+                    authException?.message,
+                )
+            writer.write(errorResponse.toJson())
+        }
     }
 }
 
@@ -26,6 +40,17 @@ class JwtFilterAccessDeniedHandler : AccessDeniedHandler {
         response: HttpServletResponse?,
         accessDeniedException: AccessDeniedException?,
     ) {
-        response?.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException?.message)
+        response?.apply {
+            contentType = MediaType.APPLICATION_JSON_VALUE
+            characterEncoding = "UTF-8"
+            status = HttpServletResponse.SC_FORBIDDEN
+
+            val errorResponse =
+                ErrorResponse.of(
+                    ErrorCode.FORBIDDEN,
+                    accessDeniedException?.message,
+                )
+            writer.write(errorResponse.toJson())
+        }
     }
 }

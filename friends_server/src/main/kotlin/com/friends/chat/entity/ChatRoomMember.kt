@@ -13,7 +13,11 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "chat_room_member", indexes = [Index(name = "chat_room_member_member_id", columnList = "member_id")], uniqueConstraints = [jakarta.persistence.UniqueConstraint(columnNames = ["chat_room_id", "member_id"], name = "chat_room_member_unique")])
+@Table(
+    name = "chat_room_member",
+    indexes = [Index(name = "chat_room_member_member_id", columnList = "member_id"), Index(name = "chat_room_member_chat_Room_id", columnList = "chat_room_id")],
+    uniqueConstraints = [jakarta.persistence.UniqueConstraint(columnNames = ["chat_room_id", "member_id"], name = "chat_room_member_unique")],
+)
 class ChatRoomMember(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

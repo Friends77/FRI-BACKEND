@@ -33,7 +33,7 @@ class ChatRoom(
     var likeCount: Int = 0,
     @Column(nullable = false)
     @OneToMany(mappedBy = "chatRoom", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var categories: MutableList<ChatRoomCategory> = mutableListOf(),
+    var categories: List<ChatRoomCategory> = listOf(),
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(nullable = true)
     var lastMessage: Message? = null,

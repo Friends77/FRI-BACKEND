@@ -1,5 +1,6 @@
 package com.friends.board.entity
 
+import com.friends.board.dto.BoardFormDto
 import com.friends.board.dto.BoardUpdateDto
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
@@ -22,7 +23,7 @@ class Board(
     val member: Member,
     @Column(length = 500, nullable = false)
     var content: String,
-    @Column(nullable = false)
+    @Column(name = "like_count", nullable = false)
     var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
     fun updateBoard(boardUpdateDto: BoardUpdateDto) {
