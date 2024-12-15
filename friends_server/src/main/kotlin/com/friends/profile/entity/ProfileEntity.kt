@@ -20,8 +20,6 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
 import java.time.LocalDate
 
 @Entity
@@ -49,13 +47,15 @@ class Profile(
     @Column(name = "image_url")
     var imageUrl: String,
 ) : BaseModifiableEntity() {
+    /*
+    oneToMany가 되면서 해당 검사를 할 수 없습니다
     @PrePersist
     @PreUpdate
     fun validate() {
         if (interestTag.isEmpty()) {
             throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
         }
-    }
+    }*/
 
     fun update(
         profileUpdateDto: ProfileUpdateDto,
