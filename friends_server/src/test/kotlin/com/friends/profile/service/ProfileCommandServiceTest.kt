@@ -1,10 +1,15 @@
 package com.friends.profile.service
 
+import com.friends.board.repository.CategoryRepository
+import com.friends.createTestCategory
 import com.friends.member.MEMBER_ID
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.createTestMember
 import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileCreateDto
+import com.friends.profile.createTestProfileInterestTag
+import com.friends.profile.entity.ProfileInterestTag
+import com.friends.profile.repository.ProfileInterestTagRepository
 import com.friends.profile.repository.ProfileRepository
 import com.friends.profile.updateTestProfile
 import io.kotest.core.spec.style.BehaviorSpec
@@ -18,11 +23,15 @@ class ProfileCommandServiceTest :
     BehaviorSpec({
         val profileRepository = mockk<ProfileRepository>()
         val memberRepository = mockk<MemberRepository>()
-        val profileCommandService = ProfileCommandService(profileRepository, memberRepository)
+        val categoryRepository = mockk<CategoryRepository>()
+        val profileInterestTagRepository = mockk<ProfileInterestTagRepository>()
+        val profileCommandService = ProfileCommandService(profileRepository, memberRepository, categoryRepository, profileInterestTagRepository)
 
         given("createProfile 메서드를 호출할 때") {
             every { memberRepository.findById(MEMBER_ID) } returns Optional.of(createTestMember())
             every { profileRepository.save(any()) } returns createTestProfile()
+            every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
+            every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
 
             `when`("유효한 프로필 정보를 전달하면") {
                 profileCommandService.createProfile(MEMBER_ID, createTestProfileCreateDto())
@@ -50,6 +59,9 @@ class ProfileCommandServiceTest :
             val updatedProfile = updateTestProfile()
 
             every { profileRepository.findByMemberId(MEMBER_ID) } returns existingProfile
+            every { profileInterestTagRepository.deleteByProfileId(any()) } returns Unit
+            every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
+            every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
 
             `when`("존재하는 프로필을 수정하면") {
                 profileCommandService.updateProfile(MEMBER_ID, updatedProfile)

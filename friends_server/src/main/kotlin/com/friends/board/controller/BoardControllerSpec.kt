@@ -1,6 +1,7 @@
 package com.friends.board.controller
 
 import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardRequestFormDto
 import com.friends.board.entity.Board
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -25,7 +26,7 @@ interface BoardControllerSpec {
         ],
     )
     fun createBoard(
-        @RequestBody @Valid boardFormDto: BoardFormDto,
+        @RequestBody @Valid boardFormDto: BoardRequestFormDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void>
 
@@ -41,12 +42,12 @@ interface BoardControllerSpec {
 
     fun updateBoard(
         @PathVariable id: Long,
-        @RequestBody boardFormDto: BoardFormDto,
+        @RequestBody boardFormDto: BoardRequestFormDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Board>
 
     fun getBoards(
         @RequestParam page: Int,
-        @RequestParam size: Int,
+        @RequestParam pageSize: Int,
     ): Page<Board>
 }

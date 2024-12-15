@@ -1,9 +1,11 @@
 package com.friends.board.controller
 
 import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardRequestFormDto
 import com.friends.board.entity.Board
 import com.friends.board.service.BoardCommandService
 import com.friends.board.service.BoardQueryService
+import com.friends.common.mapper.toCategoryInfoResponse
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -26,7 +28,7 @@ class BoardController(
     // 게시글 등록
     @PostMapping("api/user/board")
     override fun createBoard(
-        @RequestBody @Valid boardFormDto: BoardFormDto,
+        @RequestBody @Valid boardFormDto: BoardRequestFormDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void> {
         boardCommandService.createBoard(boardFormDto, memberId)
@@ -38,14 +40,14 @@ class BoardController(
     override fun getBoard(
         @PathVariable id: Long,
     ): ResponseEntity<BoardFormDto> {
-        var (board, hashtags) =
+        val (board, categories) =
             boardQueryService.getBoard(id)
                 ?: return ResponseEntity.notFound().build()
 
         val boardDto =
             BoardFormDto(
                 content = board.content,
-                hashtags = hashtags,
+                categories = categories.map { toCategoryInfoResponse(it) },
             )
         return ResponseEntity.ok(boardDto)
     }
@@ -64,7 +66,7 @@ class BoardController(
     @PutMapping("api/user/board/{id}")
     override fun updateBoard(
         @PathVariable id: Long,
-        @RequestBody boardFormDto: BoardFormDto,
+        @RequestBody boardFormDto: BoardRequestFormDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Board> {
         val board = boardCommandService.updateBoard(id, boardFormDto, memberId)

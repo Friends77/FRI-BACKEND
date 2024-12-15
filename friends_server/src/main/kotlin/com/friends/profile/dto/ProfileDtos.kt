@@ -1,5 +1,6 @@
 package com.friends.profile.dto
 
+import com.friends.common.entity.Category
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
@@ -12,7 +13,7 @@ data class ProfileCreateDto(
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
@@ -23,7 +24,7 @@ data class ProfileUpdateDto(
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
@@ -36,7 +37,7 @@ data class ProfileResponseDto(
     var location: Location?,
     var selfDescription: String?,
     var mbti: MbtiEnum?,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Category> = mutableSetOf(),
     var imageUrl: String,
 )
 
