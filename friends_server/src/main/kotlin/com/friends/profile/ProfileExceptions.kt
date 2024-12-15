@@ -6,4 +6,4 @@ abstract class ProfileExceptions(
     val errorCode: ErrorCode,
 ) : RuntimeException(errorCode.errorMessage)
 
-class ProfileNullResponseException : ProfileExceptions(ErrorCode.NOT_FOUND_PROFILE)
+class ProfileNullResponseException : ProfileExceptions(ErrorCode.PROFILE_NOT_FOUND)
