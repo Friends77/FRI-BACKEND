@@ -13,7 +13,7 @@ data class LoginResponseDto(
 )
 
 data class RegisterRequestDto(
-    val emailAuthToken: String,
+    val authToken: String,
     val email: String,
     val password: String,
     val nickname: String,
@@ -24,10 +24,14 @@ data class AtRtDto(
     val refreshToken: String,
 )
 
-data class OAuth2LoginSuccessDto(
-    val firstLogin: Boolean,
-    val accessToken: String,
-    val refreshToken: String,
+data class OAuth2LoginDto(
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
 )
 
 data class OAuth2LoginRequestDto(
@@ -36,9 +40,12 @@ data class OAuth2LoginRequestDto(
 )
 
 data class OAuth2LoginResponseDto(
-    val memberId: Long,
-    val accessToken: String,
-    val firstLogin: Boolean,
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
 )
 
 data class RefreshResponseDto(
@@ -50,6 +57,11 @@ data class LogoutRequestDto(
 )
 
 data class CheckNicknameResponseDto(
+    val isValid: Boolean,
+    val message: String,
+)
+
+data class CheckEmailResponseDto(
     val isValid: Boolean,
     val message: String,
 )
