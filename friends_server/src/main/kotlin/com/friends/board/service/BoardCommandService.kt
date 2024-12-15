@@ -1,7 +1,7 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
-import com.friends.board.InvalidBoardAccessException
+import com.friends.board.exception.BoardNotFoundException
+import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.dto.BoardFormDto
 import com.friends.board.entity.Board
 import com.friends.board.entity.BoardHashtag
