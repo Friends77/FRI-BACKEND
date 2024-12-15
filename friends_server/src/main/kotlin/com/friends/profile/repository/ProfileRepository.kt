@@ -19,7 +19,7 @@ interface ProfileRepository : JpaRepository<Profile, Long> {
             SIN(RADIANS(:latitude)) * SIN(RADIANS(p.location.latitude))))
         )
         FROM Profile p
-        INNER JOIN Member m ON p.id = m.id
+        INNER JOIN Member m ON p.member.id = m.id
         WHERE (6371000 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(p.location.latitude)) * 
               COS(RADIANS(p.location.longitude) - RADIANS(:longitude)) + 
               SIN(RADIANS(:latitude)) * SIN(RADIANS(p.location.latitude)))) <= :distance
