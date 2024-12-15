@@ -13,7 +13,6 @@ import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.HashtagRepository
 import com.friends.member.repository.MemberRepository
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -35,8 +34,6 @@ class BoardCommandServiceTest :
                 hashtagRepository = hashtagRepository,
                 boardHashtagRepository = boardHashtagRepository,
             )
-
-        isolationMode = IsolationMode.InstancePerLeaf
 
         given("createBoard 메서드를 호출할 때") {
             every { memberRepository.findById(REQUEST_MEMBER_ID) } returns Optional.of(createTestMember())

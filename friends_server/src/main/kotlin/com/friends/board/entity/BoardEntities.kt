@@ -27,7 +27,9 @@ class Board(
     var content: String,
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
     @OrderBy("id asc")
-    var comments: List<Comment> = mutableListOf()
+    var comments: List<Comment> = mutableListOf(),
+    @Column(name = "like_count")
+    var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
     fun updateBoard(boardFormDto: BoardFormDto) {
         content = boardFormDto.content

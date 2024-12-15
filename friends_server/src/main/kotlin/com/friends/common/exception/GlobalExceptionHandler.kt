@@ -82,4 +82,12 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
+
+    @ExceptionHandler(Exception::class)
+    fun handleException(ex: Exception): ResponseEntity<Any> {
+        log.error("Exception", ex)
+        return ResponseEntity
+            .status(ErrorCode.INTERNAL_SERVER_ERROR.httpStatus)
+            .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, ex.message))
+    }
 }
