@@ -25,7 +25,7 @@ class CommentQueryService(
         return if(lastCreatedAt == null){
             commentRepository.findTop20ByBoardIdOrderByCreatedAtAsc(boardId)
         } else {
-            commentRepository.findTop20ByBoardIdAndCreatedAtAfterOrderByCreatedAtAsc(
+            commentRepository.findTop20ByBoardIdAndCreatedAtAfterOrderByIdAsc(
                 boardId, lastCreatedAt
             )
         }

@@ -7,5 +7,5 @@ import java.time.LocalDateTime
 interface CommentRepository : JpaRepository<Comment, Long> {
     fun findByBoardIdAndId(boardId: Long, id: Long): Comment?
     fun findTop20ByBoardIdOrderByCreatedAtAsc(boardId: Long): List<Comment>
-    fun findTop20ByBoardIdAndCreatedAtAfterOrderByCreatedAtAsc(boardId: Long, createdAt: LocalDateTime): List<Comment>
+    fun findTop20ByBoardIdAndCreatedAtAfterOrderByIdAsc(boardId: Long, createdAt: LocalDateTime): List<Comment>
 }
