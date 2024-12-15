@@ -1,6 +1,7 @@
 package com.friends.board.service
 
 import com.friends.board.BoardLikeAlreadyExists
+import com.friends.board.BoardLikeNotFoundException
 import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.LikeRequestDto
 import com.friends.board.entity.Board
@@ -41,6 +42,7 @@ class LikeCommandService(
             board = board,
         )
         likeRepository.save(like)
+        board.increaseLike()
     }
 
     //좋아요 삭제
@@ -56,11 +58,10 @@ class LikeCommandService(
             .orElseThrow{
                 BoardNotFoundException()
             }
-        if(likeRepository.findByMemberAndBoard(member, board) != null){
-
-        }
-
-
+        val like = likeRepository.findByMemberAndBoard(member, board)
+            ?: throw BoardLikeNotFoundException()
+        likeRepository.delete(like)
+        board.decreaseLike()
     }
 
 }

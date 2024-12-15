@@ -45,6 +45,7 @@ enum class ErrorCode(
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
     BOARD_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, -16003, "이미 좋아요를 눌렀습니다."),
+    BOARD_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, -16004, "해당 게시글에 대한 좋아요가 존재하지 않습니다."),
 
     // Chat API error 17000대
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),

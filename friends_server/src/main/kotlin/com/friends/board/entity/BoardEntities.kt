@@ -28,6 +28,12 @@ class Board(
     fun updateBoard(boardFormDto: BoardFormDto) {
         content = boardFormDto.content
     }
+    fun increaseLike(){
+        likeCount++
+    }
+    fun decreaseLike(){
+        if(likeCount > 0 ) likeCount--
+    }
 }
 
 @Entity
