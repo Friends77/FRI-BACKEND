@@ -19,7 +19,7 @@ interface CommentControllerSpec {
       description = "댓글 생성 API",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "댓글 생성 성공",
             ),
         ],
@@ -39,7 +39,7 @@ interface CommentControllerSpec {
         description = "댓글 삭제 API",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "댓글 삭제 완료"
             ),
         ],
@@ -59,7 +59,7 @@ interface CommentControllerSpec {
         description = "댓글 수정 API",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "댓글 수정 완료"
             ),
         ],
