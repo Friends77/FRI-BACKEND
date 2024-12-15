@@ -20,28 +20,27 @@ class CommentController (
     val commentCommandService: CommentCommandService,
     val commentQueryService: CommentQueryService
 ) : CommentControllerSpec {
-    //TODO: override
     // 댓글 작성
     @PostMapping("api/user/board/{boardId}/comments")
-    fun createComment(@PathVariable boardId: Long, @RequestBody request: CommentAddDto, @AuthenticationPrincipal memberId: Long) : ResponseEntity<Void> {
+    override fun createComment(@PathVariable boardId: Long, @RequestBody request: CommentAddDto, @AuthenticationPrincipal memberId: Long) : ResponseEntity<Void> {
         commentCommandService.createComment(boardId, request, memberId)
         return ResponseEntity.noContent().build()
     }
 
     // 댓글 삭제
     @DeleteMapping("api/user/board/{boardId}/comments/{commentId}")
-    fun deleteComment(
+    override fun deleteComment(
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
         @AuthenticationPrincipal memberId: Long
-    ):ResponseEntity<Void>{
+    ) :ResponseEntity<Void> {
         commentCommandService.deleteComment(boardId, commentId, memberId)
         return ResponseEntity.noContent().build()
     }
 
     // 댓글 수정
     @PatchMapping("api/user/board/{boardId}/comments/{commentId}")
-    fun updateComment(
+    override fun updateComment(
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
         @AuthenticationPrincipal memberId: Long,
@@ -53,10 +52,9 @@ class CommentController (
 
     // 댓글 조회
     @GetMapping("api/user/board/{boardId}/comments")
-    fun getComments(
+    override fun getComments(
         @PathVariable boardId: Long,
     ): List<Comment> {
         return commentQueryService.getCommentList(boardId)
     }
-
 }
