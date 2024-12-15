@@ -1,6 +1,6 @@
 package com.friends.board.entity
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardUpdateDto
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.Column
@@ -25,18 +25,9 @@ class Board(
     @Column(nullable = false)
     var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
-    fun updateBoard(boardFormDto: BoardFormDto) {
-        content = boardFormDto.content
+    fun updateBoard(boardUpdateDto: BoardUpdateDto) {
+        content = boardUpdateDto.content
     }
-
-    fun increaseLikeCount(){
-        this.likeCount++;
-    }
-
-    fun decreaseLikeCount(){
-        this.likeCount--;
-    }
-
 }
 
 @Entity

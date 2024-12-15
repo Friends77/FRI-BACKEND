@@ -2,18 +2,18 @@ package com.friends.board.service
 
 import com.friends.board.BoardNotFoundException
 import com.friends.board.InvalidBoardAccessException
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardAddDto
+import com.friends.board.dto.BoardUpdateDto
 import com.friends.board.entity.Board
 import com.friends.board.entity.BoardHashtag
 import com.friends.board.entity.Hashtag
 import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.HashtagRepository
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 @Transactional
@@ -24,29 +24,24 @@ class BoardCommandService(
     private val boardHashtagRepository: BoardHashtagRepository,
 ) {
     fun createBoard(
-        boardFormDto: BoardFormDto,
+        boardAddDto: BoardAddDto,
         requestMemberId: Long,
     ): Board {
         val member =
             memberRepository.findById(requestMemberId)
-                //머지 후 membernotfoundexception으로 대체
                 .orElseThrow {
-                    ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found with id: $requestMemberId")
+                    MemberNotFoundException()
                 }
-
         val board =
             Board(
                 member = member,
-                content = boardFormDto.content,
+                content = boardAddDto.content,
             )
-
         boardRepository.save(board)
-
         val hashtags =
-            boardFormDto.hashtags.map { tag ->
+            boardAddDto.hashtags.map { tag ->
                 hashtagRepository.findByTag(tag) ?: hashtagRepository.save(Hashtag(tag = tag))
             }
-
         // 게시글-해시태그 관계 설정
         val boardHashtags =
             hashtags.map { hashtag ->
@@ -59,6 +54,7 @@ class BoardCommandService(
         return board
     }
 
+    //게시글 삭제
     fun deleteBoard(
         id: Long,
         requestMemberId: Long,
@@ -67,31 +63,26 @@ class BoardCommandService(
             boardRepository.findById(id).orElseThrow {
                 BoardNotFoundException()
             }
-
-        //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
             throw InvalidBoardAccessException()
         }
-
         boardRepository.deleteById(id)
     }
 
+    //게시글 수정
     fun updateBoard(
         id: Long,
-        boardFormDto: BoardFormDto,
+        boardUpdateDto: BoardUpdateDto,
         requestMemberId: Long,
     ): Board {
         val board =
             boardRepository.findById(id).orElseThrow {
                 BoardNotFoundException()
             }
-
-        //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
             throw InvalidBoardAccessException()
         }
-
-        board.updateBoard(boardFormDto)
+        board.updateBoard(boardUpdateDto)
         return board
     }
 }

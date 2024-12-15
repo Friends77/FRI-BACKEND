@@ -1,6 +1,6 @@
 package com.friends.board
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardAddDto
 import com.friends.board.entity.Board
 import com.friends.board.entity.BoardHashtag
 import com.friends.board.entity.Hashtag
@@ -24,6 +24,6 @@ fun createTestBoard(): Board = Board(id = BOARD_ID, member = createTestMember(),
 fun createTestHashtags(): Hashtag = Hashtag(id = HASHTAG_ID, tag = "testTag")
 
 val testHashtags = listOf("friends", "kotlin")
-val boardFormDto = BoardFormDto(content = createTestBoard().content, hashtags = testHashtags)
+val boardFormDto = BoardAddDto(content = createTestBoard().content, hashtags = testHashtags)
 
 fun createBoardHashtag(): List<BoardHashtag> = listOf(BoardHashtag(id = BOARD_HASHTAG_ID, board = createTestBoard(), hashtag = createTestHashtags()))
