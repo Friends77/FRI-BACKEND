@@ -154,11 +154,17 @@ class AuthService(
     }
 
     fun logout(
-        accessToken: String,
-        refreshToken: String,
+        accessToken: String?,
+        refreshToken: String?,
     ) {
-        atRtService.deleteAccessToken(accessToken)
-        atRtService.deleteRefreshToken(refreshToken)
+        accessToken?.let { accessToken ->
+            atRtService.getRefreshToken(accessToken)?.let { atRtService.deleteRefreshToken(it) }
+            atRtService.deleteAccessToken(accessToken)
+        }
+        refreshToken?.let { refreshToken ->
+            atRtService.getAccessToken(refreshToken)?.let { atRtService.deleteAccessToken(it) }
+            atRtService.deleteRefreshToken(refreshToken)
+        }
     }
 
     @Transactional
