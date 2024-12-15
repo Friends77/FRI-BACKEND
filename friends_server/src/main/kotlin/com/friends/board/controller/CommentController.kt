@@ -5,6 +5,7 @@ import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment
 import com.friends.board.service.CommentCommandService
 import com.friends.board.service.CommentQueryService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,15 +17,19 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class CommentController (
+class CommentController(
     val commentCommandService: CommentCommandService,
-    val commentQueryService: CommentQueryService
+    val commentQueryService: CommentQueryService,
 ) : CommentControllerSpec {
     // 댓글 작성
     @PostMapping("api/user/board/{boardId}/comments")
-    override fun createComment(@PathVariable boardId: Long, @RequestBody request: CommentAddDto, @AuthenticationPrincipal memberId: Long) : ResponseEntity<Void> {
+    override fun createComment(
+        @PathVariable boardId: Long,
+        @RequestBody request: CommentAddDto,
+        @AuthenticationPrincipal memberId: Long,
+    ): ResponseEntity<Void> {
         commentCommandService.createComment(boardId, request, memberId)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
     // 댓글 삭제
@@ -32,10 +37,10 @@ class CommentController (
     override fun deleteComment(
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
-        @AuthenticationPrincipal memberId: Long
-    ) :ResponseEntity<Void> {
+        @AuthenticationPrincipal memberId: Long,
+    ): ResponseEntity<Void> {
         commentCommandService.deleteComment(boardId, commentId, memberId)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     // 댓글 수정
@@ -44,10 +49,10 @@ class CommentController (
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody request: CommentUpdateDto
-    ):ResponseEntity<Void> {
+        @RequestBody request: CommentUpdateDto,
+    ): ResponseEntity<Void> {
         commentCommandService.updateComment(boardId, commentId, request, memberId)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
     // 댓글 조회

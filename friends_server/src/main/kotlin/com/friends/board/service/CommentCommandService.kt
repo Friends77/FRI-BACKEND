@@ -1,9 +1,9 @@
 package com.friends.board.service
 
 import com.friends.board.dto.CommentAddDto
-import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.exception.CommentNotFoundException
 import com.friends.board.exception.InvalidCommentAccessException
 import com.friends.board.repository.BoardRepository
@@ -25,33 +25,39 @@ class CommentCommandService(
         boardId: Long,
         request: CommentAddDto,
         memberId: Long,
-    ): Comment{
-        val member = memberRepository.findById(memberId).orElseThrow{
-            MemberNotFoundException()
-        }
-        val board = boardRepository.findById(boardId).orElseThrow{
-            BoardNotFoundException()
-        }
-        val savedComment = Comment(
-            text = request.text,
-            board = board,
-            member = member,
-        )
+    ): Comment {
+        val member =
+            memberRepository.findById(memberId).orElseThrow {
+                MemberNotFoundException()
+            }
+        val board =
+            boardRepository.findById(boardId).orElseThrow {
+                BoardNotFoundException()
+            }
+        val savedComment =
+            Comment(
+                text = request.text,
+                board = board,
+                member = member,
+            )
         return commentRepository.save(savedComment)
     }
+
     //댓글 삭제
     fun deleteComment(
         boardId: Long,
         commentId: Long,
-        memberId: Long
+        memberId: Long,
     ) {
-        val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
-            ?: throw CommentNotFoundException()
-        if(comment.member.id != memberId){
+        val comment =
+            commentRepository.findByBoardIdAndId(boardId, commentId)
+                ?: throw CommentNotFoundException()
+        if (comment.member.id != memberId) {
             throw InvalidCommentAccessException()
         }
         commentRepository.delete(comment)
     }
+
     //댓글 수정
     fun updateComment(
         boardId: Long,
@@ -59,9 +65,10 @@ class CommentCommandService(
         request: CommentUpdateDto,
         memberId: Long,
     ) {
-        val comment = commentRepository.findByBoardIdAndId(boardId, commentId)
-            ?: throw CommentNotFoundException()
-        if(comment.member.id != memberId){
+        val comment =
+            commentRepository.findByBoardIdAndId(boardId, commentId)
+                ?: throw CommentNotFoundException()
+        if (comment.member.id != memberId) {
             throw InvalidCommentAccessException()
         }
         comment.updateComment(request.text)

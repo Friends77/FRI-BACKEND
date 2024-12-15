@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestPart
 @Tag(name = "Comment")
 interface CommentControllerSpec {
     @Operation(
-      description = "댓글 생성 API",
+        description = "댓글 생성 API",
         responses = [
             ApiResponse(
-                responseCode = "204",
+                responseCode = "201",
                 description = "댓글 생성 성공",
             ),
         ],
@@ -27,7 +27,7 @@ interface CommentControllerSpec {
     @ApiErrorCodeExamples(
         [
             ErrorCode.INVALID_COMMENT_ACCESS,
-        ]
+        ],
     )
     fun createComment(
         @PathVariable boardId: Long,
@@ -40,56 +40,52 @@ interface CommentControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "204",
-                description = "댓글 삭제 완료"
+                description = "댓글 삭제 완료",
             ),
         ],
     )
     @ApiErrorCodeExamples(
         [
             ErrorCode.INVALID_COMMENT_ACCESS,
-        ]
+        ],
     )
     fun deleteComment(
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
         @AuthenticationPrincipal memberId: Long,
-    ) : ResponseEntity<Void>
+    ): ResponseEntity<Void>
 
     @Operation(
         description = "댓글 수정 API",
         responses = [
             ApiResponse(
                 responseCode = "204",
-                description = "댓글 수정 완료"
+                description = "댓글 수정 완료",
             ),
         ],
     )
     @ApiErrorCodeExamples(
         [
             ErrorCode.INVALID_COMMENT_ACCESS,
-        ]
+        ],
     )
     fun updateComment(
         @PathVariable boardId: Long,
         @PathVariable commentId: Long,
         @AuthenticationPrincipal memberId: Long,
         @RequestPart request: CommentUpdateDto,
-    ) : ResponseEntity<Void>
+    ): ResponseEntity<Void>
 
     @Operation(
         description = "댓글 조회 API",
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "댓글 조회 성공"
+                description = "댓글 조회 성공",
             ),
         ],
     )
-    @ApiErrorCodeExamples(
-        [
-        ]
-    )
     fun getComments(
         @PathVariable boardId: Long,
-    ) : List<Comment>
+    ): List<Comment>
 }

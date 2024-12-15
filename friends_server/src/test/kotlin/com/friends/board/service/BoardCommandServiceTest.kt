@@ -1,14 +1,14 @@
 package com.friends.board.service
 
-import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
-import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.NON_AUTHORIZED_MEMBER_ID
 import com.friends.board.REQUEST_MEMBER_ID
 import com.friends.board.boardFormDto
 import com.friends.board.createTestBoard
 import com.friends.board.createTestMember
 import com.friends.board.entity.BoardHashtag
+import com.friends.board.exception.BoardNotFoundException
+import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.repository.BoardHashtagRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.HashtagRepository
