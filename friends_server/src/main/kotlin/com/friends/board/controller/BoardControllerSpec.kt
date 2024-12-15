@@ -1,7 +1,7 @@
 package com.friends.board.controller
 
-import com.friends.board.dto.BoardFormDto
 import com.friends.board.dto.BoardRequestFormDto
+import com.friends.board.dto.BoardResponseFormDto
 import com.friends.board.entity.Board
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -33,7 +33,7 @@ interface BoardControllerSpec {
     //TODO: 여기서부턴 작성해야함
     fun getBoard(
         @PathVariable id: Long,
-    ): ResponseEntity<BoardFormDto>
+    ): ResponseEntity<BoardResponseFormDto>
 
     fun deleteBoard(
         @PathVariable id: Long,

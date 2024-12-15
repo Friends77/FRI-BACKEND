@@ -1,8 +1,8 @@
 package com.friends.board
 
 import com.friends.TEST_CATEGORY_ID
-import com.friends.board.dto.BoardFormDto
 import com.friends.board.dto.BoardRequestFormDto
+import com.friends.board.dto.BoardResponseFormDto
 import com.friends.board.entity.Board
 import com.friends.board.entity.BoardCategory
 import com.friends.createTestCategory
@@ -26,6 +26,6 @@ fun createTestBoard(): Board = Board(id = BOARD_ID, member = createTestMember(),
 
 val createBoardRequestFormDto = BoardRequestFormDto(content = createTestBoard().content, categoryIds = setOf(TEST_CATEGORY_ID))
 
-val boardFormDto = BoardFormDto(content = createTestBoard().content, categories = listOf(createTestCategoryInfoResponse()))
+val boardFormDto = BoardResponseFormDto(content = createTestBoard().content, categories = listOf(createTestCategoryInfoResponse()))
 
 fun createBoardCategory(): List<BoardCategory> = listOf(BoardCategory(id = BOARD_HASHTAG_ID, board = createTestBoard(), category = createTestCategory()))

@@ -7,7 +7,7 @@ data class BoardRequestFormDto(
     var categoryIds: Set<Long>,
 )
 
-data class BoardFormDto(
+data class BoardResponseFormDto(
     var content: String,
     var categories: List<CategoryInfoResponse>,
 )

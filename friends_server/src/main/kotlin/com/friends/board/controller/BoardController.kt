@@ -1,7 +1,7 @@
 package com.friends.board.controller
 
-import com.friends.board.dto.BoardFormDto
 import com.friends.board.dto.BoardRequestFormDto
+import com.friends.board.dto.BoardResponseFormDto
 import com.friends.board.entity.Board
 import com.friends.board.service.BoardCommandService
 import com.friends.board.service.BoardQueryService
@@ -39,13 +39,13 @@ class BoardController(
     @GetMapping("api/board/{id}")
     override fun getBoard(
         @PathVariable id: Long,
-    ): ResponseEntity<BoardFormDto> {
+    ): ResponseEntity<BoardResponseFormDto> {
         val (board, categories) =
             boardQueryService.getBoard(id)
                 ?: return ResponseEntity.notFound().build()
 
         val boardDto =
-            BoardFormDto(
+            BoardResponseFormDto(
                 content = board.content,
                 categories = categories.map { toCategoryInfoResponse(it) },
             )
