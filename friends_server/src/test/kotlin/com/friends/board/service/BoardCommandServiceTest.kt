@@ -1,17 +1,19 @@
 package com.friends.board.service
 
-import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
-import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.NON_AUTHORIZED_MEMBER_ID
 import com.friends.board.REQUEST_MEMBER_ID
-import com.friends.board.boardFormDto
+import com.friends.board.createBoardCategory
+import com.friends.board.createBoardRequestFormDto
 import com.friends.board.createTestBoard
 import com.friends.board.createTestMember
-import com.friends.board.entity.BoardHashtag
-import com.friends.board.repository.BoardHashtagRepository
+import com.friends.board.entity.BoardCategory
+import com.friends.board.exception.BoardNotFoundException
+import com.friends.board.exception.InvalidBoardAccessException
+import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.board.repository.HashtagRepository
+import com.friends.board.repository.CategoryRepository
+import com.friends.createTestCategory
 import com.friends.member.repository.MemberRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -24,31 +26,32 @@ class BoardCommandServiceTest :
     BehaviorSpec({
         val boardRepository = mockk<BoardRepository>()
         val memberRepository = mockk<MemberRepository>()
-        val hashtagRepository = mockk<HashtagRepository>()
-        val boardHashtagRepository = mockk<BoardHashtagRepository>()
+        val categoryRepository = mockk<CategoryRepository>()
+        val boardCategoryRepository = mockk<BoardCategoryRepository>()
 
         val boardCommandService =
             BoardCommandService(
                 boardRepository = boardRepository,
                 memberRepository = memberRepository,
-                hashtagRepository = hashtagRepository,
-                boardHashtagRepository = boardHashtagRepository,
+                categoryRepository = categoryRepository,
+                boardCategoryRepository = boardCategoryRepository,
             )
 
         given("createBoard 메서드를 호출할 때") {
             every { memberRepository.findById(REQUEST_MEMBER_ID) } returns Optional.of(createTestMember())
             every { boardRepository.save(any()) } answers { firstArg() }
-            every { hashtagRepository.findByTag(any()) } answers { null } //모든 해시태그는 새로 생성됩니다.
-            every { hashtagRepository.save(any()) } answers { firstArg() } //저장된 해시태그 반환
-            every { boardHashtagRepository.saveAll(any<List<BoardHashtag>>()) } answers { firstArg() }
+            every { categoryRepository.findByName(any()) } answers { null } //모든 해시태그는 새로 생성됩니다.
+            every { categoryRepository.save(any()) } answers { firstArg() } //저장된 해시태그 반환
+            every { boardCategoryRepository.saveAll(any<List<BoardCategory>>()) } answers { firstArg() }
+            every { categoryRepository.findByIdIn(any()) } answers { listOf(createTestCategory()) }
 
             val testMember = createTestMember()
 
             `when`("유효한 작성자가 글을 작성했으면") {
-                val result = boardCommandService.createBoard(boardFormDto, REQUEST_MEMBER_ID)
+                val result = boardCommandService.createBoard(createBoardRequestFormDto, REQUEST_MEMBER_ID)
 
                 then("게시글이 저장되고 반환되어야 한다.") {
-                    result.content shouldBe boardFormDto.content
+                    result.content shouldBe createBoardRequestFormDto.content
                     result.member === testMember
                 }
             }
@@ -93,10 +96,13 @@ class BoardCommandServiceTest :
         given("updateBoard 메서드를 호출할 때") {
             every { boardRepository.findById(createTestBoard().id) } returns Optional.of(createTestBoard())
             every { boardRepository.deleteById(createTestBoard().id) } returns Unit
+            every { boardCategoryRepository.deleteByBoardId(any()) } returns Unit
+            every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
+            every { boardCategoryRepository.saveAll(any<List<BoardCategory>>()) } returns createBoardCategory()
 
             `when`("수정하려는 회원이 해당 게시글의 작성자라면") {
                 val updatedContent = "Updated content"
-                val updatedDto = boardFormDto.copy(content = updatedContent)
+                val updatedDto = createBoardRequestFormDto.copy(content = updatedContent)
                 createTestBoard().content = updatedContent
 
                 val result = boardCommandService.updateBoard(createTestBoard().id, updatedDto, REQUEST_MEMBER_ID)
@@ -111,7 +117,7 @@ class BoardCommandServiceTest :
                 then("권한 없음 예외가 발생해야 한다.") {
                     val exception =
                         assertThrows<InvalidBoardAccessException> {
-                            boardCommandService.updateBoard(createTestBoard().id, boardFormDto, NON_AUTHORIZED_MEMBER_ID)
+                            boardCommandService.updateBoard(createTestBoard().id, createBoardRequestFormDto, NON_AUTHORIZED_MEMBER_ID)
                         }
                     exception.message shouldBe "게시글에 대한 유효하지 않은 접근입니다."
                 }

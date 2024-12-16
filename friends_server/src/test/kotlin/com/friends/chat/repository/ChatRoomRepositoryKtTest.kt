@@ -16,7 +16,6 @@ class ChatRoomRepositoryKtTest(
     private val chatRoomRepository: ChatRoomRepository,
 ) : DescribeSpec(
         {
-
             lateinit var member: Member
             lateinit var chatRoom1: ChatRoom
             beforeEach {

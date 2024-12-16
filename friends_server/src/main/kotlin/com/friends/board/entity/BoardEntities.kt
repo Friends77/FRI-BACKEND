@@ -1,6 +1,7 @@
 package com.friends.board.entity
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardRequestFormDto
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.CascadeType
@@ -31,29 +32,20 @@ class Board(
     @Column(name = "like_count")
     var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
-    fun updateBoard(boardFormDto: BoardFormDto) {
+    fun updateBoard(boardFormDto: BoardRequestFormDto) {
         content = boardFormDto.content
     }
 }
 
 @Entity
-class BoardHashtag(
+class BoardCategory(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_hashtag_id")
+    @Column(name = "board_category_id")
     val id: Long = 0L,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     var board: Board,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hashtag_id", nullable = false)
-    var hashtag: Hashtag,
-)
-
-@Entity
-class Hashtag(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "hashtag_id")
-    val id: Long = 0L,
-    @Column(nullable = false)
-    var tag: String,
+    @JoinColumn(name = "category_id", nullable = false)
+    var category: Category,
 )

@@ -1,6 +1,13 @@
 package com.friends.board.dto
 
-data class BoardFormDto(
+import com.friends.category.dto.CategoryInfoResponse
+
+data class BoardRequestFormDto(
     var content: String,
-    var hashtags: List<String>,
+    var categoryIds: Set<Long>,
+)
+
+data class BoardResponseFormDto(
+    var content: String,
+    var categories: List<CategoryInfoResponse>,
 )

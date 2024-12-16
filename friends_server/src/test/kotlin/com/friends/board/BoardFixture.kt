@@ -1,9 +1,12 @@
 package com.friends.board
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.TEST_CATEGORY_ID
+import com.friends.board.dto.BoardRequestFormDto
+import com.friends.board.dto.BoardResponseFormDto
 import com.friends.board.entity.Board
-import com.friends.board.entity.BoardHashtag
-import com.friends.board.entity.Hashtag
+import com.friends.board.entity.BoardCategory
+import com.friends.createTestCategory
+import com.friends.createTestCategoryInfoResponse
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
 import org.springframework.data.domain.PageRequest
@@ -21,9 +24,8 @@ fun createTestMember(): Member = Member(id = REQUEST_MEMBER_ID, nickname = "Test
 
 fun createTestBoard(): Board = Board(id = BOARD_ID, member = createTestMember(), content = "Test content")
 
-fun createTestHashtags(): Hashtag = Hashtag(id = HASHTAG_ID, tag = "testTag")
+val createBoardRequestFormDto = BoardRequestFormDto(content = createTestBoard().content, categoryIds = setOf(TEST_CATEGORY_ID))
 
-val testHashtags = listOf("friends", "kotlin")
-val boardFormDto = BoardFormDto(content = createTestBoard().content, hashtags = testHashtags)
+val boardFormDto = BoardResponseFormDto(content = createTestBoard().content, categories = listOf(createTestCategoryInfoResponse()))
 
-fun createBoardHashtag(): List<BoardHashtag> = listOf(BoardHashtag(id = BOARD_HASHTAG_ID, board = createTestBoard(), hashtag = createTestHashtags()))
+fun createBoardCategory(): List<BoardCategory> = listOf(BoardCategory(id = BOARD_HASHTAG_ID, board = createTestBoard(), category = createTestCategory()))
