@@ -35,7 +35,7 @@ interface BoardControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "게시판 상세 조회 성공"
+                description = "게시판 상세 조회 성공",
             ),
         ],
     )
@@ -48,7 +48,7 @@ interface BoardControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "204",
-                description = "게시판 삭제 성공"
+                description = "게시판 삭제 성공",
             ),
         ],
     )
@@ -62,7 +62,7 @@ interface BoardControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "게시판 수정 성공"
+                description = "게시판 수정 성공",
             ),
         ],
     )
@@ -77,7 +77,7 @@ interface BoardControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "201",
-                description = "게시판 전체 조회 성공"
+                description = "게시판 전체 조회 성공",
             ),
         ],
     )
