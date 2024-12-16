@@ -1,7 +1,7 @@
 package com.friends.chat.entity
 
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseTimeEntity
-import com.friends.common.entity.Category
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType

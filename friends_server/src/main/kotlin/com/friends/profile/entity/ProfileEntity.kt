@@ -1,7 +1,7 @@
 package com.friends.profile.entity
 
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
-import com.friends.common.entity.Category
 import com.friends.member.entity.Member
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto

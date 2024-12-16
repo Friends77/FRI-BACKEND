@@ -3,7 +3,7 @@ package com.friends.board.service
 import com.friends.board.entity.Board
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.common.entity.Category
+import com.friends.category.entity.Category
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull

@@ -1,6 +1,6 @@
 package com.friends.profile.dto
 
-import com.friends.common.entity.Category
+import com.friends.category.entity.Category
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum

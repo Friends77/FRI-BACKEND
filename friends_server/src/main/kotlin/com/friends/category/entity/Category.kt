@@ -1,4 +1,4 @@
-package com.friends.common.entity
+package com.friends.category.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

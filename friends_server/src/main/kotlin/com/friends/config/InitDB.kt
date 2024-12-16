@@ -1,8 +1,8 @@
 package com.friends.config
 
 import com.friends.board.repository.CategoryRepository
-import com.friends.common.entity.Category
-import com.friends.common.entity.CategoryType
+import com.friends.category.entity.Category
+import com.friends.category.entity.CategoryType
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.stereotype.Component

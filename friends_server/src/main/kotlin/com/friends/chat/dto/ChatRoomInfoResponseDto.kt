@@ -1,6 +1,6 @@
 package com.friends.chat.dto
 
-import com.friends.chat.dto.category.CategoryInfoResponse
+import com.friends.category.dto.CategoryInfoResponse
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class ChatRoomInfoResponseDto(

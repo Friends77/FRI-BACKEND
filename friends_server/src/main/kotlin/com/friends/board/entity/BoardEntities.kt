@@ -1,8 +1,8 @@
 package com.friends.board.entity
 
 import com.friends.board.dto.BoardRequestFormDto
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
-import com.friends.common.entity.Category
 import com.friends.member.entity.Member
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column

@@ -1,6 +1,6 @@
 package com.friends.profile
 
-import com.friends.common.entity.Category
+import com.friends.category.entity.Category
 import com.friends.createTestCategory
 import com.friends.member.MEMBER_ID
 import com.friends.member.entity.Member

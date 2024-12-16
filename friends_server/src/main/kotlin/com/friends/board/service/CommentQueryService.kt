@@ -12,21 +12,22 @@ import java.time.LocalDateTime
 class CommentQueryService(
     private val boardRepository: BoardRepository,
     private val commentRepository: CommentRepository,
-){
+) {
     //댓글조회
     @Transactional(readOnly = true)
     fun getCommentList(
         boardId: Long,
         lastCreatedAt: LocalDateTime? = null,
     ): List<Comment> {
-        if(!boardRepository.existsById(boardId)) {
+        if (!boardRepository.existsById(boardId)) {
             throw BoardNotFoundException()
         }
-        return if(lastCreatedAt == null){
+        return if (lastCreatedAt == null) {
             commentRepository.findTop20ByBoardIdOrderByCreatedAtAsc(boardId)
         } else {
             commentRepository.findTop20ByBoardIdAndCreatedAtAfterOrderByIdAsc(
-                boardId, lastCreatedAt
+                boardId,
+                lastCreatedAt,
             )
         }
     }

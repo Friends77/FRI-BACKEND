@@ -1,6 +1,6 @@
-package com.friends.chat.dto.category
+package com.friends.category.dto
 
-import com.friends.common.entity.CategoryType
+import com.friends.category.entity.CategoryType
 import io.swagger.v3.oas.annotations.media.Schema
 
 data class CategoryInfoResponse(

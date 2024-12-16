@@ -9,7 +9,7 @@ import com.friends.board.exception.NotFoundBoardCategoryException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CategoryRepository
-import com.friends.common.entity.Category
+import com.friends.category.entity.Category
 import com.friends.member.repository.MemberRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

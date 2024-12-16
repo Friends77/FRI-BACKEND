@@ -1,6 +1,6 @@
 package com.friends.board.dto
 
-import com.friends.chat.dto.category.CategoryInfoResponse
+import com.friends.category.dto.CategoryInfoResponse
 
 data class BoardRequestFormDto(
     var content: String,

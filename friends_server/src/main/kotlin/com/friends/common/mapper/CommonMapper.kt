@@ -1,8 +1,8 @@
 package com.friends.common.mapper
 
-import com.friends.chat.dto.category.CategoryInfoResponse
+import com.friends.category.dto.CategoryInfoResponse
+import com.friends.category.entity.Category
 import com.friends.common.dto.SliceBaseResponse
-import com.friends.common.entity.Category
 import org.springframework.data.domain.Slice
 
 fun <T> toSliceBaseResponse(slice: Slice<T>): SliceBaseResponse<T> = SliceBaseResponse(content = slice.content, hasNext = slice.hasNext())
