@@ -31,4 +31,6 @@ class ChatRoomQueryService(
         val chatRoomInfoResponse = chatRoomMemberRepository.sliceChatRoomIdByMember(memberId, chatRooms, size, lastChatRoomId).map { toChatRoomInfoResponse(it, chatRoomMemberRepository.countByChatRoom(it)) }
         return toSliceBaseResponse(chatRoomInfoResponse)
     }
+
+    @Transactional
 }
