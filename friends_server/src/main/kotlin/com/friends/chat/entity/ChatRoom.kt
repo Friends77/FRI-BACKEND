@@ -3,6 +3,7 @@ package com.friends.chat.entity
 import com.friends.chat.PositiveLikeCountException
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import com.friends.message.entity.Message
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
