@@ -1,6 +1,8 @@
 package com.friends.security
 
 import com.friends.member.entity.OAuth2Provider
+import com.friends.profile.entity.GenderEnum
+import com.friends.profile.entity.MbtiEnum
 
 data class LoginRequestDto(
     val email: String,
@@ -14,9 +16,21 @@ data class LoginResponseDto(
 
 data class RegisterRequestDto(
     val authToken: String,
-    val email: String,
-    val password: String,
+    val email: String? = null,
+    val password: String? = null,
     val nickname: String,
+    val birth: Int,
+    val gender: GenderEnum,
+    val selfDescription: String? = null,
+    val mbti: MbtiEnum? = null,
+    val interestTag: List<Long> = emptyList(),
+    val imageUrl: String? = null,
+    val location: LocationDto? = null,
+)
+
+data class LocationDto(
+    val latitude: Double,
+    val longitude: Double,
 )
 
 data class AtRtDto(
