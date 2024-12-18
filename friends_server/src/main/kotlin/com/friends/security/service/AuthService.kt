@@ -100,6 +100,9 @@ class AuthService(
             throw InvalidNicknameException()
         }
 
+        // 유효성 검사를 통과한 멤버 저장
+        memberRepository.save(user)
+
         // 프로필 생성
         val profile =
             Profile(
