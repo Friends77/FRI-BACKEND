@@ -35,11 +35,13 @@ class Board(
     fun updateBoard(boardUpdateDto: BoardRequestDto) {
         content = boardUpdateDto.content
     }
-    fun increaseLike(){
+
+    fun increaseLike() {
         likeCount++
     }
-    fun decreaseLike(){
-        if(likeCount > 0 ) likeCount--
+
+    fun decreaseLike() {
+        if (likeCount > 0) likeCount--
     }
 }
 
