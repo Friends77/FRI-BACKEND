@@ -30,7 +30,7 @@ class ChatRoomQueryService(
                 chatRooms = chatRoomMemberRepository.findChatRoomByMemberListIn(friends)
             }
         }
-        val chatRoomInfoResponse = chatRoomMemberRepository.sliceChatRoomIdByMember(memberId, chatRooms, size, lastChatRoomId).map { toChatRoomInfoResponse(it, chatRoomMemberRepository.countByChatRoom(it.chatRoom), messageRepository.countUnreadMessages(it)) } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
+        val chatRoomInfoResponse = chatRoomMemberRepository.sliceChatRoomIdByMember(memberId, chatRooms, size, lastChatRoomId).map { toChatRoomInfoResponse(it, chatRoomMemberRepository.countByChatRoom(it.chatRoom), messageRepository.countUnreadMessages(it).let { count -> if (count > 999) 999 else count }) } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
         return toSliceBaseResponse(chatRoomInfoResponse)
     }
 }
