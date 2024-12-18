@@ -1,11 +1,13 @@
 package com.friends.board.controller
 
 import com.friends.board.dto.CommentAddDto
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.dto.CommentUpdateDto
-import com.friends.board.entity.Comment
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
@@ -82,10 +84,16 @@ interface CommentControllerSpec {
             ApiResponse(
                 responseCode = "200",
                 description = "댓글 조회 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = CommentResponseDto::class),
+                    ),
+                ],
             ),
         ],
     )
     fun getComments(
         @PathVariable boardId: Long,
-    ): List<Comment>
+    ): List<CommentResponseDto>
 }
