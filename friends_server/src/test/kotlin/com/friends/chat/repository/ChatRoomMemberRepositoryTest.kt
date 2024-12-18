@@ -2,6 +2,7 @@ package com.friends.chat.repository
 
 import com.friends.TEST_SIZE
 import com.friends.chat.createTestChatRoom
+import com.friends.chat.createTestChatRoomMember
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.member.MEMBER_OTHER_EMAIL
@@ -9,6 +10,9 @@ import com.friends.member.MEMBER_OTHER_NICKNAME
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.message.createTestMessage
+import com.friends.message.entity.Message
+import com.friends.message.repository.MessageRepository
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -18,6 +22,7 @@ class ChatRoomMemberRepositoryTest(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val messageRepository: MessageRepository,
 ) : DescribeSpec({
         lateinit var member1: Member
         lateinit var member2: Member
@@ -26,14 +31,16 @@ class ChatRoomMemberRepositoryTest(
         lateinit var chatRoomMember: ChatRoomMember
         lateinit var chatRoomMember2: ChatRoomMember
         lateinit var chatRoomMember3: ChatRoomMember
+        lateinit var message: Message
         beforeEach {
             member1 = memberRepository.save(createTestMember())
             member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL, nickname = MEMBER_OTHER_NICKNAME))
             chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member1))
             chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
-            chatRoomMember = chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom1, member1))
-            chatRoomMember2 = chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom1, member2))
-            chatRoomMember3 = chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom2, member2))
+            message = messageRepository.save(createTestMessage(chatRoom1, member1))
+            chatRoomMember = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1, message))
+            chatRoomMember2 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member2, message))
+            chatRoomMember3 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member2, message))
         }
 
         describe("countByChatRoomId 메서드는") {
@@ -55,25 +62,25 @@ class ChatRoomMemberRepositoryTest(
         describe("sliceChatRoomIdByMember 메서드는") {
             context("memberId만 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoom2, chatRoom1)
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoomMember3, chatRoomMember2)
                 }
             }
 
             context("채팅방 ID 리스트를 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(chatRoom1), TEST_SIZE, null).content shouldBe listOf(chatRoom1)
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(chatRoom1), TEST_SIZE, null).content shouldBe listOf(chatRoomMember2)
                 }
             }
 
             context("사이즈를 받으면") {
                 it("chatRoomMember를 사이즈만큼 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), 1, null).content shouldBe listOf(chatRoom2)
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), 1, null).content shouldBe listOf(chatRoomMember3)
                 }
             }
 
             context("회원 ID와 마지막 채팅방 ID를 받으면") {
                 it("chatRoomMember를 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, chatRoom2.id).content shouldBe listOf(chatRoom1)
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, chatRoom2.id).content shouldBe listOf(chatRoomMember2)
                 }
             }
         }

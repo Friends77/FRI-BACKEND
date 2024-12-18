@@ -26,7 +26,7 @@ interface ChatRoomMemberCustomRepository {
         chatRoomList: List<ChatRoom>,
         size: Int,
         lastChatRoomId: Long?,
-    ): Slice<ChatRoom>
+    ): Slice<ChatRoomMember>
 
     fun findChatRoomByMemberListIn(friendsList: List<Member>): List<ChatRoom>
 }
@@ -39,10 +39,10 @@ class ChatRoomMemberCustomRepositoryImpl(
         chatRoomList: List<ChatRoom>,
         size: Int,
         lastChatRoomId: Long?,
-    ): Slice<ChatRoom> {
+    ): Slice<ChatRoomMember> {
         val pageable = Pageable.ofSize(size)
         return kotlinJdslJpqlExecutor.getSlice(pageable) {
-            select(path(ChatRoomMember::chatRoom))
+            select(entity(ChatRoomMember::class))
                 .from(entity(ChatRoomMember::class), join(ChatRoomMember::chatRoom))
                 .where(
                     and(

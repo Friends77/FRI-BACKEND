@@ -7,12 +7,14 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.entity.Member
+import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ChatRoomQueryService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val messageRepository: MessageRepository,
 ) {
     @Transactional
     fun getChatRooms(
@@ -28,7 +30,7 @@ class ChatRoomQueryService(
                 chatRooms = chatRoomMemberRepository.findChatRoomByMemberListIn(friends)
             }
         }
-        val chatRoomInfoResponse = chatRoomMemberRepository.sliceChatRoomIdByMember(memberId, chatRooms, size, lastChatRoomId).map { toChatRoomInfoResponse(it, chatRoomMemberRepository.countByChatRoom(it)) }
+        val chatRoomInfoResponse = chatRoomMemberRepository.sliceChatRoomIdByMember(memberId, chatRooms, size, lastChatRoomId).map { toChatRoomInfoResponse(it, chatRoomMemberRepository.countByChatRoom(it.chatRoom), messageRepository.countUnreadMessages(it)) } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
         return toSliceBaseResponse(chatRoomInfoResponse)
     }
 }

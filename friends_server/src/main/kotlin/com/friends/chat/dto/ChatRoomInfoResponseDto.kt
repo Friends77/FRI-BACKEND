@@ -2,6 +2,7 @@ package com.friends.chat.dto
 
 import com.friends.category.dto.CategoryInfoResponse
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 data class ChatRoomInfoResponseDto(
     @Schema(description = "채팅방 ID")
@@ -14,6 +15,8 @@ data class ChatRoomInfoResponseDto(
     val categoryIdList: List<CategoryInfoResponse>,
     @Schema(description = "채팅방 참여자 수")
     val participantCount: Int,
-    @Schema(description = "채팅방 좋아요 수")
-    val likeCount: Int,
+    @Schema(description = "채팅방 마지막 메세지 시간")
+    val lastMessageTime: LocalDateTime,
+    @Schema(description = "안 읽은 메세지 수")
+    val unreadMessageCount: Int,
 )
