@@ -6,5 +6,5 @@ import com.friends.member.entity.Member
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface LikeRepository : JpaRepository<Like, Long> {
-    fun findByMemberAndBoard(member: Member?, board: Board?): Like
+    fun findByMemberAndBoard(member: Member, board: Board): Like?
 }
