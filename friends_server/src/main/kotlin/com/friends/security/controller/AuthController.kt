@@ -36,12 +36,7 @@ class AuthController(
     fun register(
         @RequestBody registerRequestDto: RegisterRequestDto,
     ): ResponseEntity<String> {
-        authService.register(
-            registerRequestDto.authToken,
-            registerRequestDto.email,
-            registerRequestDto.password,
-            registerRequestDto.nickname,
-        )
+        authService.register(registerRequestDto)
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.")
     }
 

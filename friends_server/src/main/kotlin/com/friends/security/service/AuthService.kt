@@ -1,5 +1,6 @@
 package com.friends.security.service
 
+import com.friends.category.repository.CategoryRepository
 import com.friends.config.AuthProperties
 import com.friends.jwt.AtRtService
 import com.friends.jwt.JwtService
@@ -8,10 +9,16 @@ import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
 import com.friends.oauth2.OAuth2Service
+import com.friends.profile.entity.Location
+import com.friends.profile.entity.Profile
+import com.friends.profile.entity.ProfileInterestTag
+import com.friends.profile.repository.ProfileInterestTagRepository
+import com.friends.profile.repository.ProfileRepository
 import com.friends.security.AtRtDto
 import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.OAuth2LoginDto
+import com.friends.security.RegisterRequestDto
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.EmailNotFoundException
 import com.friends.security.securityException.InvalidNicknameException
@@ -25,6 +32,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
 
 @Service
 class AuthService(
@@ -35,6 +43,9 @@ class AuthService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
     private val oAuth2Service: OAuth2Service,
+    private val profileInterestTagRepository: ProfileInterestTagRepository,
+    private val categoryRepository: CategoryRepository,
+    private val profileRepository: ProfileRepository,
 ) {
     @Transactional(readOnly = true)
     fun login(
@@ -64,44 +75,80 @@ class AuthService(
 
     @Transactional
     fun register(
-        emailAuthToken: String,
-        email: String,
-        password: String,
-        nickname: String,
+        registerRequestDto: RegisterRequestDto,
     ) {
         // emailAuthToken 검증
-        if (!jwtService.validate(emailAuthToken)) {
+        if (!jwtService.validate(registerRequestDto.authToken)) {
             throw InvalidTokenException()
         }
 
-        // emailAuthToken 에서 email 추출하여 인증 받은 이메일과 일치하는지 검증
-        val emailFromToken = jwtService.getClaim(emailAuthToken, "email", String::class.java)
-        if (emailFromToken != email) {
-            throw InvalidTokenException()
-        }
+        // Email-Password 회원가입인지, OAuth2 회원가입인지 확인
+        val type = jwtService.getClaim(registerRequestDto.authToken, "type", String::class.java)?.let { JwtType.valueOf(it) } ?: throw InvalidTokenException()
+        val user =
+            when (type) {
+                JwtType.EMAIL -> registerByEmail(registerRequestDto)
+                JwtType.OAUTH2 -> registerByOAuth2(registerRequestDto)
+            }
 
         // 이메일이 중복되는지 검증
-        if (memberRepository.existsByEmail(email)) {
+        if (!validateEmail(user.email).isValid) {
             throw EmailDuplicateException()
         }
 
-        // 비밀번호 규칙 검증
-        if (!validatePassword(password)) {
-            throw InvalidPasswordException()
-        }
-
-        // 닉네임 유효성 검사
-        if (!validateNickname(nickname).isValid) {
+        // 닉네임이 중복되는지 검증
+        if (!validateNickname(user.nickname).isValid) {
             throw InvalidNicknameException()
         }
 
-        val user =
-            Member.createUser(
-                nickname = nickname,
-                email = email,
-                password = passwordEncoder.encode(password),
+        // 프로필 생성
+        val profile =
+            Profile(
+                member = user,
+                imageUrl = registerRequestDto.imageUrl ?: "default image url",
+                gender = registerRequestDto.gender,
+                birth = LocalDate.of(registerRequestDto.birth, 1, 1),
+                location = registerRequestDto.location?.let { Location(it.latitude, it.longitude) },
+                selfDescription = registerRequestDto.selfDescription,
+                mbti = registerRequestDto.mbti,
             )
-        memberRepository.save(user)
+        profileRepository.save(profile)
+
+        // 프로필 관심사 태그 생성
+        profileInterestTagRepository.saveAll(
+            registerRequestDto.interestTag.map {
+                ProfileInterestTag(profile = profile, category = categoryRepository.findById(it).orElseThrow { IllegalArgumentException() })
+            },
+        )
+    }
+
+    private fun registerByOAuth2(registerRequestDto: RegisterRequestDto): Member {
+        val email = jwtService.getClaim(registerRequestDto.authToken, "email", String::class.java) ?: throw InvalidTokenException()
+        val provider = jwtService.getClaim(registerRequestDto.authToken, "provider", String::class.java)?.let { OAuth2Provider.valueOf(it) } ?: throw InvalidTokenException()
+        val nickname = registerRequestDto.nickname
+        val imageUrl = registerRequestDto.imageUrl
+        return Member.createUser(
+            nickname = nickname,
+            email = email,
+            imageUrl = imageUrl,
+            oauth2Provider = provider,
+        )
+    }
+
+    private fun registerByEmail(registerRequestDto: RegisterRequestDto): Member {
+        val email = jwtService.getClaim(registerRequestDto.authToken, "email", String::class.java) ?: throw InvalidTokenException()
+        val nickname = registerRequestDto.nickname
+        val password = registerRequestDto.password
+        // 패스워드 유효성 검사
+        if (!validatePassword(password!!)) {
+            throw InvalidPasswordException()
+        }
+        val imageUrl = registerRequestDto.imageUrl
+        return Member.createUser(
+            nickname = nickname,
+            email = email,
+            password = passwordEncoder.encode(password),
+            imageUrl = imageUrl,
+        )
     }
 
     fun validatePassword(password: String): Boolean {
@@ -156,6 +203,7 @@ class AuthService(
                 jwtService.createToken(
                     "email" to userProfile.email,
                     "type" to JwtType.OAUTH2,
+                    "provider" to oAuth2Provider,
                     expirationSeconds = authProperties.oauth2JwtExpiration,
                 )
             return OAuth2LoginDto(isRegistered = false, email = userProfile.email, nickname = userProfile.name, imageUrl = userProfile.imageUrl, authToken = authToken)
