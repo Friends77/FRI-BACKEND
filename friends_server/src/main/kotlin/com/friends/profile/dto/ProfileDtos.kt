@@ -1,6 +1,8 @@
 package com.friends.profile.dto
 
+import com.friends.category.entity.Category
 import com.friends.profile.entity.GenderEnum
+import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
 import java.time.LocalDate
 
@@ -8,10 +10,10 @@ import java.time.LocalDate
 data class ProfileCreateDto(
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
@@ -19,10 +21,10 @@ data class ProfileCreateDto(
 data class ProfileUpdateDto(
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
@@ -32,9 +34,16 @@ data class ProfileResponseDto(
     val email: String,
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String?,
+    var location: Location?,
     var selfDescription: String?,
     var mbti: MbtiEnum?,
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var interestTag: MutableSet<Category> = mutableSetOf(),
     var imageUrl: String,
+)
+
+data class ProfileWithDistanceDto(
+    val id: Long,
+    val nickname: String,
+    val imageUrl: String,
+    val distance: Double,
 )

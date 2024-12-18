@@ -1,6 +1,7 @@
 package com.friends.security.controller
 
 import com.friends.jwt.AtRtService
+import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.LoginRequestDto
 import com.friends.security.LoginResponseDto
@@ -36,7 +37,7 @@ class AuthController(
         @RequestBody registerRequestDto: RegisterRequestDto,
     ): ResponseEntity<String> {
         authService.register(
-            registerRequestDto.emailAuthToken,
+            registerRequestDto.authToken,
             registerRequestDto.email,
             registerRequestDto.password,
             registerRequestDto.nickname,
@@ -62,18 +63,30 @@ class AuthController(
             .body(LoginResponseDto(memberId, atRtDto.accessToken))
     }
 
-    @PostMapping("/oauth2-login")
+    @PostMapping("/oauth2")
     fun oauth2Login(
         @RequestBody oauth2LoginRequestDto: OAuth2LoginRequestDto,
     ): ResponseEntity<OAuth2LoginResponseDto> {
-        val oauth2LoginSuccessDto = authService.loginByOAuth2(oauth2LoginRequestDto.code, oauth2LoginRequestDto.provider)
-        val memberId = atRtService.getMemberId(oauth2LoginSuccessDto.accessToken)
+        val oauth2LoginDto = authService.loginByOAuth2(oauth2LoginRequestDto.code, oauth2LoginRequestDto.provider)
+        if (oauth2LoginDto.isRegistered) {
+            val memberId = atRtService.getMemberId(oauth2LoginDto.accessToken!!)
 
-        return ResponseEntity
-            .ok()
-            // refresh token 을 쿠키로 전달합니다.
-            .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginSuccessDto.refreshToken).toString())
-            .body(OAuth2LoginResponseDto(memberId, oauth2LoginSuccessDto.accessToken, oauth2LoginSuccessDto.firstLogin))
+            return ResponseEntity
+                .ok()
+                .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginDto.refreshToken!!).toString())
+                .body(OAuth2LoginResponseDto(memberId = memberId, accessToken = oauth2LoginDto.accessToken, isRegistered = true))
+        } else {
+            return ResponseEntity
+                .ok()
+                .body(
+                    OAuth2LoginResponseDto(
+                        isRegistered = false,
+                        email = oauth2LoginDto.email,
+                        nickname = oauth2LoginDto.nickname,
+                        imageUrl = oauth2LoginDto.imageUrl,
+                    ),
+                )
+        }
     }
 
     @PostMapping("/refresh")
@@ -92,7 +105,7 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(
         @RequestBody logoutRequestDto: LogoutRequestDto,
-        @CookieValue refreshToken: String,
+        @CookieValue(required = false) refreshToken: String,
     ): ResponseEntity<String> {
         // accessToken 과 refreshToken 을 삭제합니다.
         authService.logout(logoutRequestDto.accessToken, refreshToken)
@@ -114,6 +127,11 @@ class AuthController(
     fun checkNickname(
         @RequestParam nickname: String,
     ): ResponseEntity<CheckNicknameResponseDto> = ResponseEntity.ok(authService.validateNickname(nickname))
+
+    @GetMapping("/check-email")
+    fun checkEmail(
+        @RequestParam email: String,
+    ): ResponseEntity<CheckEmailResponseDto> = ResponseEntity.ok(authService.validateEmail(email))
 
     /**
      * cookie 를 생성하여 문자열로 변환시 아래와 같은 형태로 변환됩니다.

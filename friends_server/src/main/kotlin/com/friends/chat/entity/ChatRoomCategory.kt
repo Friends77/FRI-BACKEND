@@ -1,5 +1,6 @@
 package com.friends.chat.entity
 
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseTimeEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -13,7 +14,7 @@ import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 
 @Entity
-@Table(name = "chat_room_category", uniqueConstraints = [UniqueConstraint(columnNames = ["chat_room_id", "chat_subject_category_id"], name = "chat_room_category_unique")])
+@Table(name = "chat_room_category", uniqueConstraints = [UniqueConstraint(columnNames = ["chat_room_id", "category_id"], name = "chat_room_category_unique")])
 class ChatRoomCategory(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,8 +24,8 @@ class ChatRoomCategory(
     @JoinColumn(name = "chat_room_id", nullable = false, updatable = false)
     val chatRoom: ChatRoom,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_subject_category_id", nullable = false, updatable = false)
-    val chatSubjectCategory: ChatSubjectCategory,
+    @JoinColumn(name = "category_id", nullable = false, updatable = false)
+    val category: Category,
 ) : BaseTimeEntity() {
-    constructor(chatRoom: ChatRoom, chatSubjectCategory: ChatSubjectCategory) : this(0L, chatRoom, chatSubjectCategory)
+    constructor(chatRoom: ChatRoom, category: Category) : this(0L, chatRoom, category)
 }

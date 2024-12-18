@@ -44,6 +44,7 @@ enum class ErrorCode(
     // Board API error 16000대
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
+    BOARD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -16003, "전부 존재하지 않는 게시판 카테고리입니다."),
 
     // Chat API error 17000대
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),
@@ -51,7 +52,7 @@ enum class ErrorCode(
     CHAT_ROOM_TITLE_INVALID_LENGTH(HttpStatus.BAD_REQUEST, -17003, "채팅방 제목은 1자 이상 20자 이하로 입력해주세요."),
     CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
     CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
-    CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "존재하지 않는 채팅방 카테고리입니다."),
+    CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "전부 존재하지 않는 채팅방 카테고리입니다."),
     INVALID_LAST_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17007, "lastChatRoomId는는 양수여야 합니다."),
 
     // Comment API error 18000대

@@ -9,3 +9,5 @@ abstract class BoardException(
 class BoardNotFoundException : BoardException(ErrorCode.NOT_FOUND_BOARD)
 
 class InvalidBoardAccessException : BoardException(ErrorCode.INVALID_BOARD_ACCESS)
+
+class NotFoundBoardCategoryException : BoardException(ErrorCode.BOARD_CATEGORY_NOT_FOUND)

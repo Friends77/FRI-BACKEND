@@ -1,11 +1,14 @@
 package com.friends.profile.entity
 
+import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
-import jakarta.persistence.ElementCollection
+import jakarta.persistence.Embeddable
+import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
@@ -14,9 +17,9 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
-import jakarta.persistence.PrePersist
-import jakarta.persistence.PreUpdate
 import java.time.LocalDate
 
 @Entity
@@ -31,25 +34,28 @@ class Profile(
     var birth: LocalDate,
     @Enumerated(EnumType.STRING)
     var gender: GenderEnum,
-    var location: String?,
+    @Embedded
+    var location: Location? = null,
     @Column(name = "self_description", length = 100)
-    var selfDescription: String?,
+    var selfDescription: String? = null,
     @Enumerated(EnumType.STRING)
-    var mbti: MbtiEnum?,
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Column(name = "interest_tag", length = 225)
-    var interestTag: MutableSet<String> = mutableSetOf(),
+    var mbti: MbtiEnum? = null,
+    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "profile")
+    @Column(name = "Category", length = 225)
+    var interestTag: MutableSet<ProfileInterestTag> = mutableSetOf(),
     //기본이미지가 있기 때문에 null이 될 수 없습니다
     @Column(name = "image_url")
     var imageUrl: String,
 ) : BaseModifiableEntity() {
+    /*
+    oneToMany가 되면서 해당 검사를 할 수 없습니다
     @PrePersist
     @PreUpdate
     fun validate() {
         if (interestTag.isEmpty()) {
             throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
         }
-    }
+    }*/
 
     fun update(
         profileUpdateDto: ProfileUpdateDto,
@@ -59,7 +65,6 @@ class Profile(
         this.location = profileUpdateDto.location
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
-        this.interestTag = profileUpdateDto.interestTag
         this.imageUrl = profileUpdateDto.imageUrl
     }
 
@@ -72,7 +77,26 @@ class Profile(
             location = this.location,
             selfDescription = this.selfDescription,
             mbti = this.mbti,
-            interestTag = this.interestTag,
+            interestTag = this.interestTag.map { it.category }.toMutableSet(),
             imageUrl = this.imageUrl,
         )
 }
+
+@Embeddable
+data class Location(
+    val latitude: Double,
+    val longitude: Double,
+)
+
+@Entity
+class ProfileInterestTag(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "profile_interest_tag_id")
+    val id: Long = 0L,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", nullable = false)
+    var profile: Profile,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    var category: Category,
+)
