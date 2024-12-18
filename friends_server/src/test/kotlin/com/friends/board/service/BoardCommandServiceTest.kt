@@ -1,15 +1,15 @@
 package com.friends.board.service
 
+import com.friends.board.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
+import com.friends.board.InvalidBoardAccessException
 import com.friends.board.NON_AUTHORIZED_MEMBER_ID
 import com.friends.board.REQUEST_MEMBER_ID
 import com.friends.board.createBoardCategory
-import com.friends.board.createBoardRequestFormDto
+import com.friends.board.createBoardRequestDto
 import com.friends.board.createTestBoard
 import com.friends.board.createTestMember
 import com.friends.board.entity.BoardCategory
-import com.friends.board.exception.BoardNotFoundException
-import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CategoryRepository
@@ -48,10 +48,10 @@ class BoardCommandServiceTest :
             val testMember = createTestMember()
 
             `when`("유효한 작성자가 글을 작성했으면") {
-                val result = boardCommandService.createBoard(createBoardRequestFormDto, REQUEST_MEMBER_ID)
+                val result = boardCommandService.createBoard(createBoardRequestDto, REQUEST_MEMBER_ID)
 
                 then("게시글이 저장되고 반환되어야 한다.") {
-                    result.content shouldBe createBoardRequestFormDto.content
+                    result.content shouldBe createBoardRequestDto.content
                     result.member === testMember
                 }
             }
@@ -102,7 +102,7 @@ class BoardCommandServiceTest :
 
             `when`("수정하려는 회원이 해당 게시글의 작성자라면") {
                 val updatedContent = "Updated content"
-                val updatedDto = createBoardRequestFormDto.copy(content = updatedContent)
+                val updatedDto = createBoardRequestDto.copy(content = updatedContent)
                 createTestBoard().content = updatedContent
 
                 val result = boardCommandService.updateBoard(createTestBoard().id, updatedDto, REQUEST_MEMBER_ID)
@@ -117,7 +117,7 @@ class BoardCommandServiceTest :
                 then("권한 없음 예외가 발생해야 한다.") {
                     val exception =
                         assertThrows<InvalidBoardAccessException> {
-                            boardCommandService.updateBoard(createTestBoard().id, createBoardRequestFormDto, NON_AUTHORIZED_MEMBER_ID)
+                            boardCommandService.updateBoard(createTestBoard().id, createBoardRequestDto, NON_AUTHORIZED_MEMBER_ID)
                         }
                     exception.message shouldBe "게시글에 대한 유효하지 않은 접근입니다."
                 }
