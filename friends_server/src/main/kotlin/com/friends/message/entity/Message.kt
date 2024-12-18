@@ -1,5 +1,6 @@
-package com.friends.chat.entity
+package com.friends.message.entity
 
+import com.friends.chat.entity.ChatRoom
 import com.friends.common.entity.BaseTimeEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.Column
