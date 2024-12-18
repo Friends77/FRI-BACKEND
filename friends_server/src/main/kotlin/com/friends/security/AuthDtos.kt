@@ -32,6 +32,7 @@ data class OAuth2LoginDto(
     val email: String? = null,
     val nickname: String? = null,
     val imageUrl: String? = null,
+    val authToken: String? = null,
 )
 
 data class OAuth2LoginRequestDto(

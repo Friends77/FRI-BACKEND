@@ -9,6 +9,7 @@ class AuthProperties(
     val refreshTokenExpiration: Long,
     val emailCodeExpiration: Long,
     val emailJwtExpiration: Long,
+    val oauth2JwtExpiration: Long,
 )
 
 @ConfigurationProperties(prefix = "jwt")

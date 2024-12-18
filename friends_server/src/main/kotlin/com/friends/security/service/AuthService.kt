@@ -1,7 +1,9 @@
 package com.friends.security.service
 
+import com.friends.config.AuthProperties
 import com.friends.jwt.AtRtService
 import com.friends.jwt.JwtService
+import com.friends.jwt.JwtType
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
 import com.friends.member.repository.MemberRepository
@@ -29,6 +31,7 @@ class AuthService(
     private val authenticationManager: AuthenticationManager,
     private val atRtService: AtRtService,
     private val jwtService: JwtService,
+    private val authProperties: AuthProperties,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
     private val oAuth2Service: OAuth2Service,
@@ -149,7 +152,13 @@ class AuthService(
             val atRtoDto = atRtService.createAtRt(user.id, user.authorities.map { SimpleGrantedAuthority(it.role.name) })
             return OAuth2LoginDto(isRegistered = true, memberId = user.id, accessToken = atRtoDto.accessToken, refreshToken = atRtoDto.refreshToken)
         } else { // 가입되지 않은 사용자인 경우
-            return OAuth2LoginDto(isRegistered = false, email = userProfile.email, nickname = userProfile.name, imageUrl = userProfile.imageUrl)
+            val authToken =
+                jwtService.createToken(
+                    "email" to userProfile.email,
+                    "type" to JwtType.OAUTH2,
+                    expirationSeconds = authProperties.oauth2JwtExpiration,
+                )
+            return OAuth2LoginDto(isRegistered = false, email = userProfile.email, nickname = userProfile.name, imageUrl = userProfile.imageUrl, authToken = authToken)
         }
     }
 
