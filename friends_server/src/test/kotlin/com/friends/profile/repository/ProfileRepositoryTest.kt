@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 
 @RepositoryTest
-class CategoryRepositoryTest
+class ProfileRepositoryTest
     @Autowired
     constructor(
         private val profileRepository: ProfileRepository,
