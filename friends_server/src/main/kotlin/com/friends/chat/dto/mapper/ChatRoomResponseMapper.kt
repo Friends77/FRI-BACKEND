@@ -1,9 +1,8 @@
 package com.friends.chat.dto.mapper
 
 import com.friends.chat.dto.ChatRoomInfoResponseDto
-import com.friends.chat.dto.category.ChatSubjectInfoResponse
 import com.friends.chat.entity.ChatRoom
-import com.friends.chat.entity.ChatSubjectCategory
+import com.friends.common.mapper.toCategoryInfoResponse
 
 fun toChatRoomInfoResponse(
     chatRoom: ChatRoom,
@@ -12,9 +11,7 @@ fun toChatRoomInfoResponse(
     id = chatRoom.id,
     title = chatRoom.title,
     imageUrl = chatRoom.imageUrl,
-    categoryIdList = chatRoom.categories.map { toChatSubjectInfoResponse(it.chatSubjectCategory) },
+    categoryIdList = chatRoom.categories.map { toCategoryInfoResponse(it.category) },
     participantCount = memberCount,
     likeCount = chatRoom.likeCount,
 )
-
-fun toChatSubjectInfoResponse(chatSubjectCategory: ChatSubjectCategory) = ChatSubjectInfoResponse(chatSubjectCategory.id, chatSubjectCategory.name)

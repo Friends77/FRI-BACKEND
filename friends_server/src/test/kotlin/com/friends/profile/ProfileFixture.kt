@@ -1,5 +1,7 @@
 package com.friends.profile
 
+import com.friends.category.entity.Category
+import com.friends.createTestCategory
 import com.friends.member.MEMBER_ID
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
@@ -10,6 +12,7 @@ import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
 import com.friends.profile.entity.Profile
+import com.friends.profile.entity.ProfileInterestTag
 import java.time.LocalDate
 
 val PROFILE_ID = 1L
@@ -23,3 +26,8 @@ fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(nick
 fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
 
 fun updateTestProfile(): ProfileUpdateDto = ProfileUpdateDto(birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = "test update imageurl")
+
+fun createTestProfileInterestTag(
+    profile: Profile = createTestProfile(),
+    category: Category = createTestCategory(),
+) = ProfileInterestTag(profile = profile, category = category)

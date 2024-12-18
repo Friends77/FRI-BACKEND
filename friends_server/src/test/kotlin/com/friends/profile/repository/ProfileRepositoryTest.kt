@@ -18,6 +18,7 @@ class ProfileRepositoryTest
     @Autowired
     constructor(
         private val profileRepository: ProfileRepository,
+        private val profileInterestTagRepository: ProfileInterestTagRepository,
         private val memberRepository: MemberRepository,
         private val entityManager: EntityManager,
     ) {
@@ -35,9 +36,9 @@ class ProfileRepositoryTest
             val member2 = memberRepository.save(Member.createUser("test2", "test2@com"))
             val member3 = memberRepository.save(Member.createUser("test3", "test3@com"))
 
-            profile1 = profileRepository.save(Profile(member = member1, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint1, interestTag = mutableSetOf("일상"), imageUrl = "test imageurl"))
-            profile2 = profileRepository.save(Profile(member = member2, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint2, interestTag = mutableSetOf("일상"), imageUrl = "test imageurl"))
-            profile3 = profileRepository.save(Profile(member = member3, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint3, interestTag = mutableSetOf("일상"), imageUrl = "test imageurl"))
+            profile1 = profileRepository.save(Profile(member = member1, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint1, imageUrl = "test imageurl"))
+            profile2 = profileRepository.save(Profile(member = member2, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint2, imageUrl = "test imageurl"))
+            profile3 = profileRepository.save(Profile(member = member3, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint3, imageUrl = "test imageurl"))
 
             entityManager.flush()
             entityManager.clear()

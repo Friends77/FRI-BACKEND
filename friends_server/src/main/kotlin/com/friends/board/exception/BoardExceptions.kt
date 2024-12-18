@@ -13,3 +13,5 @@ class InvalidBoardAccessException : BoardException(ErrorCode.INVALID_BOARD_ACCES
 class BoardLikeAlreadyExists: BoardException(ErrorCode.BOARD_LIKE_ALREADY_EXISTS)
 
 class BoardLikeNotFoundException : BoardException(ErrorCode.BOARD_LIKE_NOT_FOUND)
+
+class NotFoundBoardCategoryException : BoardException(ErrorCode.BOARD_CATEGORY_NOT_FOUND)
