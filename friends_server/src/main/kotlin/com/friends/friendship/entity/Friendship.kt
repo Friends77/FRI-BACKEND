@@ -3,6 +3,7 @@ package com.friends.friendship.entity
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.Column
+import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -10,6 +11,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
+@Entity
 data class Friendship(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friendship_id")
