@@ -23,7 +23,8 @@ fun createTestChatRoom(
     title: String = CHAT_ROOM_TITLE,
     manager: Member = createTestMember(),
     imageUrl: String? = null,
-) = ChatRoom.of(title, manager, imageUrl)
+    likeCount: Int = 0,
+) = ChatRoom(id = 0L, title = title, manager = manager, imageUrl = imageUrl, likeCount = likeCount)
 
 fun createTestChatRoomCreateRequestDto(
     title: String = CHAT_ROOM_TITLE,

@@ -33,6 +33,7 @@ interface ChatRoomLikeControllerSpec {
         [
             ErrorCode.INVALID_CHAT_ROOM_ID,
             ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.CHAT_ROOM_POSITIVE_LIKE_COUNT,
         ],
     )
     fun toggleLike(

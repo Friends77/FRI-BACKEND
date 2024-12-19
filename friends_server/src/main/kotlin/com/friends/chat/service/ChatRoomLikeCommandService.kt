@@ -23,12 +23,16 @@ class ChatRoomLikeCommandService(
     ): ToggleLikeResponseDto {
         val chatRoom = chatRoomRepository.getByChatRoomId(chatRoomId)
         val member = memberRepository.getByMemberId(memberId)
-        val liked = true
-        if (chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom, member)) {
-            chatRoomLikeRepository.deleteByChatRoomAndMember(chatRoom, member)
-        } else {
-            chatRoomLikeRepository.save(ChatRoomLike.of(chatRoom, member))
-        }
-        return ToggleLikeResponseDto(chatRoomId, chatRoomLikeRepository.countByChatRoom(chatRoom), liked)
+        val liked =
+            if (chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom, member)) {
+                chatRoomLikeRepository.deleteByChatRoomAndMember(chatRoom, member)
+                chatRoom.decreaseLikeCount()
+                false
+            } else {
+                chatRoomLikeRepository.save(ChatRoomLike.of(chatRoom, member))
+                chatRoom.increaseLikeCount()
+                true
+            }
+        return ToggleLikeResponseDto(chatRoomId, chatRoom.likeCount, liked)
     }
 }
