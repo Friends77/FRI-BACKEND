@@ -12,7 +12,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
 @Entity
-data class Friendship(
+class Friendship(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friendship_id")
     val id: Long,
