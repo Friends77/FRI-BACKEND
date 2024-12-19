@@ -6,12 +6,12 @@ import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomMember
-import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.chat.repository.MessageRepository
 import com.friends.member.repository.MemberRepository
+import com.friends.message.entity.Message
+import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
