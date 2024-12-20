@@ -3,6 +3,7 @@ package com.friends.email
 import com.friends.config.AuthProperties
 import com.friends.jwt.EmailCodeRepository
 import com.friends.jwt.JwtService
+import com.friends.jwt.JwtType
 import org.springframework.stereotype.Service
 import org.thymeleaf.TemplateEngine
 import org.thymeleaf.context.Context
@@ -32,7 +33,7 @@ class EmailVerifyService(
         if (!verifyCode(email, code)) {
             throw EmailVerifyFailedException()
         }
-        return jwtService.createToken("email" to email, expirationSeconds = authProperties.emailJwtExpiration)
+        return jwtService.createToken("email" to email, "type" to JwtType.EMAIL, expirationSeconds = authProperties.emailJwtExpiration)
     }
 
     private fun verifyCode(
