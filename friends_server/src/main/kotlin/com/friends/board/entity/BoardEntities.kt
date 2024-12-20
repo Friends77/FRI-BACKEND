@@ -1,6 +1,6 @@
 package com.friends.board.entity
 
-import com.friends.board.dto.BoardRequestFormDto
+import com.friends.board.dto.BoardRequestDto
 import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
@@ -29,11 +29,11 @@ class Board(
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = [CascadeType.REMOVE])
     @OrderBy("id asc")
     var comments: List<Comment> = mutableListOf(),
-    @Column(name = "like_count")
+    @Column(name = "like_count", nullable = false)
     var likeCount: Int = 0,
 ) : BaseModifiableEntity() {
-    fun updateBoard(boardFormDto: BoardRequestFormDto) {
-        content = boardFormDto.content
+    fun updateBoard(boardUpdateDto: BoardRequestDto) {
+        content = boardUpdateDto.content
     }
 }
 
