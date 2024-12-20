@@ -114,11 +114,11 @@ class ChatRoomControllerTest(
                 }
             }
 
-            `when`("lastChatRoomId가 양수가 아닌 경우") {
+            `when`("lastChatRoomMemberId가 양수가 아닌 경우") {
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            getWithAuthentication(requestPath).param("lastChatRoomId", "-1"),
+                            getWithAuthentication(requestPath).param("lastChatRoomMemberId", "-1"),
                         ).andExpect(
                             status().isBadRequest,
                         )

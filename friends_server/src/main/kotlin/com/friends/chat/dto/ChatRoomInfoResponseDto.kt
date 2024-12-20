@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
 data class ChatRoomInfoResponseDto(
+    @Schema(description = "참여하는 채팅방 연관 ID")
+    val chatRoomMemberId: Long,
     @Schema(description = "채팅방 ID")
     val id: Long,
     @Schema(description = "채팅방 제목")
