@@ -1,12 +1,12 @@
 package com.friends.chat.service
 
+import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ToggleLikeResponseDto
 import com.friends.chat.entity.ChatRoomLike
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.chat.repository.getByChatRoomId
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
-import com.friends.member.repository.getByMemberId
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,8 +21,8 @@ class ChatRoomLikeCommandService(
         chatRoomId: Long,
         memberId: Long,
     ): ToggleLikeResponseDto {
-        val chatRoom = chatRoomRepository.getByChatRoomId(chatRoomId)
-        val member = memberRepository.getByMemberId(memberId)
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         val liked =
             if (chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom, member)) {
                 chatRoomLikeRepository.deleteByChatRoomAndMember(chatRoom, member)
