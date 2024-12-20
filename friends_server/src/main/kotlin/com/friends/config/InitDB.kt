@@ -3,17 +3,33 @@ package com.friends.config
 import com.friends.board.repository.CategoryRepository
 import com.friends.category.entity.Category
 import com.friends.category.entity.CategoryType
+import com.friends.member.entity.Member
+import com.friends.member.repository.MemberRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
 class InitDB(
     private val categoryRepository: CategoryRepository,
+    private val memberRepository: MemberRepository,
+    private val passwordEncoder: PasswordEncoder,
 ) {
     @Bean
     fun runInitializer(): ApplicationRunner =
+
         ApplicationRunner {
+            // 테스트 유저 생성
+            memberRepository.save(
+                Member.createUser(
+                    nickname = "user",
+                    email = "user",
+                    password = passwordEncoder.encode("user"),
+                ),
+            )
+
+            // 카테고리 생성
             categoryRepository.deleteAll()
             categoryRepository.save(Category(name = "자유수다", type = CategoryType.SUBJECT))
             categoryRepository.save(Category(name = "팬덤", type = CategoryType.SUBJECT))
