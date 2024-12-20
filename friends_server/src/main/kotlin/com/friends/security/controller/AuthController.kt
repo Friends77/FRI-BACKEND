@@ -36,12 +36,7 @@ class AuthController(
     fun register(
         @RequestBody registerRequestDto: RegisterRequestDto,
     ): ResponseEntity<String> {
-        authService.register(
-            registerRequestDto.authToken,
-            registerRequestDto.email,
-            registerRequestDto.password,
-            registerRequestDto.nickname,
-        )
+        authService.register(registerRequestDto)
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.")
     }
 
@@ -105,7 +100,7 @@ class AuthController(
     @PostMapping("/logout")
     fun logout(
         @RequestBody logoutRequestDto: LogoutRequestDto,
-        @CookieValue(required = false) refreshToken: String,
+        @CookieValue(required = false) refreshToken: String?,
     ): ResponseEntity<String> {
         // accessToken 과 refreshToken 을 삭제합니다.
         authService.logout(logoutRequestDto.accessToken, refreshToken)
