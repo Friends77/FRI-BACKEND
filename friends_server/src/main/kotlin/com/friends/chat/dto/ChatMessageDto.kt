@@ -15,18 +15,4 @@ data class ChatSendMessageDto(
     val senderProfileImageUrl: String,
     val message: String,
     val sendTime: LocalDateTime,
-) {
-    companion object {
-        fun from(
-            chatReceiveMessageDto: ChatReceiveMessageDto,
-            sendTime: LocalDateTime,
-        ): ChatSendMessageDto =
-            ChatSendMessageDto(
-                senderId = chatReceiveMessageDto.senderId,
-                senderName = chatReceiveMessageDto.senderName,
-                senderProfileImageUrl = chatReceiveMessageDto.senderProfileImageUrl,
-                message = chatReceiveMessageDto.message,
-                sendTime = sendTime,
-            )
-    }
-}
+)

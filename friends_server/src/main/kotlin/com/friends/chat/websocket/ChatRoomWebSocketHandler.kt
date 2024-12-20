@@ -36,7 +36,14 @@ class ChatRoomWebSocketHandler : TextWebSocketHandler() {
             val sessions = chatRooms[chatRoomId]
             sessions?.forEach { s ->
                 if (s.isOpen) {
-                    val chatSendMessageDto = ChatSendMessageDto.from(chatMessage, LocalDateTime.now())
+                    val chatSendMessageDto =
+                        ChatSendMessageDto(
+                            senderId = chatMessage.senderId,
+                            senderName = chatMessage.senderName,
+                            senderProfileImageUrl = chatMessage.senderProfileImageUrl,
+                            message = chatMessage.message,
+                            sendTime = LocalDateTime.now(),
+                        )
                     s.sendMessage(TextMessage(JsonUtil.toJson(chatSendMessageDto)))
                 }
             }
