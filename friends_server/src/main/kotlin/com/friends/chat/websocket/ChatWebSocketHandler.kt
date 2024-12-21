@@ -12,7 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.time.LocalDateTime
 
 @Component
-class ChatRoomWebSocketHandler(
+class ChatWebSocketHandler(
     private val messageService: MessageService,
 ) : TextWebSocketHandler() {
     override fun afterConnectionEstablished(session: WebSocketSession) {
