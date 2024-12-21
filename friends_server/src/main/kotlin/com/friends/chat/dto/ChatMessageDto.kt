@@ -1,5 +1,6 @@
 package com.friends.chat.dto
 
+import com.friends.message.entity.MessageType
 import java.time.LocalDateTime
 
 data class ChatReceiveMessageDto(
@@ -15,4 +16,5 @@ data class ChatSendMessageDto(
     val senderProfileImageUrl: String,
     val message: String,
     val sendTime: LocalDateTime,
+    val type: MessageType,
 )
