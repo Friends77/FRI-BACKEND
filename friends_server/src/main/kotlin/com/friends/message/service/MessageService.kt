@@ -4,17 +4,14 @@ import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatSendMessageDto
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
-import org.springframework.web.socket.TextMessage
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.socket.WebSocketSession
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArraySet
 
 @Service
 class MessageService(
@@ -23,24 +20,16 @@ class MessageService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
 ) {
-    // 채팅방 ID를 키로 하고, 각 채팅방의 세션을 Set으로 저장
-    private val chatRooms: MutableMap<Long, MutableSet<WebSocketSession>> = ConcurrentHashMap()
-
-    fun connectChatRoom(
-        chatRoomId: Long,
-        session: WebSocketSession,
-    ) {
-        chatRooms.computeIfAbsent(chatRoomId) { CopyOnWriteArraySet() }
-        chatRooms[chatRoomId]?.add(session)
-    }
-
+    /**
+     * 채팅방을 나갈 때마다 마지막으로 읽은 메세지 ID를 업데이트합니다.
+     * 채팅방이 없거나 멤버가 없거나 채팅방 멤버가 아닐 경우 무시합니다.
+     */
+    @Transactional
     fun disconnectChatRoom(
         chatRoomId: Long,
         memberId: Long,
         session: WebSocketSession,
     ) {
-        chatRooms[chatRoomId]?.remove(session) // 세션 제거
-
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: return // 채팅방이 없을 경우 무시
         val member = memberRepository.findById(memberId).orElse(null) ?: return // 멤버가 없을 경우 무시
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: return // 채팅방 멤버가 아닐 경우 무시
@@ -51,14 +40,17 @@ class MessageService(
         }
     }
 
-    fun sendMessage(
+    /**
+     * 채팅방에 메세지를 보낼 메세지를 저장합니다.
+     * 채팅방이 없거나 멤버가 없을 경우 예외를 발생시킵니다.
+     */
+    @Transactional
+    fun saveMessage(
         chatRoomId: Long,
         memberId: Long,
         message: String,
         type: MessageType,
-    ) {
-        val sessions = chatRooms[chatRoomId]
-
+    ): ChatSendMessageDto {
         /**
          * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
          * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
@@ -71,17 +63,11 @@ class MessageService(
         val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
 
         val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message, type))
-        val sendMessageDto =
-            ChatSendMessageDto(
-                senderId = sender.id,
-                message = savedMessage.content,
-                sendTime = savedMessage.createdAt,
-                type = savedMessage.type,
-            )
-        sessions?.forEach { session ->
-            if (session.isOpen) {
-                session.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
-            }
-        }
+        return ChatSendMessageDto(
+            senderId = sender.id,
+            message = savedMessage.content,
+            sendTime = savedMessage.createdAt,
+            type = savedMessage.type,
+        )
     }
 }
