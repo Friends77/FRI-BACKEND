@@ -68,9 +68,9 @@ class MessageService(
          * val sender = entityManager.getReference(Member::class.java, message.senderId)
          */
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val sender = memberRepository.findById(message.senderId).orElseThrow { MemberNotFoundException() }
+        val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
 
-        val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message.message, type))
+        val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message, type))
         val sendMessageDto =
             ChatSendMessageDto(
                 senderId = sender.id,
