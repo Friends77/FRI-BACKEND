@@ -2,6 +2,7 @@ package com.friends.message.service
 
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatSendMessageDto
+import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
@@ -20,6 +21,7 @@ class MessageService(
     private val messageRepository: MessageRepository,
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
+    private val chatRoomMemberRepository: ChatRoomMemberRepository,
 ) {
     // 채팅방 ID를 키로 하고, 각 채팅방의 세션을 Set으로 저장
     private val chatRooms: MutableMap<Long, MutableSet<WebSocketSession>> = ConcurrentHashMap()
@@ -34,14 +36,25 @@ class MessageService(
 
     fun disconnectChatRoom(
         chatRoomId: Long,
+        memberId: Long,
         session: WebSocketSession,
     ) {
-        chatRooms[chatRoomId]?.remove(session)
+        chatRooms[chatRoomId]?.remove(session) // 세션 제거
+
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: return // 채팅방이 없을 경우 무시
+        val member = memberRepository.findById(memberId).orElse(null) ?: return // 멤버가 없을 경우 무시
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: return // 채팅방 멤버가 아닐 경우 무시
+
+        // 마지막으로 읽은 메세지 ID 업데이트 (채팅방에 메세지가 없다면 무시)
+        messageRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)?.let {
+            chatRoomMember.lastReadMessageId = it.id
+        }
     }
 
     fun sendMessage(
         chatRoomId: Long,
-        message: ChatSendMessageDto,
+        memberId: Long,
+        message: String,
         type: MessageType,
     ) {
         val sessions = chatRooms[chatRoomId]
