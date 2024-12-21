@@ -3,54 +3,40 @@ package com.friends.chat.websocket
 import com.friends.chat.dto.ChatReceiveMessageDto
 import com.friends.chat.dto.ChatSendMessageDto
 import com.friends.common.util.JsonUtil
-import org.slf4j.LoggerFactory
+import com.friends.message.service.MessageService
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.time.LocalDateTime
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.CopyOnWriteArraySet
 
 @Component
-class ChatRoomWebSocketHandler : TextWebSocketHandler() {
-    private val log = LoggerFactory.getLogger(ChatRoomWebSocketHandler::class.java)
-    // 채팅방 ID를 키로 하고, 각 채팅방의 세션을 Set으로 저장
-    private val chatRooms: MutableMap<String, MutableSet<WebSocketSession>> = ConcurrentHashMap()
-
+class ChatRoomWebSocketHandler(
+    private val messageService: MessageService,
+) : TextWebSocketHandler() {
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val chatRoomId = getChatRoomId(session)
-        chatRooms.computeIfAbsent(chatRoomId) { CopyOnWriteArraySet() }
-        chatRooms[chatRoomId]?.add(session)
-        log.debug("User connected to chat room: $chatRoomId")
+        messageService.connectChatRoom(chatRoomId, session)
+        // TODO : 채팅방 입장 실패 시 에러 처리
     }
 
     override fun handleTextMessage(
         session: WebSocketSession,
         message: TextMessage,
     ) {
-        try {
-            val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
-            val chatRoomId = getChatRoomId(session)
-            val sessions = chatRooms[chatRoomId]
-            sessions?.forEach { s ->
-                if (s.isOpen) {
-                    val chatSendMessageDto =
-                        ChatSendMessageDto(
-                            senderId = chatMessage.senderId,
-                            senderName = chatMessage.senderName,
-                            senderProfileImageUrl = chatMessage.senderProfileImageUrl,
-                            message = chatMessage.message,
-                            sendTime = LocalDateTime.now(),
-                        )
-                    s.sendMessage(TextMessage(JsonUtil.toJson(chatSendMessageDto)))
-                }
-            }
-            log.debug("Received message: $chatMessage")
-        } catch (e: Exception) {
-            log.error("Failed to parse message", e)
-        }
+        val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
+        val chatRoomId = getChatRoomId(session)
+        val chatSendMessageDto =
+            ChatSendMessageDto(
+                senderId = chatMessage.senderId,
+                senderName = chatMessage.senderName,
+                senderProfileImageUrl = chatMessage.senderProfileImageUrl,
+                message = chatMessage.message,
+                sendTime = LocalDateTime.now(),
+            )
+        messageService.sendMessage(chatRoomId, chatSendMessageDto)
+        // TODO : 메세지 전송 실패 시 에러 처리
     }
 
     override fun afterConnectionClosed(
@@ -58,13 +44,14 @@ class ChatRoomWebSocketHandler : TextWebSocketHandler() {
         status: CloseStatus,
     ) {
         val chatRoomId = getChatRoomId(session)
-        chatRooms[chatRoomId]?.remove(session)
-        log.debug("User disconnected from chat room: $chatRoomId")
+        messageService.disconnectChatRoom(chatRoomId, session)
+        // TODO : 채팅방 나가기 실패 시 에러 처리
     }
 
     // 채팅방 ID를 URI에서 추출하는 함수
-    private fun getChatRoomId(session: WebSocketSession): String {
+    private fun getChatRoomId(session: WebSocketSession): Long {
         val uri = session.uri.toString()
-        return uri.substringAfterLast("/")
+        return uri.substringAfterLast("/").toLong()
+        // TODO : 채팅방 아이디 얻기 실패 시 에러 처리
     }
 }
