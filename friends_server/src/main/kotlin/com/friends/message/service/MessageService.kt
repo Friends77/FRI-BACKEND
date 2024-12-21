@@ -74,8 +74,6 @@ class MessageService(
         val sendMessageDto =
             ChatSendMessageDto(
                 senderId = sender.id,
-                senderName = sender.nickname,
-                senderProfileImageUrl = sender.imageUrl ?: "default image url", // TODO : member 와 profile 에 imageUrl 이 중복되어 있는 것을 확인 -> 둘 중 하나로 통일하고 non-null 로 변경 (회원가입 시 주어지지 않는다면 default image url 로 설정)
                 message = savedMessage.content,
                 sendTime = savedMessage.createdAt,
                 type = savedMessage.type,

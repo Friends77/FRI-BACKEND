@@ -12,8 +12,6 @@ data class ChatReceiveMessageDto(
 
 data class ChatSendMessageDto(
     val senderId: Long,
-    val senderName: String,
-    val senderProfileImageUrl: String,
     val message: String,
     val sendTime: LocalDateTime,
     val type: MessageType,
