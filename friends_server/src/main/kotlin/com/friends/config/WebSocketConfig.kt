@@ -1,6 +1,7 @@
 package com.friends.config
 
 import com.friends.chat.websocket.ChatRoomWebSocketHandler
+import com.friends.chat.websocket.ChatWebsocketInterceptor
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.config.annotation.EnableWebSocket
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer
@@ -14,6 +15,7 @@ class WebSocketConfig(
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry
             .addHandler(chatRoomWebSocketHandler, "/ws/chatRoom/{chatRoomId}")
+            .addInterceptors(ChatWebsocketInterceptor())
             .setAllowedOrigins("*") // CORS 허용
     }
 }
