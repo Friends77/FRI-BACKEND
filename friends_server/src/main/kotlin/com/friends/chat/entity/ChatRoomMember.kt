@@ -1,6 +1,8 @@
 package com.friends.chat.entity
 
+import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
+import com.friends.message.entity.Message
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -29,17 +31,20 @@ class ChatRoomMember(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
-    @Column(name = "last_read_message_id")
-    var lastReadMessageId: Long = 0L,
-) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "message_id", nullable = false)
+    var lastReadMessage: Message,
+) : BaseModifiableEntity() {
     companion object {
         fun of(
             chatRoom: ChatRoom,
             member: Member,
+            lastReadMessage: Message,
         ): ChatRoomMember =
             ChatRoomMember(
                 chatRoom = chatRoom,
                 member = member,
+                lastReadMessage = lastReadMessage,
             )
     }
 }

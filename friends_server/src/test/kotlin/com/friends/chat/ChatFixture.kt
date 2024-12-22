@@ -11,6 +11,9 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
+import com.friends.message.MockTestMessage
+import com.friends.message.createTestMessage
+import com.friends.message.entity.Message
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -34,19 +37,33 @@ fun createTestChatRoomCreateRequestDto(
 fun createTestChatRoomMember(
     chatRoom: ChatRoom = createTestChatRoom(),
     member: Member = createTestMember(),
-) = ChatRoomMember.of(chatRoom, member)
+    lastReadMessage: Message = createTestMessage(),
+) = ChatRoomMember.of(
+    chatRoom,
+    member,
+    lastReadMessage,
+)
 
 fun createTestSliceChatRoom(
-    chatRoom: ChatRoom = createTestChatRoom(),
-) = SliceImpl(listOf(chatRoom), Pageable.ofSize(TEST_SIZE), false)
+    chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
+) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
+
+fun createTestMockSliceChatRoom(
+    chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), MockTestMessage()),
+) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
 
 fun createTestChatRoomInfoResponseDto(
-    chatRoom: ChatRoom = createTestChatRoom(),
+    chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
     memberCount: Int = TEST_SIZE,
-) = toChatRoomInfoResponse(chatRoom, memberCount)
+    unreadMessageCount: Int = 0,
+) = toChatRoomInfoResponse(chatRoomMember, memberCount, unreadMessageCount)
 
 fun createTestSliceResponseChatRoom(
-    sliceChatRoom: Slice<ChatRoom> = createTestSliceChatRoom(),
+    sliceChatRoom: Slice<ChatRoomMember> = createTestSliceChatRoom(),
+) = toSliceBaseResponse(sliceChatRoom.map { createTestChatRoomInfoResponseDto(it) })
+
+fun createTestMockSliceResponseChatRoom(
+    sliceChatRoom: Slice<ChatRoomMember> = createTestMockSliceChatRoom(),
 ) = toSliceBaseResponse(sliceChatRoom.map { createTestChatRoomInfoResponseDto(it) })
 
 fun createTestToggleLikeResponseDto(
