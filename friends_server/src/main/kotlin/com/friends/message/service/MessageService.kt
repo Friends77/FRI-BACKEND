@@ -36,7 +36,7 @@ class MessageService(
 
         // 마지막으로 읽은 메세지 ID 업데이트 (채팅방에 메세지가 없다면 무시)
         messageRepository.findFirstByChatRoomOrderByIdDesc(chatRoom)?.let {
-            chatRoomMember.lastReadMessageId = it.id
+            chatRoomMember.lastReadMessage = it
         }
     }
 
