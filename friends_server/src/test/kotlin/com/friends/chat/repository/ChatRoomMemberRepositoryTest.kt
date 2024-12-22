@@ -29,10 +29,12 @@ class ChatRoomMemberRepositoryTest(
         lateinit var member3: Member
         lateinit var chatRoom1: ChatRoom
         lateinit var chatRoom2: ChatRoom
+        lateinit var chatRoom3: ChatRoom
         lateinit var chatRoomMember: ChatRoomMember
         lateinit var chatRoomMember2: ChatRoomMember
         lateinit var chatRoomMember3: ChatRoomMember
         lateinit var chatRoomMember4: ChatRoomMember
+        lateinit var chatRoomMember5: ChatRoomMember
         lateinit var message: Message
         beforeEach {
             member1 = memberRepository.save(createTestMember())
@@ -40,12 +42,13 @@ class ChatRoomMemberRepositoryTest(
             member3 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL + 2, nickname = MEMBER_OTHER_NICKNAME + 2))
             chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member1))
             chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
-
+            chatRoom3 = chatRoomRepository.save(createTestChatRoom(manager = member3))
             message = messageRepository.save(createTestMessage(chatRoom1, member1))
             chatRoomMember = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1, message))
             chatRoomMember2 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member2, message))
             chatRoomMember3 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member3, message))
             chatRoomMember4 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member3, message))
+            chatRoomMember5 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom3, member2, message))
         }
 
         describe("countByChatRoomId 메서드는") {
@@ -59,7 +62,7 @@ class ChatRoomMemberRepositoryTest(
         describe("sliceChatRoomIdByMember 메서드는") {
             context("memberId만 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoomMember2)
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoomMember5, chatRoomMember2)
                 }
             }
 

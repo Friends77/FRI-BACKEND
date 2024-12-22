@@ -40,7 +40,7 @@ class ChatRoomMemberCustomRepositoryImpl(
     ): Slice<ChatRoomMember> {
         val pageable = Pageable.ofSize(size)
         return kotlinJdslJpqlExecutor.getSlice(pageable) {
-            selectDistinct(entity(ChatRoomMember::class)) // 중복 제거
+            select(entity(ChatRoomMember::class)) // 중복 제거
                 .from(entity(ChatRoomMember::class), join(ChatRoomMember::chatRoom))
                 .where(
                     and(
