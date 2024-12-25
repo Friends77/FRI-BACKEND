@@ -6,15 +6,15 @@ import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.createTestChatRoomMember
 import com.friends.chat.entity.ChatRoomCategory
-import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.chat.repository.MessageRepository
 import com.friends.createTestCategory
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
+import com.friends.message.entity.Message
+import com.friends.message.repository.MessageRepository
 import com.friends.support.createTestImageFile
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -39,7 +39,7 @@ class ChatRoomCommandServiceTest :
                 every { chatRoomRepository.save(any()) } returns createTestChatRoom()
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
-                every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory(createTestChatRoom(), createTestCategory()))
+                every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
                 every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방이 저장된다.") {

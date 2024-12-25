@@ -6,12 +6,12 @@ import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomMember
-import com.friends.chat.entity.Message
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.chat.repository.MessageRepository
 import com.friends.member.repository.MemberRepository
+import com.friends.message.entity.Message
+import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -37,8 +37,8 @@ class ChatRoomCommandService(
             }
         val member = memberRepository.findById(memberId).get()
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
-        chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory(chatRoom, it) })
-        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member))
-        messageRepository.save(Message.createEnterMessage(member, chatRoom))
+        chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
+        val enterMassage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
+        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage)) // 마지막으로 읽은 채팅 자신의 입장 메세지로 초기화
     }
 }

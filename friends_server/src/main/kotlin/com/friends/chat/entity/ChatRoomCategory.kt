@@ -27,5 +27,10 @@ class ChatRoomCategory(
     @JoinColumn(name = "category_id", nullable = false, updatable = false)
     val category: Category,
 ) : BaseTimeEntity() {
-    constructor(chatRoom: ChatRoom, category: Category) : this(0L, chatRoom, category)
+    companion object {
+        fun of(
+            chatRoom: ChatRoom,
+            category: Category,
+        ): ChatRoomCategory = ChatRoomCategory(0L, chatRoom, category)
+    }
 }
