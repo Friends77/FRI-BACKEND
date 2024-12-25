@@ -35,6 +35,14 @@ class Board(
     fun updateBoard(boardUpdateDto: BoardRequestDto) {
         content = boardUpdateDto.content
     }
+
+    fun increaseLike() {
+        likeCount++
+    }
+
+    fun decreaseLike() {
+        if (likeCount > 0) likeCount--
+    }
 }
 
 @Entity
