@@ -1,6 +1,7 @@
 package com.friends.board.controller
 
 import com.friends.board.dto.CommentAddDto
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment
 import com.friends.board.service.CommentCommandService
@@ -59,7 +60,7 @@ class CommentController(
     @GetMapping("api/user/board/{boardId}/comments")
     override fun getComments(
         @PathVariable boardId: Long,
-    ): List<Comment> {
+    ): List<CommentResponseDto> {
         return commentQueryService.getCommentList(boardId)
     }
 }
