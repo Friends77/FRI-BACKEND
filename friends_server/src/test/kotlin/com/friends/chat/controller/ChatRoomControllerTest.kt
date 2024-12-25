@@ -3,7 +3,7 @@ package com.friends.chat.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
 import com.friends.chat.createTestChatRoomCreateRequestDto
-import com.friends.chat.createTestSliceResponseChatRoom
+import com.friends.chat.createTestMockSliceResponseChatRoom
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
 import com.friends.support.annotation.ControllerTest
@@ -92,7 +92,7 @@ class ChatRoomControllerTest(
 
         given("GET $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
-                every { chatRoomQueryService.getChatRooms(any(), any(), any(), any()) } returns createTestSliceResponseChatRoom()
+                every { chatRoomQueryService.getChatRooms(any(), any(), any(), any()) } returns createTestMockSliceResponseChatRoom()
                 then("채팅방을 조회한다.") {
                     mockMvc
                         .perform(
@@ -114,11 +114,11 @@ class ChatRoomControllerTest(
                 }
             }
 
-            `when`("lastChatRoomId가 양수가 아닌 경우") {
+            `when`("lastChatRoomMemberId가 양수가 아닌 경우") {
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            getWithAuthentication(requestPath).param("lastChatRoomId", "-1"),
+                            getWithAuthentication(requestPath).param("lastChatRoomMemberId", "-1"),
                         ).andExpect(
                             status().isBadRequest,
                         )

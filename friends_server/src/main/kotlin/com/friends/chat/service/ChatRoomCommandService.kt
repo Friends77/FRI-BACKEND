@@ -37,8 +37,8 @@ class ChatRoomCommandService(
             }
         val member = memberRepository.findById(memberId).get()
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
-        chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory(chatRoom, it) })
-        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member))
-        messageRepository.save(Message.createEnterMessage(member, chatRoom))
+        chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
+        val enterMassage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
+        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage)) // 마지막으로 읽은 채팅 자신의 입장 메세지로 초기화
     }
 }

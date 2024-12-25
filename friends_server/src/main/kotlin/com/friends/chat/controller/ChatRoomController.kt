@@ -34,7 +34,7 @@ class ChatRoomController(
     override fun getChatRooms(
         memberId: Long,
         size: Int,
-        lastChatRoomId: Long?,
+        lastChatRoomMemberId: Long?,
         nickname: String?,
-    ): ResponseEntity<SliceBaseResponse<ChatRoomInfoResponseDto>> = ResponseEntity.ok(chatRoomQueryService.getChatRooms(memberId, size, lastChatRoomId, nickname))
+    ): ResponseEntity<SliceBaseResponse<ChatRoomInfoResponseDto>> = ResponseEntity.ok(chatRoomQueryService.getChatRooms(memberId, size, lastChatRoomMemberId, nickname))
 }
