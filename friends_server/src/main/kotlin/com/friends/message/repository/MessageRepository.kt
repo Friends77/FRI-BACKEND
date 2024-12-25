@@ -1,5 +1,6 @@
 package com.friends.message.repository
 
+import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.util.getSingle
 import com.friends.message.entity.Message
@@ -11,7 +12,9 @@ import org.springframework.stereotype.Repository
 @Repository
 interface MessageRepository :
     JpaRepository<Message, Long>,
-    MessageCustomRepository
+    MessageCustomRepository {
+    fun findFirstByChatRoomOrderByIdDesc(chatRoom: ChatRoom): Message?
+}
 
 interface MessageCustomRepository {
     fun countUnreadMessages(

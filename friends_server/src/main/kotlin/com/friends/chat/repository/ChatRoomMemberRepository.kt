@@ -18,6 +18,11 @@ interface ChatRoomMemberRepository :
     JpaRepository<ChatRoomMember, Long>,
     ChatRoomMemberCustomRepository {
     fun countByChatRoom(chatRoom: ChatRoom): Int
+
+    fun findByChatRoomAndMember(
+        chatRoom: ChatRoom,
+        member: Member,
+    ): ChatRoomMember?
 }
 
 interface ChatRoomMemberCustomRepository {
