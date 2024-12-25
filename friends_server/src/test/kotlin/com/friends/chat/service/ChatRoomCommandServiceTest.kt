@@ -39,7 +39,7 @@ class ChatRoomCommandServiceTest :
                 every { chatRoomRepository.save(any()) } returns createTestChatRoom()
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
-                every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory(createTestChatRoom(), createTestCategory()))
+                every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
                 every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방이 저장된다.") {

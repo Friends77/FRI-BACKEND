@@ -15,3 +15,7 @@ fun <T : Any> KotlinJdslJpqlExecutor.getSlice(
 fun <T : Any> KotlinJdslJpqlExecutor.getList(
     init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
 ): List<T> = this.findAll(init) as List<T>
+
+fun <T : Any> KotlinJdslJpqlExecutor.getSingle(
+    init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
+): T = this.findAll(init).first() as T

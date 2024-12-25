@@ -76,8 +76,9 @@ interface ChatRoomControllerSpec {
         @RequestParam("size", defaultValue = "100")
         size: Int,
         @Positive(message = "lastChatRoomId는 양수여야 합니다.")
-        @RequestParam("lastChatRoomId", required = false)
-        lastChatRoomId: Long?,
+        @RequestParam("lastChatRoomMemberId", required = false)
+        @Schema(description = "마지막으로 조회된 참여하는 채팅방 연관 ID를 넣어주면 됩니다. 처음부터 조회시 null로 보내주시면 됩니다.")
+        lastChatRoomMemberId: Long?,
         @Schema(description = "친구 닉네임 기반 친구와 함께 참여 중인 채팅방 리스트는 아직 구현되지 않았습니다, 해당 필드 null로 보내주시면 전체 검색됩니다.")
         @RequestParam("nickname", required = false)
         nickname: String?,
