@@ -19,14 +19,13 @@ class Friendship(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     val member: Member,
-    @Column(name = "member_email")
     val memberEmail: String? = null,
-    @Column(name = "friend_email")
-    val friendEmail: String? = null,
-    @Column(name =  "friendship_status")
-    var friendshipStatus: FriendshipStatusEnums,
-    @Column(name = "is_from")
+    @Column(nullable = false)
+    val friendEmail: String,
+    private var friendshipStatus: FriendshipStatusEnums,
     var isFrom: Boolean,
+    //상대방 아이디
+    var counterpartId: Long,
     ) :BaseModifiableEntity(){
         fun acceptFriendshipRequest(){
             friendshipStatus = FriendshipStatusEnums.ACCEPT
