@@ -26,14 +26,16 @@ class Friendship(
     var isFrom: Boolean,
     //상대방 아이디
     var counterpartId: Long,
-    ) :BaseModifiableEntity(){
-        fun acceptFriendshipRequest(){
-            friendshipStatus = FriendshipStatusEnums.ACCEPT
-        }
-        fun waitFriendshipRequest(){
-            friendshipStatus = FriendshipStatusEnums.WAITING
-        }
-        fun blockFriendRequest(){
-            friendshipStatus = FriendshipStatusEnums.BLOCK
-        }
+) : BaseModifiableEntity() {
+    fun acceptFriendshipRequest() {
+        friendshipStatus = FriendshipStatusEnums.ACCEPT
     }
+
+    fun waitFriendshipRequest() {
+        friendshipStatus = FriendshipStatusEnums.WAITING
+    }
+
+    fun blockFriendRequest() {
+        friendshipStatus = FriendshipStatusEnums.BLOCK
+    }
+}
