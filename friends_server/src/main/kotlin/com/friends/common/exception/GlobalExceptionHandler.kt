@@ -1,6 +1,6 @@
 package com.friends.common.exception
 
-import com.friends.board.exception.BoardException
+import com.friends.board.BoardException
 import com.friends.board.exception.CommentException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
