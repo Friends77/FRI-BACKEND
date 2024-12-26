@@ -27,7 +27,7 @@ interface LikeControllerSpec {
         description = "좋아요 취소 API",
         responses = [
             ApiResponse(
-                responseCode = "201",
+                responseCode = "204",
                 description = "좋아요 취소 성공"
             ),
         ],
