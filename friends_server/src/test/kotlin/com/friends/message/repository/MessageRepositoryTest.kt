@@ -51,5 +51,32 @@ class MessageRepositoryTest(
                     }
                 }
             }
+
+            describe("findUnreadMessagesForMember 메서드는") {
+                context("멤버의 채팅방 연관 정보가 주어졌을 떄 ") {
+                    it("읽지 않은 메시지를 반환한다.") {
+                        val unreadMessages = messageRepository.findUnreadMessagesForMember(chatRoomMember1)
+                        for (unreadMessage in unreadMessages) {
+                            println("${unreadMessage.id} ${unreadMessage.content}")
+                        }
+
+                        unreadMessages.size shouldBe 2 // 자신의 입장 메세지를 제외하고 2개
+                        unreadMessages[1].id shouldBe message.id // 마지막 메세지는 message
+                    }
+                }
+            }
+
+            describe("findMessagesBeforeIdInChatRoom 메서드는") {
+                context("채팅방의 메시지 id와 사이즈가 주어졌을 때") {
+                    it("이전 메시지를 반환한다.") {
+                        val previousMessages = messageRepository.findMessagesBeforeIdInChatRoom(chatRoom1, message.id, 5)
+                        for (previousMessage in previousMessages) {
+                            println("${previousMessage.id} ${previousMessage.content}")
+                        }
+                        previousMessages.content.size shouldBe 2 // 입장 메세지 2개
+                        previousMessages.hasNext() shouldBe false // 이전 메시지가 없으므로 hasNext는 false
+                    }
+                }
+            }
         },
     )
