@@ -57,6 +57,7 @@ enum class ErrorCode(
     CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "전부 존재하지 않는 채팅방 카테고리입니다."),
     INVALID_LAST_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17007, "lastChatRoomId는는 양수여야 합니다."),
     INVALID_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17008, "채팅방 ID는 양수여야 합니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, -17009, "채팅방에 존재하지 않는 멤버입니다."),
 
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
