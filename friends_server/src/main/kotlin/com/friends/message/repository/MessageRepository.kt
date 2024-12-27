@@ -31,7 +31,7 @@ interface MessageCustomRepository {
 
     fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
-        messageId: Long,
+        messageId: Long? = null,
         size: Int,
     ): Slice<Message>
 }
@@ -77,7 +77,7 @@ class MessageCustomRepositoryImpl(
      */
     override fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
-        messageId: Long,
+        messageId: Long?,
         size: Int,
     ): Slice<Message> {
         val pageable = Pageable.ofSize(size)
@@ -87,7 +87,7 @@ class MessageCustomRepositoryImpl(
                 .where(
                     and(
                         path(Message::chatRoom).equal(chatRoom),
-                        path(Message::id).lessThan(messageId),
+                        messageId?.let { path(Message::id).lessThan(it) },
                     ),
                 ).orderBy(path(Message::id).desc())
         }
