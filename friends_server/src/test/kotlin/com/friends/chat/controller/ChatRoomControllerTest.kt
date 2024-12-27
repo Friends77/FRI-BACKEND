@@ -128,7 +128,7 @@ class ChatRoomControllerTest(
             }
         }
 
-        given("GET  $requestPath/detail/{id} Test") {
+        given("GET  $requestPath/{id} Test") {
             `when`("정상적인 요청이 들어온 경우") {
                 every { chatRoomQueryService.getChatRoomDetail(any(), any()) } returns createTestChatRoomDetailResponseDto()
                 then("채팅방 상세를 조회한다,") {
