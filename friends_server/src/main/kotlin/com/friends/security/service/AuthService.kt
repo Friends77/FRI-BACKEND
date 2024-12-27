@@ -128,11 +128,9 @@ class AuthService(
         val email = jwtService.getClaim(registerRequestDto.authToken, "email", String::class.java) ?: throw InvalidTokenException()
         val provider = jwtService.getClaim(registerRequestDto.authToken, "provider", String::class.java)?.let { OAuth2Provider.valueOf(it) } ?: throw InvalidTokenException()
         val nickname = registerRequestDto.nickname
-        val imageUrl = registerRequestDto.imageUrl
         return Member.createUser(
             nickname = nickname,
             email = email,
-            imageUrl = imageUrl,
             oauth2Provider = provider,
         )
     }
@@ -145,12 +143,10 @@ class AuthService(
         if (!validatePassword(password!!)) {
             throw InvalidPasswordException()
         }
-        val imageUrl = registerRequestDto.imageUrl
         return Member.createUser(
             nickname = nickname,
             email = email,
             password = passwordEncoder.encode(password),
-            imageUrl = imageUrl,
         )
     }
 

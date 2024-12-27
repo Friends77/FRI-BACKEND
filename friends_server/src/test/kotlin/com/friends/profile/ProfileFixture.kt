@@ -17,7 +17,7 @@ import java.time.LocalDate
 
 val PROFILE_ID = 1L
 
-fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE, imageUrl = "test imageurl")
+fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE)
 
 fun createTestProfile(): Profile = Profile(id = PROFILE_ID, member = createTestMember(), birth = LocalDate.now(), gender = GenderEnum.MAN, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
 
