@@ -79,6 +79,7 @@ class AuthController(
                         email = oauth2LoginDto.email,
                         nickname = oauth2LoginDto.nickname,
                         imageUrl = oauth2LoginDto.imageUrl,
+                        authToken = oauth2LoginDto.authToken,
                     ),
                 )
         }
