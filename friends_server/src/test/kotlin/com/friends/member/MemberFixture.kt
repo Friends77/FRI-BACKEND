@@ -29,7 +29,6 @@ fun createTestMember(
     email: String = MEMBER_EMAIL,
     password: String = MEMBER_PASSWORD,
     oauth2Provider: OAuth2Provider? = null,
-    imageUrl: String? = null,
-) = Member.createUser(nickname, email, password, oauth2Provider, imageUrl)
+) = Member.createUser(nickname, email, password, oauth2Provider)
 
-fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password = "12345", oauth2Provider = OAuth2Provider.NAVER, imageUrl = "test imageurl2")
+fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password = "12345", oauth2Provider = OAuth2Provider.NAVER)
