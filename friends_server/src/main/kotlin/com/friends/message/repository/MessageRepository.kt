@@ -25,11 +25,11 @@ interface MessageCustomRepository {
         chatRoomMember: ChatRoomMember,
     ): Int
 
-    fun getUnreadMessages(
+    fun findUnreadMessagesForMember(
         chatRoomMember: ChatRoomMember,
     ): List<Message>
 
-    fun getPreviousMessages(
+    fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
         messageId: Long,
         size: Int,
@@ -55,7 +55,7 @@ class MessageCustomRepositoryImpl(
                     )
             }.toInt()
 
-    override fun getUnreadMessages(chatRoomMember: ChatRoomMember): List<Message> =
+    override fun findUnreadMessagesForMember(chatRoomMember: ChatRoomMember): List<Message> =
         kotlinJdslJpqlExecutor.getList {
             select(entity(Message::class))
                 .from(entity(Message::class))
@@ -67,7 +67,7 @@ class MessageCustomRepositoryImpl(
                 ).orderBy(path(Message::id).asc())
         }
 
-    override fun getPreviousMessages(
+    override fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
         messageId: Long,
         size: Int,
