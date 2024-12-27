@@ -6,6 +6,7 @@ import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
+import org.springframework.test.util.ReflectionTestUtils
 import java.time.LocalDateTime
 
 const val TEST_CONTENT = "안녕하세여"
@@ -17,13 +18,10 @@ fun createTestMessage(
     type: MessageType = MessageType.TEXT,
 ) = Message.of(content = content, chatRoom = chatRoom, sender = sender, type = type)
 
-class MockTestMessage(
+fun createMockTestMessage(
     id: Long = 0L,
     chatRoom: ChatRoom = createTestChatRoom(),
     sender: Member = createTestMember(),
     content: String = TEST_CONTENT,
     type: MessageType = MessageType.TEXT,
-) : Message(id, chatRoom, sender, content, type) {
-    override var createdAt: LocalDateTime = LocalDateTime.now() // 해당 mock 객체를 만들어서 채팅방 리스트의 마지막 메세지 시간을 테스트하기 위함
-    // 코틀린은 기본적으로 final이기 때문에 open 키워드를 붙여주어야 상속이 가능하다.
-}
+) = Message(id, chatRoom, sender, content, type).apply { ReflectionTestUtils.setField(this, "createdAt", LocalDateTime.now()) } //ReflectionTestUtils을 사용하면 private field에 값을 넣을 수 있다.
