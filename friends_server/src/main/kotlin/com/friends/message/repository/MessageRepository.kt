@@ -55,6 +55,10 @@ class MessageCustomRepositoryImpl(
                     )
             }.toInt()
 
+    /**
+     * 채팅방의 읽지 않은 메세지를 가져옵니다.
+     * id 오름차순으로 정렬합니다.
+     */
     override fun findUnreadMessagesForMember(chatRoomMember: ChatRoomMember): List<Message> =
         kotlinJdslJpqlExecutor.getList {
             select(entity(Message::class))
@@ -67,6 +71,10 @@ class MessageCustomRepositoryImpl(
                 ).orderBy(path(Message::id).asc())
         }
 
+    /**
+     * 채팅방의 특정 메세지 이전의 메세지를 가져옵니다.
+     * id 내림차순으로 정렬합니다.
+     */
     override fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
         messageId: Long,
