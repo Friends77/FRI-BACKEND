@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.socket.WebSocketSession
 
 @Service
-class MessageService(
+class MessageCommandService(
     private val messageRepository: MessageRepository,
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
