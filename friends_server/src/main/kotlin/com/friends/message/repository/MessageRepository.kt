@@ -2,10 +2,14 @@ package com.friends.message.repository
 
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
+import com.friends.common.util.getList
 import com.friends.common.util.getSingle
+import com.friends.common.util.getSlice
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -20,6 +24,16 @@ interface MessageCustomRepository {
     fun countUnreadMessages(
         chatRoomMember: ChatRoomMember,
     ): Int
+
+    fun getUnreadMessages(
+        chatRoomMember: ChatRoomMember,
+    ): List<Message>
+
+    fun getPreviousMessages(
+        chatRoom: ChatRoom,
+        messageId: Long,
+        size: Int,
+    ): Slice<Message>
 }
 
 class MessageCustomRepositoryImpl(
@@ -40,4 +54,34 @@ class MessageCustomRepositoryImpl(
                         ),
                     )
             }.toInt()
+
+    override fun getUnreadMessages(chatRoomMember: ChatRoomMember): List<Message> =
+        kotlinJdslJpqlExecutor.getList {
+            select(entity(Message::class))
+                .from(entity(Message::class))
+                .where(
+                    and(
+                        path(Message::chatRoom).equal(chatRoomMember.chatRoom),
+                        path(Message::id).greaterThan(chatRoomMember.lastReadMessage.id),
+                    ),
+                ).orderBy(path(Message::id).asc())
+        }
+
+    override fun getPreviousMessages(
+        chatRoom: ChatRoom,
+        messageId: Long,
+        size: Int,
+    ): Slice<Message> {
+        val pageable = Pageable.ofSize(size)
+        return kotlinJdslJpqlExecutor.getSlice(pageable) {
+            select(entity(Message::class))
+                .from(entity(Message::class))
+                .where(
+                    and(
+                        path(Message::chatRoom).equal(chatRoom),
+                        path(Message::id).lessThan(messageId),
+                    ),
+                ).orderBy(path(Message::id).desc())
+        }
+    }
 }
