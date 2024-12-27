@@ -4,6 +4,8 @@ import com.friends.config.OAuth2Properties
 import com.friends.member.entity.OAuth2Provider
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import java.nio.charset.StandardCharsets
@@ -17,13 +19,6 @@ class OAuth2Fetcher(
         oAuth2Provider: OAuth2Provider,
     ): OAuth2AccessTokenResponseDto {
         val oAuth2Property = oAuth2Properties.get(oAuth2Provider)
-        val requestForm =
-            mapOf(
-                "code" to code,
-                "grant_type" to "authorization_code",
-                "redirect_uri" to oAuth2Property.redirectUrl,
-            )
-
         return try {
             WebClient
                 .create()
@@ -34,7 +29,7 @@ class OAuth2Fetcher(
                     it.contentType = MediaType.APPLICATION_FORM_URLENCODED
                     it.accept = listOf(MediaType.APPLICATION_JSON)
                     it.acceptCharset = listOf(StandardCharsets.UTF_8)
-                }.bodyValue(requestForm)
+                }.bodyValue(accessTokenRequestForm(code, oAuth2Provider))
                 .retrieve()
                 .bodyToMono(OAuth2AccessTokenResponseDto::class.java)
                 .block() ?: throw OAuth2NullResponseException()
@@ -61,5 +56,17 @@ class OAuth2Fetcher(
         } catch (e: Exception) {
             throw OAuth2UserInfoFetchFailedException()
         }
+    }
+
+    private fun accessTokenRequestForm(
+        code: String,
+        oAuth2Provider: OAuth2Provider,
+    ): MultiValueMap<String, String> {
+        val form = LinkedMultiValueMap<String, String>()
+        val oAuth2Property = oAuth2Properties.get(oAuth2Provider)
+        form.add("code", code)
+        form.add("grant_type", "authorization_code")
+        form.add("redirect_uri", oAuth2Property.redirectUrl)
+        return form
     }
 }

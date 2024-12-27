@@ -1,6 +1,6 @@
 package com.friends.board.service
 
-import com.friends.board.entity.Comment
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CommentRepository
@@ -18,7 +18,7 @@ class CommentQueryService(
     fun getCommentList(
         boardId: Long,
         lastCreatedAt: LocalDateTime? = null,
-    ): List<Comment> {
+    ): List<CommentResponseDto> {
         if (!boardRepository.existsById(boardId)) {
             throw BoardNotFoundException()
         }

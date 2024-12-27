@@ -39,12 +39,14 @@ enum class ErrorCode(
     OAUTH2_NULL_RESPONSE(HttpStatus.BAD_GATEWAY, -14003, "OAuth2 API로부터 응답이 없습니다."),
 
     // Profile API error 15000대
-    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
+    PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
 
     // Board API error 16000대
-    NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
-    BOARD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -16003, "전부 존재하지 않는 게시판 카테고리입니다."),
+    BOARD_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, -16003, "이미 좋아요를 눌렀습니다."),
+    BOARD_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, -16004, "해당 게시글에 대한 좋아요가 존재하지 않습니다."),
+    BOARD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -16005, "전부 존재하지 않는 게시판 카테고리입니다."),
 
     // Chat API error 17000대
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),

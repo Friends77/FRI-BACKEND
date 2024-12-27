@@ -21,6 +21,6 @@ fun createTestMember(): Member = Member(id = REQUEST_MEMBER_ID, nickname = "Test
 
 fun createTestBoard(): Board = Board(id = BOARD_ID, member = createTestMember(), content = "Test content")
 
-val createBoardRequestFormDto = BoardRequestDto(content = createTestBoard().content, categoryIds = setOf(TEST_CATEGORY_ID))
+val createBoardRequestDto = BoardRequestDto(content = createTestBoard().content, categoryIds = setOf(TEST_CATEGORY_ID))
 
 fun createBoardCategory(): List<BoardCategory> = listOf(BoardCategory(id = BOARD_HASHTAG_ID, board = createTestBoard(), category = createTestCategory()))
