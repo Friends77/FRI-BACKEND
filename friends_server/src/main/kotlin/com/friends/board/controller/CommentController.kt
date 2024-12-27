@@ -1,8 +1,8 @@
 package com.friends.board.controller
 
 import com.friends.board.dto.CommentAddDto
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.dto.CommentUpdateDto
-import com.friends.board.entity.Comment
 import com.friends.board.service.CommentCommandService
 import com.friends.board.service.CommentQueryService
 import org.springframework.http.HttpStatus
@@ -59,7 +59,5 @@ class CommentController(
     @GetMapping("api/user/board/{boardId}/comments")
     override fun getComments(
         @PathVariable boardId: Long,
-    ): List<Comment> {
-        return commentQueryService.getCommentList(boardId)
-    }
+    ): List<CommentResponseDto> = commentQueryService.getCommentList(boardId)
 }
