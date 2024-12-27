@@ -13,8 +13,10 @@ import com.friends.message.dto.MessageResponseDto
 import com.friends.message.dto.mapper.toMessageResponseDto
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class MessageQueryService(
     private val messageRepository: MessageRepository,
     private val memberRepository: MemberRepository,
