@@ -28,11 +28,11 @@ class ChatRoomLikeRepositoryTest(
             chatRoomLikeRepository.save(ChatRoomLike.of(chatRoom1, member1))
         }
 
-        describe("existsByChatRoomAndMember 메서드는") {
+        describe("existsByChatRoomAndMemberId 메서드는") {
             context("채팅방과 회원을 받으면") {
                 it("채팅방 좋아요 여부를 반환한다") {
-                    chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom1, member1) shouldBe true
-                    chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom1, member2) shouldBe false
+                    chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom1, member1.id) shouldBe true
+                    chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom1, member2.id) shouldBe false
                 }
             }
         }
@@ -41,7 +41,7 @@ class ChatRoomLikeRepositoryTest(
             context("채팅방과 회원을 받으면") {
                 it("채팅방 좋아요를 삭제한다") {
                     chatRoomLikeRepository.deleteByChatRoomAndMember(chatRoom1, member1)
-                    chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom1, member1) shouldBe false
+                    chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom1, member1.id) shouldBe false
                 }
             }
         }

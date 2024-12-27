@@ -36,4 +36,6 @@ data class ChatRoomDetailResponseDto(
     val participantCount: Int,
     @Schema(description = "채팅방 좋아요 수")
     val likeCount: Int,
+    @Schema(description = "해당 채팅방 좋아요 여부(좋아요 눌렀을 시, true)")
+    val isLike: Boolean,
 )
