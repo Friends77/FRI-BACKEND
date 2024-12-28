@@ -60,7 +60,5 @@ class CommentController(
     @GetMapping("api/user/board/{boardId}/comments")
     override fun getComments(
         @PathVariable boardId: Long,
-    ): List<CommentResponseDto> {
-        return commentQueryService.getCommentList(boardId)
-    }
+    ): List<CommentResponseDto> = commentQueryService.getCommentList(boardId)
 }

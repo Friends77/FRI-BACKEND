@@ -61,6 +61,7 @@ data class OAuth2LoginResponseDto(
     val email: String? = null,
     val nickname: String? = null,
     val imageUrl: String? = null,
+    val authToken: String? = null,
 )
 
 data class RefreshResponseDto(
