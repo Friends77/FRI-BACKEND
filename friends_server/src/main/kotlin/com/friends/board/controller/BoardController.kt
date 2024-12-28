@@ -1,8 +1,12 @@
 package com.friends.board.controller
 
+import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.BoardRequestDto
 import com.friends.board.dto.BoardResponseDto
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.entity.Board
+import com.friends.board.repository.BoardCategoryRepository
+import com.friends.board.repository.BoardRepository
 import com.friends.board.service.BoardCommandService
 import com.friends.board.service.BoardQueryService
 import com.friends.common.mapper.toCategoryInfoResponse
@@ -24,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(
     val boardCommandService: BoardCommandService,
     val boardQueryService: BoardQueryService,
+    private val boardRepository: BoardRepository,
+    private val boardCategoryRepository: BoardCategoryRepository,
 ) : BoardControllerSpec {
     // 게시글 등록
     @PostMapping("api/user/board")
@@ -40,17 +46,8 @@ class BoardController(
     override fun getBoard(
         @PathVariable id: Long,
     ): ResponseEntity<BoardResponseDto> {
-        val (board, categories) =
-            boardQueryService.getBoard(id)
-                ?: return ResponseEntity.notFound().build()
-
-        val boardDto =
-            BoardResponseDto(
-                content = board.content,
-                categories = categories.map { toCategoryInfoResponse(it) },
-            )
-        return ResponseEntity.ok(boardDto)
-    }
+        val boardDto = boardQueryService.getBoard(id)
+        return ResponseEntity.ok(boardDto) }
 
     // 게시글 삭제
     @DeleteMapping("api/user/board/{id}")
@@ -78,7 +75,7 @@ class BoardController(
     override fun getBoards(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int,
-    ): Page<Board> {
+    ): Page<BoardResponseDto> {
         val pageable = PageRequest.of(page, pageSize)
         return boardQueryService.getBoardList(pageable)
     }

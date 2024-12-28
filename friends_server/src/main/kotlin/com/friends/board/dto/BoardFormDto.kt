@@ -9,5 +9,6 @@ data class BoardRequestDto(
 
 data class BoardResponseDto(
     var content: String,
-    var categories: List<CategoryInfoResponse>,
+    var categories: List<CategoryInfoResponse>?,
+    var comments: List<CommentResponseDto>?
 )
