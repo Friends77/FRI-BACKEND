@@ -19,7 +19,7 @@ interface ProfileControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "내 프로필 조회 성공"
+                description = "내 프로필 조회 성공",
             ),
         ],
     )
@@ -32,7 +32,7 @@ interface ProfileControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "다른 사람 프로필 조회 성공"
+                description = "다른 사람 프로필 조회 성공",
             ),
         ],
     )
@@ -45,7 +45,7 @@ interface ProfileControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "204",
-                description = "프로필 작성 성공"
+                description = "프로필 작성 성공",
             ),
         ],
     )
@@ -59,12 +59,12 @@ interface ProfileControllerSpec {
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "프로필 수정 성공"
+                description = "프로필 수정 성공",
             ),
         ],
     )
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-    ):ResponseEntity<ProfileUpdateDto>
+    ): ResponseEntity<ProfileUpdateDto>
 }
