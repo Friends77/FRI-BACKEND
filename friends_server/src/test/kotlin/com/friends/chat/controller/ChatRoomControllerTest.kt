@@ -12,6 +12,7 @@ import com.friends.support.annotation.ControllerTest
 import com.friends.support.createMultipartFile
 import com.friends.support.getWithAuthentication
 import com.friends.support.multipartWithAuthentication
+import com.friends.support.postWithAuthentication
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
@@ -32,7 +33,7 @@ class ChatRoomControllerTest(
         given("POST $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
                 val request = createTestChatRoomCreateRequestDto()
-                every { chatRoomCommandService.createChatRoom(any(), any(), any()) } returns Unit
+                every { chatRoomCommandService.createChatRoom(any(), any(), any()) } returns TEST_CHAT_ROOM_ID
                 then("채팅방을 생성한다.") {
                     mockMvc
                         .perform(
@@ -146,6 +147,31 @@ class ChatRoomControllerTest(
                     mockMvc
                         .perform(
                             getWithAuthentication("$requestPath/0"),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+        }
+
+        given("POST $requestPath/{chatRoomId} Test") {
+            `when`("정상적인 요청이 들어올 경우") {
+                every { chatRoomCommandService.enterChatRoom(any(), any()) } returns Unit
+                then("채팅방에 입장한다.") {
+                    mockMvc
+                        .perform(
+                            postWithAuthentication("$requestPath/$TEST_CHAT_ROOM_ID"),
+                        ).andExpect(
+                            status().isNoContent,
+                        )
+                }
+            }
+
+            `when`("채팅방 ID가 0인 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            postWithAuthentication("$requestPath/0"),
                         ).andExpect(
                             status().isBadRequest,
                         )

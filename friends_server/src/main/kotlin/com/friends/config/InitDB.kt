@@ -21,11 +21,18 @@ class InitDB(
 
         ApplicationRunner {
             // 테스트 유저 생성
-            memberRepository.save(
-                Member.createUser(
-                    nickname = "user",
-                    email = "user",
-                    password = passwordEncoder.encode("user"),
+            memberRepository.saveAll(
+                listOf(
+                    Member.createUser(
+                        nickname = "user",
+                        email = "user",
+                        password = passwordEncoder.encode("user"),
+                    ),
+                    Member.createUser(
+                        nickname = "user2",
+                        email = "user2",
+                        password = passwordEncoder.encode("user2"),
+                    ),
                 ),
             )
 
