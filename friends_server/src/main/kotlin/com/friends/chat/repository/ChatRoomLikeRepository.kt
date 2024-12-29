@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ChatRoomLikeRepository : JpaRepository<ChatRoomLike, Long> {
-    fun existsByChatRoomAndMember(
+    fun existsByChatRoomAndMemberId(
         chatRoom: ChatRoom,
-        member: Member,
+        memberId: Long,
     ): Boolean
 
     fun deleteByChatRoomAndMember(

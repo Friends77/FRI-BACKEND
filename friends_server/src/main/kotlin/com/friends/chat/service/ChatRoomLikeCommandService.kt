@@ -24,7 +24,7 @@ class ChatRoomLikeCommandService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         val liked =
-            if (chatRoomLikeRepository.existsByChatRoomAndMember(chatRoom, member)) {
+            if (chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, member.id)) {
                 chatRoomLikeRepository.deleteByChatRoomAndMember(chatRoom, member)
                 chatRoom.decreaseLikeCount()
                 false
