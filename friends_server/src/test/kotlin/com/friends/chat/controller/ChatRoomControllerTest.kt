@@ -2,7 +2,9 @@ package com.friends.chat.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
+import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoomCreateRequestDto
+import com.friends.chat.createTestChatRoomDetailResponseDto
 import com.friends.chat.createTestMockSliceResponseChatRoom
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
@@ -119,6 +121,31 @@ class ChatRoomControllerTest(
                     mockMvc
                         .perform(
                             getWithAuthentication(requestPath).param("lastChatRoomMemberId", "-1"),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+        }
+
+        given("GET  $requestPath/{id} Test") {
+            `when`("정상적인 요청이 들어온 경우") {
+                every { chatRoomQueryService.getChatRoomDetail(any(), any()) } returns createTestChatRoomDetailResponseDto()
+                then("채팅방 상세를 조회한다,") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication("$requestPath/$TEST_CHAT_ROOM_ID"),
+                        ).andExpect(
+                            status().isOk,
+                        )
+                }
+            }
+
+            `when`("채팅방 ID가 양수가 아닌 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication("$requestPath/0"),
                         ).andExpect(
                             status().isBadRequest,
                         )

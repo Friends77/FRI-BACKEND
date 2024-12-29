@@ -4,6 +4,7 @@ import com.friends.TEST_CATEGORY_ID
 import com.friends.TEST_SIZE
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ToggleLikeResponseDto
+import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
 import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomLike
@@ -76,3 +77,9 @@ fun createTestChatRoomLike(
     chatRoom: ChatRoom = createTestChatRoom(),
     member: Member = createTestMember(),
 ) = ChatRoomLike.of(chatRoom, member)
+
+fun createTestChatRoomDetailResponseDto(
+    chatRoom: ChatRoom = createTestChatRoom(),
+    memberCount: Int = TEST_SIZE,
+    like: Boolean = false,
+) = toChatRoomDetailResponseDto(chatRoom, memberCount, like)
