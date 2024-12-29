@@ -1,28 +1,30 @@
 package com.friends.profile.dto
 
+import com.friends.category.entity.Category
 import com.friends.profile.entity.GenderEnum
+import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
-import java.util.Date
+import java.time.LocalDate
 
 //작성용 dto
 data class ProfileCreateDto(
-    var birth: Date,
+    var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: List<String>? = null,
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
 //수정가능한 필드 dto
 data class ProfileUpdateDto(
-    var birth: Date,
+    var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String? = null,
+    var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: List<String>? = null,
+    var interestTag: MutableSet<Long> = mutableSetOf(),
     var imageUrl: String,
 )
 
@@ -30,11 +32,18 @@ data class ProfileUpdateDto(
 data class ProfileResponseDto(
     val nickname: String,
     val email: String,
-    var birth: Date,
+    var birth: LocalDate,
     var gender: GenderEnum,
-    var location: String?,
+    var location: Location?,
     var selfDescription: String?,
     var mbti: MbtiEnum?,
-    var interestTag: List<String>?,
+    var interestTag: MutableSet<Category> = mutableSetOf(),
     var imageUrl: String,
+)
+
+data class ProfileWithDistanceDto(
+    val id: Long,
+    val nickname: String,
+    val imageUrl: String,
+    val distance: Double,
 )

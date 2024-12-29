@@ -2,63 +2,64 @@ package com.friends.board.service
 
 import com.friends.board.BoardNotFoundException
 import com.friends.board.InvalidBoardAccessException
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.NotFoundBoardCategoryException
+import com.friends.board.dto.BoardRequestDto
 import com.friends.board.entity.Board
-import com.friends.board.entity.BoardHashtag
-import com.friends.board.entity.Hashtag
-import com.friends.board.repository.BoardHashtagRepository
+import com.friends.board.entity.BoardCategory
+import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.board.repository.HashtagRepository
+import com.friends.board.repository.CategoryRepository
+import com.friends.category.entity.Category
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 @Transactional
 class BoardCommandService(
     private val boardRepository: BoardRepository,
     private val memberRepository: MemberRepository,
-    private val hashtagRepository: HashtagRepository,
-    private val boardHashtagRepository: BoardHashtagRepository,
+    private val categoryRepository: CategoryRepository,
+    private val boardCategoryRepository: BoardCategoryRepository,
 ) {
     fun createBoard(
-        boardFormDto: BoardFormDto,
+        boardAddDto: BoardRequestDto,
         requestMemberId: Long,
     ): Board {
         val member =
-            memberRepository.findById(requestMemberId)
-                //머지 후 membernotfoundexception으로 대체
+            memberRepository
+                .findById(requestMemberId)
                 .orElseThrow {
-                    ResponseStatusException(HttpStatus.NOT_FOUND, "Member not found with id: $requestMemberId")
+                    MemberNotFoundException()
                 }
 
         val board =
             Board(
                 member = member,
-                content = boardFormDto.content,
+                content = boardAddDto.content,
             )
 
         boardRepository.save(board)
 
-        val hashtags =
-            boardFormDto.hashtags.map { tag ->
-                hashtagRepository.findByTag(tag) ?: hashtagRepository.save(Hashtag(tag = tag))
+        val categories =
+            categoryRepository.findByIdIn(boardAddDto.categoryIds).also {
+                if (it.isEmpty()) {
+                    throw NotFoundBoardCategoryException()
+                }
             }
-
-        // 게시글-해시태그 관계 설정
-        val boardHashtags =
-            hashtags.map { hashtag ->
-                BoardHashtag(
+        val boardCategories =
+            categories.map { category ->
+                BoardCategory(
                     board = board,
-                    hashtag = hashtag,
+                    category = Category(category.id, category.name, category.type),
                 )
             }
-        boardHashtagRepository.saveAll(boardHashtags)
+        boardCategoryRepository.saveAll(boardCategories)
         return board
     }
 
+    //게시글 삭제
     fun deleteBoard(
         id: Long,
         requestMemberId: Long,
@@ -68,7 +69,6 @@ class BoardCommandService(
                 BoardNotFoundException()
             }
 
-        //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
             throw InvalidBoardAccessException()
         }
@@ -76,9 +76,10 @@ class BoardCommandService(
         boardRepository.deleteById(id)
     }
 
+    //게시글 수정
     fun updateBoard(
         id: Long,
-        boardFormDto: BoardFormDto,
+        boardUpdateDto: BoardRequestDto,
         requestMemberId: Long,
     ): Board {
         val board =
@@ -86,12 +87,20 @@ class BoardCommandService(
                 BoardNotFoundException()
             }
 
-        //요청자와 작성자 비교
         if (board.member.id != requestMemberId) {
             throw InvalidBoardAccessException()
         }
+        boardCategoryRepository.deleteByBoardId(id)
+        boardCategoryRepository.saveAll(
+            categoryRepository.findByIdIn(boardUpdateDto.categoryIds).map {
+                BoardCategory(
+                    board = board,
+                    category = Category(it.id, it.name, it.type),
+                )
+            },
+        )
+        board.updateBoard(boardUpdateDto)
 
-        board.updateBoard(boardFormDto)
         return board
     }
 }

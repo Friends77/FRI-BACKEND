@@ -1,15 +1,20 @@
 package com.friends.chat.repository
 
+import com.friends.TEST_SIZE
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomMember
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
+import com.friends.member.MEMBER_OTHER_EMAIL
+import com.friends.member.MEMBER_OTHER_NICKNAME
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.message.createTestMessage
+import com.friends.message.entity.Message
+import com.friends.message.repository.MessageRepository
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -18,44 +23,75 @@ class ChatRoomMemberRepositoryTest(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
-) : DescribeSpec(
-        {
-
-            isolationMode = IsolationMode.InstancePerLeaf
-            lateinit var member: Member
-            lateinit var member2: Member
-            lateinit var chatRoom1: ChatRoom
-            lateinit var chatRoomMember1: ChatRoomMember
-
-            beforeEach {
-                member = memberRepository.save(createTestMember())
-                member2 = memberRepository.save(createTestMember(email = "othrtEmail@naver.com"))
-                chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member))
-                chatRoomMember1 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
+    private val messageRepository: MessageRepository,
+) : DescribeSpec({
+        lateinit var member1: Member
+        lateinit var member2: Member
+        lateinit var member3: Member
+        lateinit var chatRoom1: ChatRoom
+        lateinit var chatRoom2: ChatRoom
+        lateinit var chatRoom3: ChatRoom
+        lateinit var chatRoomMember: ChatRoomMember
+        lateinit var chatRoomMember2: ChatRoomMember
+        lateinit var chatRoomMember3: ChatRoomMember
+        lateinit var chatRoomMember4: ChatRoomMember
+        lateinit var chatRoomMember5: ChatRoomMember
+        lateinit var message: Message
+        beforeEach {
+            member1 = memberRepository.save(createTestMember())
+            member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL, nickname = MEMBER_OTHER_NICKNAME))
+            member3 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL + 2, nickname = MEMBER_OTHER_NICKNAME + 2))
+            chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member1))
+            chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
+            chatRoom3 = chatRoomRepository.save(createTestChatRoom(manager = member3))
+            message = messageRepository.save(createTestMessage(chatRoom1, member1))
+            chatRoomMember = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1, message))
+            chatRoomMember2 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member2, message))
+            chatRoomMember3 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member3, message))
+            chatRoomMember4 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member3, message))
+            chatRoomMember5 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom3, member2, message))
+        }
+    describe("save") {
+        context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
+            it("에러가 난다.") {
+                shouldThrow<Exception> {
+                    chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
+                }
             }
+        }
+    }
 
-            describe("save") {
-                context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
-                    it("에러가 난다.") {
-                        shouldThrow<Exception> {
-                            chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
-                        }
-                    }
+        describe("countByChatRoomId 메서드는") {
+            context("존재하는 채팅방 ID를 받으면") {
+                it("chatRoomMember의 수를 반환한다") {
+                    chatRoomMemberRepository.countByChatRoom(chatRoom1) shouldBe 3
+                }
+            }
+        }
+
+        describe("sliceChatRoomIdByMember 메서드는") {
+            context("memberId만 받으면") {
+                it("chatRoomMember를 전부 반환한다") {
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoomMember5, chatRoomMember2)
                 }
             }
 
-            describe("existsByMemberIdAndChatRoomId") {
-                context("존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
-                    it("true를 반환한다.") {
-                        chatRoomMemberRepository.existsByMemberIdAndChatRoomId(member.id, chatRoom1.id) shouldBe true
-                    }
-                }
-
-                context("존재하지 않는 ChatRoomId와 MemberId가 들어오는 경우") {
-                    it("false를 반환한다.") {
-                        chatRoomMemberRepository.existsByMemberIdAndChatRoomId(member2.id, chatRoom1.id) shouldBe false
-                    }
+            context("회원 ID 리스트를 받으면") {
+                it("chatRoomMember를 전부 반환한다") {
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(member1, member3), TEST_SIZE, null).content shouldBe listOf(chatRoomMember2)
                 }
             }
-        },
-    )
+
+            context("사이즈를 받으면") {
+                it("chatRoomMember를 사이즈만큼 반환한다") {
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member3.id, listOf(), 1, null).size shouldBe 1
+                }
+            }
+
+            context("회원 ID와 마지막 채팅방 ID를 받으면") {
+                it("chatRoomMember를 반환한다") {
+                    chatRoomMemberRepository.sliceChatRoomIdByMember(member3.id, listOf(), TEST_SIZE, chatRoomMember4.id).content shouldBe listOf(chatRoomMember3)
+                }
+            }
+        }
+    })

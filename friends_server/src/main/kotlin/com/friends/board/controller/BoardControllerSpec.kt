@@ -1,6 +1,7 @@
 package com.friends.board.controller
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.dto.BoardRequestDto
+import com.friends.board.dto.BoardResponseDto
 import com.friends.board.entity.Board
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -25,28 +26,63 @@ interface BoardControllerSpec {
         ],
     )
     fun createBoard(
-        @RequestBody @Valid boardFormDto: BoardFormDto,
+        @RequestBody @Valid boardAddDto: BoardRequestDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void>
 
-    //TODO: 여기서부턴 작성해야함
+    @Operation(
+        description = "게시판 상세 조회",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "게시판 상세 조회 성공",
+            ),
+        ],
+    )
     fun getBoard(
         @PathVariable id: Long,
-    ): ResponseEntity<BoardFormDto>
+    ): ResponseEntity<BoardResponseDto>
 
+    @Operation(
+        description = "게시판 삭제",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "게시판 삭제 성공",
+            ),
+        ],
+    )
     fun deleteBoard(
         @PathVariable id: Long,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void>
 
+    @Operation(
+        description = "게시판 수정",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "게시판 수정 성공",
+            ),
+        ],
+    )
     fun updateBoard(
         @PathVariable id: Long,
-        @RequestBody boardFormDto: BoardFormDto,
+        @RequestBody boardUpdateDto: BoardRequestDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Board>
 
+    @Operation(
+        description = "게시판 전체 조회",
+        responses = [
+            ApiResponse(
+                responseCode = "201",
+                description = "게시판 전체 조회 성공",
+            ),
+        ],
+    )
     fun getBoards(
         @RequestParam page: Int,
-        @RequestParam size: Int,
-    ): Page<Board>
+        @RequestParam pageSize: Int,
+    ): Page<BoardResponseDto>
 }

@@ -3,11 +3,10 @@ package com.friends.board.service
 import com.friends.board.BOARD_ID
 import com.friends.board.INVALID_BOARD_ID
 import com.friends.board.PAGEABLE
-import com.friends.board.createBoardHashtag
+import com.friends.board.createBoardCategory
 import com.friends.board.createTestBoard
-import com.friends.board.repository.BoardHashtagRepository
+import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -19,24 +18,22 @@ import org.springframework.data.repository.findByIdOrNull
 class BoardQueryServiceTest :
     BehaviorSpec({
         val boardRepository = mockk<BoardRepository>()
-        val boardHashtagRepository = mockk<BoardHashtagRepository>()
-        val boardQueryService = BoardQueryService(boardRepository, boardHashtagRepository)
-
-        isolationMode = IsolationMode.InstancePerLeaf
+        val boardCategoryRepository = mockk<BoardCategoryRepository>()
+        val boardQueryService = BoardQueryService(boardRepository, boardCategoryRepository)
 
         given("getBoard 메서드를 호출할 때") {
 
             val testBoard = createTestBoard()
-            val testBoardHashtags = createBoardHashtag()
+            val testBoardCategories = createBoardCategory()
 
             every { boardRepository.findByIdOrNull(BOARD_ID) } returns testBoard
-            every { boardHashtagRepository.findByBoardId(BOARD_ID) } returns testBoardHashtags
+            every { boardCategoryRepository.findByBoardId(BOARD_ID) } returns testBoardCategories
 
             `when`("존재하는 boardId가 주어졌다면") {
-                val expTags = listOf("testTag")
+                val expTags = testBoardCategories.map { it.category }
                 val result = boardQueryService.getBoard(BOARD_ID)
 
-                then("Board와 Board 관련 Hashtag 리스트를 반환해야 한다.") {
+                then("Board와 Board 관련 Category 리스트를 반환해야 한다.") {
                     result?.first shouldBe testBoard
                     result?.second shouldContainExactly expTags
                 }

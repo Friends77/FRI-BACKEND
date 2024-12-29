@@ -10,7 +10,7 @@ enum class ErrorCode(
     // global error
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, -10000, "적절하지 않은 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, -10001, "서버 내부 오류입니다."),
-    POSITIVE_ID(HttpStatus.BAD_REQUEST, -11002, "Id는 0보다 커야 합니다."),
+    INVALID_SIZE(HttpStatus.BAD_REQUEST, -10002, "size는 양수여야 합니다."),
 
     // Auth API error 11000대
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, -11001, "유효하지 않은 토큰입니다."),
@@ -22,6 +22,8 @@ enum class ErrorCode(
     EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, -11005, "이미 존재하는 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, -11006, "유효하지 않은 비밀번호입니다."),
     INVALID_NICKNAME(HttpStatus.BAD_REQUEST, -11007, "유효하지 않은 닉네임입니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, -11008, "인증되지 않은 사용자입니다."),
+    FORBIDDEN(HttpStatus.FORBIDDEN, -11009, "권한이 없습니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
@@ -37,11 +39,14 @@ enum class ErrorCode(
     OAUTH2_NULL_RESPONSE(HttpStatus.BAD_GATEWAY, -14003, "OAuth2 API로부터 응답이 없습니다."),
 
     // Profile API error 15000대
-    NOT_FOUND_PROFILE(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
+    PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
 
     // Board API error 16000대
-    NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
     INVALID_BOARD_ACCESS(HttpStatus.FORBIDDEN, -16002, "게시글에 대한 유효하지 않은 접근입니다."),
+    BOARD_LIKE_ALREADY_EXISTS(HttpStatus.CONFLICT, -16003, "이미 좋아요를 눌렀습니다."),
+    BOARD_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, -16004, "해당 게시글에 대한 좋아요가 존재하지 않습니다."),
+    BOARD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -16005, "전부 존재하지 않는 게시판 카테고리입니다."),
 
     // Chat API error 17000대
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),
@@ -49,7 +54,14 @@ enum class ErrorCode(
     CHAT_ROOM_TITLE_INVALID_LENGTH(HttpStatus.BAD_REQUEST, -17003, "채팅방 제목은 1자 이상 20자 이하로 입력해주세요."),
     CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
     CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
-    CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "존재하지 않는 채팅방 카테고리입니다."),
-    NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17007, "참여중인 채팅방이 아닙니다."),
-    NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17008, "채팅방 관리자가 아닙니다."),
+    CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "전부 존재하지 않는 채팅방 카테고리입니다."),
+    INVALID_LAST_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17007, "lastChatRoomMemberId는 양수여야 합니다."),
+    INVALID_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17008, "채팅방 ID는 양수여야 합니다."),
+    CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, -17009, "채팅방에 존재하지 않는 멤버입니다."),
+    NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17010, "참여중인 채팅방이 아닙니다."),
+    NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17011, "채팅방 관리자가 아닙니다."),
+
+    // Comment API error 18000대
+    NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
+    INVALID_COMMENT_ACCESS(HttpStatus.FORBIDDEN, -18002, "댓글에 대한 유효하지 않은 접근입니다."),
 }

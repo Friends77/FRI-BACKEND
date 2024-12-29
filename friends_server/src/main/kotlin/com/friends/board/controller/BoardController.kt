@@ -1,9 +1,15 @@
 package com.friends.board.controller
 
-import com.friends.board.dto.BoardFormDto
+import com.friends.board.BoardNotFoundException
+import com.friends.board.dto.BoardRequestDto
+import com.friends.board.dto.BoardResponseDto
+import com.friends.board.dto.CommentResponseDto
 import com.friends.board.entity.Board
+import com.friends.board.repository.BoardCategoryRepository
+import com.friends.board.repository.BoardRepository
 import com.friends.board.service.BoardCommandService
 import com.friends.board.service.BoardQueryService
+import com.friends.common.mapper.toCategoryInfoResponse
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -22,14 +28,16 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(
     val boardCommandService: BoardCommandService,
     val boardQueryService: BoardQueryService,
+    private val boardRepository: BoardRepository,
+    private val boardCategoryRepository: BoardCategoryRepository,
 ) : BoardControllerSpec {
     // 게시글 등록
     @PostMapping("api/user/board")
     override fun createBoard(
-        @RequestBody @Valid boardFormDto: BoardFormDto,
+        @RequestBody @Valid boardAddDto: BoardRequestDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Void> {
-        boardCommandService.createBoard(boardFormDto, memberId)
+        boardCommandService.createBoard(boardAddDto, memberId)
         return ResponseEntity.noContent().build()
     }
 
@@ -37,18 +45,9 @@ class BoardController(
     @GetMapping("api/board/{id}")
     override fun getBoard(
         @PathVariable id: Long,
-    ): ResponseEntity<BoardFormDto> {
-        var (board, hashtags) =
-            boardQueryService.getBoard(id)
-                ?: return ResponseEntity.notFound().build()
-
-        val boardDto =
-            BoardFormDto(
-                content = board.content,
-                hashtags = hashtags,
-            )
-        return ResponseEntity.ok(boardDto)
-    }
+    ): ResponseEntity<BoardResponseDto> {
+        val boardDto = boardQueryService.getBoard(id)
+        return ResponseEntity.ok(boardDto) }
 
     // 게시글 삭제
     @DeleteMapping("api/user/board/{id}")
@@ -64,10 +63,10 @@ class BoardController(
     @PutMapping("api/user/board/{id}")
     override fun updateBoard(
         @PathVariable id: Long,
-        @RequestBody boardFormDto: BoardFormDto,
+        @RequestBody boardUpdateDto: BoardRequestDto,
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<Board> {
-        val board = boardCommandService.updateBoard(id, boardFormDto, memberId)
+        val board = boardCommandService.updateBoard(id, boardUpdateDto, memberId)
         return ResponseEntity.ok(board)
     }
 
@@ -76,7 +75,7 @@ class BoardController(
     override fun getBoards(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") pageSize: Int,
-    ): Page<Board> {
+    ): Page<BoardResponseDto> {
         val pageable = PageRequest.of(page, pageSize)
         return boardQueryService.getBoardList(pageable)
     }

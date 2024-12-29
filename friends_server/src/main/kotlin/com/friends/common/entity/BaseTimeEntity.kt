@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 abstract class BaseTimeEntity {
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    lateinit var createdAt: LocalDateTime
+    open lateinit var createdAt: LocalDateTime
         protected set
 }
 

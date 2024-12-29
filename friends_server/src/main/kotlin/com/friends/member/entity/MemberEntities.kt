@@ -10,12 +10,15 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Index
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "member", indexes = [Index(name = "member_nickname", columnList = "nickname")])
 class Member(
     // id는 불변 값으로 설정하여 JPA에서 자동으로 할당
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +32,6 @@ class Member(
     var password: String? = null,
     @Enumerated(EnumType.STRING)
     var oauth2Provider: OAuth2Provider?,
-    var imageUrl: String?,
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
@@ -46,14 +48,12 @@ class Member(
             email: String,
             password: String? = null,
             oauth2Provider: OAuth2Provider? = null,
-            imageUrl: String? = null,
         ): Member =
             Member(
                 nickname = nickname,
                 email = email,
                 password = password,
                 oauth2Provider = oauth2Provider,
-                imageUrl = imageUrl,
             ).apply {
                 addAuthority(Role.ROLE_USER) // 기본 권한을 사용자 권한으로 설정
             }
@@ -67,14 +67,12 @@ class Member(
             email: String,
             password: String,
             oauth2Provider: OAuth2Provider? = null,
-            imageUrl: String? = null,
         ): Member =
             Member(
                 nickname = nickname,
                 email = email,
                 password = password,
                 oauth2Provider = oauth2Provider,
-                imageUrl = imageUrl,
             ).apply {
                 addAuthority(Role.ROLE_USER) // 기본 권한으로 사용자 권한 추가
                 addAuthority(Role.ROLE_ADMIN) // 관리자 권한 추가

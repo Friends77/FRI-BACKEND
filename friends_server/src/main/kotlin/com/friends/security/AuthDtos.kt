@@ -1,6 +1,8 @@
 package com.friends.security
 
 import com.friends.member.entity.OAuth2Provider
+import com.friends.profile.entity.GenderEnum
+import com.friends.profile.entity.MbtiEnum
 
 data class LoginRequestDto(
     val email: String,
@@ -13,10 +15,22 @@ data class LoginResponseDto(
 )
 
 data class RegisterRequestDto(
-    val emailAuthToken: String,
-    val email: String,
-    val password: String,
+    val authToken: String,
+    val email: String? = null,
+    val password: String? = null,
     val nickname: String,
+    val birth: Int,
+    val gender: GenderEnum,
+    val selfDescription: String? = null,
+    val mbti: MbtiEnum? = null,
+    val interestTag: List<Long> = emptyList(),
+    val imageUrl: String? = null,
+    val location: LocationDto? = null,
+)
+
+data class LocationDto(
+    val latitude: Double,
+    val longitude: Double,
 )
 
 data class AtRtDto(
@@ -24,10 +38,15 @@ data class AtRtDto(
     val refreshToken: String,
 )
 
-data class OAuth2LoginSuccessDto(
-    val firstLogin: Boolean,
-    val accessToken: String,
-    val refreshToken: String,
+data class OAuth2LoginDto(
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
+    val authToken: String? = null,
 )
 
 data class OAuth2LoginRequestDto(
@@ -36,9 +55,13 @@ data class OAuth2LoginRequestDto(
 )
 
 data class OAuth2LoginResponseDto(
-    val memberId: Long,
-    val accessToken: String,
-    val firstLogin: Boolean,
+    val isRegistered: Boolean,
+    val memberId: Long? = null,
+    val accessToken: String? = null,
+    val email: String? = null,
+    val nickname: String? = null,
+    val imageUrl: String? = null,
+    val authToken: String? = null,
 )
 
 data class RefreshResponseDto(
@@ -46,10 +69,15 @@ data class RefreshResponseDto(
 )
 
 data class LogoutRequestDto(
-    val accessToken: String,
+    val accessToken: String?,
 )
 
 data class CheckNicknameResponseDto(
+    val isValid: Boolean,
+    val message: String,
+)
+
+data class CheckEmailResponseDto(
     val isValid: Boolean,
     val message: String,
 )

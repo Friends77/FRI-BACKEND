@@ -1,6 +1,7 @@
 package com.friends.common.exception
 
 import com.friends.board.BoardException
+import com.friends.board.exception.CommentException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
 import com.friends.member.MemberExceptions
@@ -73,4 +74,20 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
+
+    @ExceptionHandler(CommentException::class)
+    fun handleCommentException(ex: CommentException): ResponseEntity<Any> {
+        log.error("Comment Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+//    @ExceptionHandler(Exception::class)
+//    fun handleException(ex: Exception): ResponseEntity<Any> {
+//        log.error("Exception", ex)
+//        return ResponseEntity
+//            .status(ex.httpStatus)
+//            .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR, ex.message))
+//    }
 }

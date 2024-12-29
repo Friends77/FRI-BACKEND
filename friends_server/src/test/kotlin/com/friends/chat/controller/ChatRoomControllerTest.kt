@@ -1,15 +1,18 @@
 package com.friends.chat.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.friends.chat.CHAT_ROOM_ID
 import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
+import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoomCreateRequestDto
+import com.friends.chat.createTestChatRoomDetailResponseDto
+import com.friends.chat.createTestMockSliceResponseChatRoom
 import com.friends.chat.service.ChatRoomCommandService
+import com.friends.chat.service.ChatRoomQueryService
 import com.friends.support.annotation.ControllerTest
 import com.friends.support.createMultipartFile
+import com.friends.support.getWithAuthentication
 import com.friends.support.multipartWithAuthentication
 import com.ninjasquad.springmockk.MockkBean
-import io.kotest.core.spec.IsolationMode
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -20,12 +23,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 @WebMvcTest(ChatRoomController::class)
 class ChatRoomControllerTest(
     @MockkBean private val chatRoomCommandService: ChatRoomCommandService,
+    @MockkBean private val chatRoomQueryService: ChatRoomQueryService,
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : BehaviorSpec({
-        val requestPath = "/api/user/chat"
-
-        isolationMode = IsolationMode.InstancePerLeaf
+        val requestPath = "/api/user/chat/room"
 
         given("POST $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
@@ -90,24 +92,60 @@ class ChatRoomControllerTest(
             }
         }
 
-        given("POST $requestPath/{chatRoomId} Test") {
+        given("GET $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
-                every { chatRoomCommandService.enterChatRoom(any(), any()) } returns Unit
-                then("채팅방에 입장한다.") {
+                every { chatRoomQueryService.getChatRooms(any(), any(), any(), any()) } returns createTestMockSliceResponseChatRoom()
+                then("채팅방을 조회한다.") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication("$requestPath/$CHAT_ROOM_ID"),
+                            getWithAuthentication(requestPath),
                         ).andExpect(
-                            status().isNoContent,
+                            status().isOk,
                         )
                 }
             }
 
-            `when`("채팅방 ID가 0인 경우") {
+            `when`("사이즈가 양수가 아닌 경우") {
                 then("400 에러 발생") {
                     mockMvc
                         .perform(
-                            multipartWithAuthentication("$requestPath/0"),
+                            getWithAuthentication(requestPath).param("size", "0"),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+
+            `when`("lastChatRoomMemberId가 양수가 아닌 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication(requestPath).param("lastChatRoomMemberId", "-1"),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
+        }
+
+        given("GET  $requestPath/{id} Test") {
+            `when`("정상적인 요청이 들어온 경우") {
+                every { chatRoomQueryService.getChatRoomDetail(any(), any()) } returns createTestChatRoomDetailResponseDto()
+                then("채팅방 상세를 조회한다,") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication("$requestPath/$TEST_CHAT_ROOM_ID"),
+                        ).andExpect(
+                            status().isOk,
+                        )
+                }
+            }
+
+            `when`("채팅방 ID가 양수가 아닌 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication("$requestPath/0"),
                         ).andExpect(
                             status().isBadRequest,
                         )
