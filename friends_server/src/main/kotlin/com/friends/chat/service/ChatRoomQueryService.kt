@@ -48,7 +48,7 @@ class ChatRoomQueryService(
         return toSliceBaseResponse(chatRoomInfoResponse)
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun getChatRoomDetail(
         chatRoomId: Long,
         memberId: Long,
