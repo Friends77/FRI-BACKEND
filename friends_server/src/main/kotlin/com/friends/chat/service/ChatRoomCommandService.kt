@@ -4,6 +4,7 @@ import com.friends.board.repository.CategoryRepository
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomMember
@@ -33,7 +34,7 @@ class ChatRoomCommandService(
         request: ChatRoomCreateRequestDto,
         memberId: Long,
         backgroundImage: MultipartFile?,
-    ): Long {
+    ): CreateChatRoomResponseDto {
         val imageUrl =
             backgroundImage?.let {
                 /* 이미지 업로드 로직 */ backgroundImage.name
@@ -43,7 +44,7 @@ class ChatRoomCommandService(
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
         val enterMassage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
-        return chatRoom.id
+        return CreateChatRoomResponseDto(chatRoom.id)
     }
 
     fun enterChatRoom(

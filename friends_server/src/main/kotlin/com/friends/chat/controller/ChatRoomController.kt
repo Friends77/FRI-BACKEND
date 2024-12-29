@@ -37,10 +37,7 @@ class ChatRoomController(
         backgroundImage: MultipartFile?,
         @AuthenticationPrincipal
         memberId: Long,
-    ): ResponseEntity<CreateChatRoomResponseDto> {
-        val chatRoomId = chatRoomCommandService.createChatRoom(chatRoomCreateRequestDto, memberId, backgroundImage)
-        return ResponseEntity.status(HttpStatus.CREATED).body(CreateChatRoomResponseDto(chatRoomId))
-    }
+    ): ResponseEntity<CreateChatRoomResponseDto> = ResponseEntity.status(HttpStatus.CREATED).body(chatRoomCommandService.createChatRoom(chatRoomCreateRequestDto, memberId, backgroundImage))
 
     @GetMapping
     override fun getChatRooms(
