@@ -1,8 +1,13 @@
 package com.friends.chat.service
 
+import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
 import com.friends.chat.dto.mapper.toChatRoomInfoResponse
+import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
+import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.entity.Member
@@ -14,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 class ChatRoomQueryService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val messageRepository: MessageRepository,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val chatRoomLikeRepository: ChatRoomLikeRepository,
 ) {
     @Transactional
     fun getChatRooms(
@@ -39,5 +46,14 @@ class ChatRoomQueryService(
                     )
                 } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
         return toSliceBaseResponse(chatRoomInfoResponse)
+    }
+
+    @Transactional(readOnly = true)
+    fun getChatRoomDetail(
+        chatRoomId: Long,
+        memberId: Long,
+    ): ChatRoomDetailResponseDto {
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        return toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId))
     }
 }

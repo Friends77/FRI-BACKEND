@@ -4,6 +4,7 @@ import com.friends.TEST_CATEGORY_ID
 import com.friends.TEST_SIZE
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ToggleLikeResponseDto
+import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
 import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomLike
@@ -11,7 +12,7 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
-import com.friends.message.MockTestMessage
+import com.friends.message.createMockTestMessage
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import org.springframework.data.domain.Pageable
@@ -49,7 +50,7 @@ fun createTestSliceChatRoom(
 ) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
 
 fun createTestMockSliceChatRoom(
-    chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), MockTestMessage()),
+    chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), createMockTestMessage()),
 ) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
 
 fun createTestChatRoomInfoResponseDto(
@@ -76,3 +77,9 @@ fun createTestChatRoomLike(
     chatRoom: ChatRoom = createTestChatRoom(),
     member: Member = createTestMember(),
 ) = ChatRoomLike.of(chatRoom, member)
+
+fun createTestChatRoomDetailResponseDto(
+    chatRoom: ChatRoom = createTestChatRoom(),
+    memberCount: Int = TEST_SIZE,
+    like: Boolean = false,
+) = toChatRoomDetailResponseDto(chatRoom, memberCount, like)

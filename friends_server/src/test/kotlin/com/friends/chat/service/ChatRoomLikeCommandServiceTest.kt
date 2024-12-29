@@ -30,7 +30,7 @@ class ChatRoomLikeCommandServiceTest :
                 val member = createTestMember()
                 every { chatRoomRepository.findById(any()) } returns Optional.of(chatRoom)
                 every { memberRepository.findById(any()) } returns Optional.of(member)
-                every { chatRoomLikeRepository.existsByChatRoomAndMember(any(), any()) } returns false
+                every { chatRoomLikeRepository.existsByChatRoomAndMemberId(any(), any()) } returns false
                 every { chatRoomLikeRepository.save(any()) } returns createTestChatRoomLike()
                 `when`("좋아요를 누르지 않은 상태에서 좋아요를 누를 경우") {
                     then("좋아요가 저장된다.") {
@@ -43,7 +43,7 @@ class ChatRoomLikeCommandServiceTest :
                     }
                 }
 
-                every { chatRoomLikeRepository.existsByChatRoomAndMember(any(), any()) } returns true
+                every { chatRoomLikeRepository.existsByChatRoomAndMemberId(any(), any()) } returns true
                 every { chatRoomLikeRepository.deleteByChatRoomAndMember(any(), any()) } returns Unit
                 `when`("좋아요를 누른 상태에서 좋아요를 누를 경우") {
                     then("좋아요가 삭제된다.") {
@@ -66,7 +66,7 @@ class ChatRoomLikeCommandServiceTest :
                 `when`("좋아요 감소 시 좋아요 수가 음수가 되는 경우") {
                     chatRoom = createTestChatRoom(likeCount = 0)
                     every { chatRoomRepository.findById(any()) } returns Optional.of(chatRoom)
-                    every { chatRoomLikeRepository.existsByChatRoomAndMember(any(), any()) } returns true
+                    every { chatRoomLikeRepository.existsByChatRoomAndMemberId(any(), any()) } returns true
                     every { chatRoomLikeRepository.deleteByChatRoomAndMember(any(), any()) } returns Unit
                     then("PositiveLikeCountException 발생한다.") {
                         shouldThrow<PositiveLikeCountException> { chatRoomLikeCommandService.toggleLike(MEMBER_ID, chatRoom.id) }
