@@ -84,5 +84,5 @@ interface BoardControllerSpec {
     fun getBoards(
         @RequestParam page: Int,
         @RequestParam pageSize: Int,
-    ): Page<Board>
+    ): Page<BoardResponseDto>
 }
