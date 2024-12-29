@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.util.SliceChatRoomInfoResponseDto
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.exception.ErrorCode
@@ -29,6 +30,12 @@ interface ChatRoomControllerSpec {
             ApiResponse(
                 responseCode = "201",
                 description = "채팅방 생성 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = CreateChatRoomResponseDto::class),
+                    ),
+                ],
             ),
         ],
     )
@@ -48,7 +55,7 @@ interface ChatRoomControllerSpec {
         backgroundImage: MultipartFile?,
         @AuthenticationPrincipal
         memberId: Long,
-    ): ResponseEntity<Void>
+    ): ResponseEntity<CreateChatRoomResponseDto>
 
     @Operation(
         description = "채팅방 리스트 조회 API",
@@ -127,7 +134,7 @@ interface ChatRoomControllerSpec {
     @ApiErrorCodeExamples(
         [
             ErrorCode.CHAT_ROOM_NOT_FOUND,
-            ErrorCode.POSITIVE_ID,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
         ],
     )
     fun enterChatRoom(

@@ -34,8 +34,8 @@ class BoardQueryServiceTest :
                 val result = boardQueryService.getBoard(BOARD_ID)
 
                 then("Board와 Board 관련 Category 리스트를 반환해야 한다.") {
-                    result?.first shouldBe testBoard
-                    result?.second shouldContainExactly expTags
+                    result shouldBe testBoard
+                    result.categories shouldContainExactly expTags
                 }
             }
 
@@ -45,7 +45,7 @@ class BoardQueryServiceTest :
                 val result = boardQueryService.getBoard(INVALID_BOARD_ID)
 
                 then("null을 반환해야 한다.") {
-                    result?.first shouldBe null
+                    result shouldBe null
                 }
             }
         }
