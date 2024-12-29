@@ -12,7 +12,7 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
-import com.friends.message.MockTestMessage
+import com.friends.message.createMockTestMessage
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import org.springframework.data.domain.Pageable
@@ -50,7 +50,7 @@ fun createTestSliceChatRoom(
 ) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
 
 fun createTestMockSliceChatRoom(
-    chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), MockTestMessage()),
+    chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), createMockTestMessage()),
 ) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
 
 fun createTestChatRoomInfoResponseDto(
