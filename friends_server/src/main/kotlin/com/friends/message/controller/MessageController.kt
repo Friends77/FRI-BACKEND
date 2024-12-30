@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user/message")
 class MessageController(
     private val messageQueryService: MessageQueryService,
-) {
+) : MessageControllerSpec {
     @GetMapping("/unread/{chatRoomId}")
-    fun getUnreadMessageCount(
+    override fun getUnreadMessages(
         @AuthenticationPrincipal memberId: Long,
         @PathVariable chatRoomId: Long,
     ): ResponseEntity<ListBaseResponse<MessageResponseDto>> {
@@ -27,7 +27,7 @@ class MessageController(
     }
 
     @GetMapping("/previous/{chatRoomId}")
-    fun getPreviousMessage(
+    override fun getPreviousMessage(
         @AuthenticationPrincipal memberId: Long,
         @PathVariable chatRoomId: Long,
         @RequestParam("size", defaultValue = "20") size: Int,
