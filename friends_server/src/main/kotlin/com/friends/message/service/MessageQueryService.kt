@@ -56,7 +56,6 @@ class MessageQueryService(
          * 하지만 클라이언트에서는 message id 를 오름차순으로 정렬하여 보여주기 때문에 역순으로 반환합니다.
          */
         val messages = messageRepository.findMessagesBeforeIdInChatRoom(chatRoom, messageId, size).map { toMessageResponseDto(it) }
-        messages.content.reverse()
         return toSliceBaseResponse(messages)
     }
 }
