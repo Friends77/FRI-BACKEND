@@ -16,16 +16,15 @@ class Friendship(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friendship_id")
     val id: Long,
+    //내가 친구요청을 한 멤버
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    val member: Member,
-    val memberEmail: String? = null,
-    @Column(nullable = false)
-    val friendEmail: String,
+    @JoinColumn(name = "request_member_id")
+    val requestMember: Member,
+    //내가 친구요청을 받은 멤버
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receive_member_id")
+    val receiveMember: Member,
     private var friendshipStatus: FriendshipStatusEnums,
-    var isFrom: Boolean,
-    //상대방 아이디
-    var counterpartId: Long,
 ) : BaseModifiableEntity() {
     fun acceptFriendshipRequest() {
         friendshipStatus = FriendshipStatusEnums.ACCEPT
