@@ -29,6 +29,7 @@ class MessageQueryService(
     ): ListBaseResponse<MessageResponseDto> {
         val member = memberRepository.findById(memberId).orElse(null) ?: throw MemberNotFoundException()
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: throw ChatRoomNotFoundException()
+        // 채팅방에 속한 멤버인지 확인하는 유효성 검사도 같이 수행합니다.
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw ChatRoomMemberNotFoundException()
 
         val messages = messageRepository.findUnreadMessagesForMember(chatRoomMember).map { toMessageResponseDto(it) }
@@ -37,10 +38,17 @@ class MessageQueryService(
 
     fun getPreviousMessages(
         chatRoomId: Long,
-        messageId: Long,
+        memberId: Long,
+        messageId: Long?,
         size: Int,
     ): SliceBaseResponse<MessageResponseDto> {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: throw ChatRoomNotFoundException()
+        val member = memberRepository.findById(memberId).orElse(null) ?: throw MemberNotFoundException()
+
+        // 채팅방에 속한 멤버인지 확인합니다.
+        if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
+            throw ChatRoomMemberNotFoundException()
+        }
 
         /**
          * 이전 메세지를 들을 가져와 역순으로 반환합니다.

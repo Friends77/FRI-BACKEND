@@ -23,6 +23,11 @@ interface ChatRoomMemberRepository :
         chatRoom: ChatRoom,
         member: Member,
     ): ChatRoomMember?
+
+    fun existsChatRoomMemberByChatRoomAndMember(
+        chatRoom: ChatRoom,
+        member: Member,
+    ): Boolean
 }
 
 interface ChatRoomMemberCustomRepository {
