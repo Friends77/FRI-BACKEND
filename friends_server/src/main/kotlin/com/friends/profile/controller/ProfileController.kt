@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ProfileController(
-    val profileCommandService: ProfileCommandService,
-    val profileQueryService: ProfileQueryService,
-) {
+    private val profileCommandService: ProfileCommandService,
+    private val profileQueryService: ProfileQueryService,
+) : ProfileControllerSpec {
     //내 프로필 조회
     @GetMapping("api/user/profile")
-    fun getMyProfile(
+    override fun getMyProfile(
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<ProfileResponseDto> {
         val profile = profileQueryService.getProfile(memberId)
@@ -31,7 +31,7 @@ class ProfileController(
 
     //다른 사람 프로필 조회
     @GetMapping("api/global/profile/{memberId}")
-    fun getOtherProfile(
+    override fun getOtherProfile(
         @PathVariable memberId: Long,
     ): ResponseEntity<ProfileResponseDto> {
         val profile = profileQueryService.getProfile(memberId)
@@ -40,7 +40,7 @@ class ProfileController(
 
     //프로필 작성(초기화면)
     @PostMapping("api/user/profile")
-    fun createProfile(
+    override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileCreateDto: ProfileCreateDto,
     ): ResponseEntity<Void> {
@@ -50,7 +50,7 @@ class ProfileController(
 
     //프로필 수정
     @PutMapping("api/user/profile")
-    fun updateProfile(
+    override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
     ): ResponseEntity<ProfileUpdateDto> {

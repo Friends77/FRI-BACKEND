@@ -19,21 +19,23 @@ class BoardQueryService(
     //상세조회
     @Transactional(readOnly = true)
     fun getBoard(id: Long): BoardResponseDto {
-        val board = boardRepository.findById(id)
-            .orElseThrow { BoardNotFoundException() }
+        val board =
+            boardRepository.findById(id)
+                .orElseThrow { BoardNotFoundException() }
         val categories = boardCategoryRepository.findByBoardId(board.id).map { it.category }
 
         val boardDto =
             BoardResponseDto(
                 content = board.content,
                 categories = categories.map { toCategoryInfoResponse(it) },
-                comments = board.comments.map { comment ->
-                    CommentResponseDto(
-                        board = comment.board,
-                        member = comment.member,
-                        text = comment.text,
-                    )
-                }
+                comments =
+                    board.comments.map { comment ->
+                        CommentResponseDto(
+                            board = comment.board,
+                            member = comment.member,
+                            text = comment.text,
+                        )
+                    },
             )
         return boardDto
     }
@@ -46,13 +48,14 @@ class BoardQueryService(
             BoardResponseDto(
                 content = board.content,
                 categories = categories.map { toCategoryInfoResponse(it) },
-                comments = board.comments.map { comment ->
-                    CommentResponseDto(
-                        board = comment.board,
-                        member = comment.member,
-                        text = comment.text
-                    )
-                }
+                comments =
+                    board.comments.map { comment ->
+                        CommentResponseDto(
+                            board = comment.board,
+                            member = comment.member,
+                            text = comment.text,
+                        )
+                    },
             )
         }
     }

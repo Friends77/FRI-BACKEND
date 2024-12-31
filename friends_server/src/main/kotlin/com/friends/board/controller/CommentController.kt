@@ -3,7 +3,6 @@ package com.friends.board.controller
 import com.friends.board.dto.CommentAddDto
 import com.friends.board.dto.CommentResponseDto
 import com.friends.board.dto.CommentUpdateDto
-import com.friends.board.entity.Comment
 import com.friends.board.service.CommentCommandService
 import com.friends.board.service.CommentQueryService
 import org.springframework.http.HttpStatus
