@@ -60,18 +60,6 @@ class ChatRoomCommandService(
         }
     }
 
-    fun enterChatRoom(
-        chatRoomId: Long,
-        memberId: Long,
-    ) {
-        val chatRoom = chatRoomRepository.getByChatRoomId(chatRoomId)
-        val member = memberRepository.findById(memberId).get()
-        if (!chatRoomMemberRepository.existsByMemberIdAndChatRoomId(memberId, chatRoomId)) {
-            chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member))
-            messageRepository.save(Message.createEnterMessage(member, chatRoom))
-        }
-    }
-
     fun deleteChatRoom(
         chatRoomId: Long,
         memberId: Long,
