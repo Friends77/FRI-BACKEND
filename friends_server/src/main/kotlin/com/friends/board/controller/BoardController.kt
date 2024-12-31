@@ -1,15 +1,10 @@
 package com.friends.board.controller
 
-import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.BoardRequestDto
 import com.friends.board.dto.BoardResponseDto
-import com.friends.board.dto.CommentResponseDto
 import com.friends.board.entity.Board
-import com.friends.board.repository.BoardCategoryRepository
-import com.friends.board.repository.BoardRepository
 import com.friends.board.service.BoardCommandService
 import com.friends.board.service.BoardQueryService
-import com.friends.common.mapper.toCategoryInfoResponse
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -28,8 +23,6 @@ import org.springframework.web.bind.annotation.RestController
 class BoardController(
     val boardCommandService: BoardCommandService,
     val boardQueryService: BoardQueryService,
-    private val boardRepository: BoardRepository,
-    private val boardCategoryRepository: BoardCategoryRepository,
 ) : BoardControllerSpec {
     // 게시글 등록
     @PostMapping("api/user/board")

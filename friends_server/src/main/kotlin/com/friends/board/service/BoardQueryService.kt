@@ -3,15 +3,11 @@ package com.friends.board.service
 import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.BoardResponseDto
 import com.friends.board.dto.CommentResponseDto
-import com.friends.board.entity.Board
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.category.dto.CategoryInfoResponse
-import com.friends.category.entity.Category
 import com.friends.common.mapper.toCategoryInfoResponse
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
