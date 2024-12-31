@@ -9,6 +9,7 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.image.S3ClientService
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.repository.MessageRepository
@@ -24,6 +25,7 @@ class ChatRoomCommandService(
     private val categoryRepository: CategoryRepository,
     private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
     private val messageRepository: MessageRepository,
+    private val s3ClientService: S3ClientService,
 ) {
     @Transactional
     fun createChatRoom(
@@ -33,7 +35,7 @@ class ChatRoomCommandService(
     ) {
         val imageUrl =
             backgroundImage?.let {
-                /* 이미지 업로드 로직 */ backgroundImage.name
+                s3ClientService.upload(it)
             }
         val member = memberRepository.findById(memberId).get()
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
