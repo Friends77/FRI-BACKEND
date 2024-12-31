@@ -13,6 +13,7 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.websocket.ChatWebSocketHandler
 import com.friends.createTestCategory
+import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
@@ -36,7 +37,8 @@ class ChatRoomCommandServiceTest :
             val chatRoomCategoryRepository = mockk<ChatRoomCategoryRepository>()
             val messageRepository = mockk<MessageRepository>()
             val chatWebSocketHandler = mockk<ChatWebSocketHandler>()
-            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository, chatWebSocketHandler)
+            val s3ClientService = mockk<S3ClientService>()
+            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository, s3ClientService, chatWebSocketHandler)
 
             given("createChatRoom 테스트") {
                 val request = createTestChatRoomCreateRequestDto()
@@ -46,6 +48,7 @@ class ChatRoomCommandServiceTest :
                 every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
                 every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
                 every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                every { s3ClientService.upload(any()) } returns "test"
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방이 저장된다.") {
                         chatRoomCommandService.createChatRoom(request, MEMBER_ID, null)
