@@ -11,6 +11,7 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.image.S3ClientService
 import com.friends.chat.websocket.ChatWebSocketHandler
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
@@ -28,6 +29,7 @@ class ChatRoomCommandService(
     private val categoryRepository: CategoryRepository,
     private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
     private val messageRepository: MessageRepository,
+    private val s3ClientService: S3ClientService,
     private val chatWebSocketHandler: ChatWebSocketHandler,
 ) {
     @Transactional
@@ -38,7 +40,7 @@ class ChatRoomCommandService(
     ): CreateChatRoomResponseDto {
         val imageUrl =
             backgroundImage?.let {
-                /* 이미지 업로드 로직 */ backgroundImage.name
+                s3ClientService.upload(it)
             }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))

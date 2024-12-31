@@ -15,7 +15,7 @@ class LikeController(
     //좋아요 추가
     @PostMapping("api/user/board/like")
     override fun createLike(
-        likeRequestDto: LikeRequestDto
+        likeRequestDto: LikeRequestDto,
     ): ResponseEntity<Void> {
         likeCommandService.createLike(likeRequestDto)
         return ResponseEntity.status(HttpStatus.CREATED).build()
@@ -24,10 +24,9 @@ class LikeController(
     //좋아요 삭제
     @DeleteMapping("api/user/board/like")
     override fun deleteLike(
-        likeRequestDto: LikeRequestDto
+        likeRequestDto: LikeRequestDto,
     ): ResponseEntity<Void> {
         likeCommandService.deleteLike(likeRequestDto)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
-
 }
