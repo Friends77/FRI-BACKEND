@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 @Repository
 class SecondaryTokenRepository(
-    private val redisTemplate: RedisTemplate<String, Long>,
+    private val redisTemplate: RedisTemplate<String, String>,
 ) {
     private fun getKey(token: String) = "secondaryToken:$token"
 
@@ -15,10 +15,10 @@ class SecondaryTokenRepository(
         memberId: Long,
         expiration: Long,
     ) {
-        redisTemplate.opsForValue().set(getKey(token), memberId, expiration, TimeUnit.SECONDS)
+        redisTemplate.opsForValue().set(getKey(token), memberId.toString(), expiration, TimeUnit.SECONDS)
     }
 
-    fun getMemberId(token: String): Long? = redisTemplate.opsForValue().get(getKey(token))
+    fun getMemberId(token: String): Long? = redisTemplate.opsForValue().get(getKey(token))?.toLong()
 
     fun delete(token: String) = redisTemplate.delete(getKey(token))
 }
