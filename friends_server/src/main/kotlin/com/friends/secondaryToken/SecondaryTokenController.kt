@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class SecondaryTokenController(
     private val secondaryTokenService: SecondaryTokenService,
-) {
+) : SecondaryTokenControllerSpec {
     @GetMapping("/secondaryToken")
-    fun getSecondaryToken(
+    override fun getSecondaryToken(
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<SecondaryTokenResponseDto> {
         val secondaryToken = secondaryTokenService.createAndSaveSecondaryToken(memberId)
