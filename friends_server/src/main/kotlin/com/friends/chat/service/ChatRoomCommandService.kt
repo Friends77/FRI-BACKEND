@@ -12,6 +12,7 @@ import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.websocket.ChatWebSocketHandler
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.repository.MessageRepository
@@ -39,7 +40,7 @@ class ChatRoomCommandService(
             backgroundImage?.let {
                 /* 이미지 업로드 로직 */ backgroundImage.name
             }
-        val member = memberRepository.findById(memberId).get()
+        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
         val enterMassage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
@@ -52,7 +53,7 @@ class ChatRoomCommandService(
         memberId: Long,
     ) {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val member = memberRepository.findById(memberId).get()
+        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         if (!chatRoomMemberRepository.existsByMemberIdAndChatRoomId(memberId, chatRoomId)) {
             val enterMessage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
