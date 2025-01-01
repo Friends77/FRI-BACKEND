@@ -1,7 +1,6 @@
 package com.friends.member.entity
 
 import com.friends.common.entity.BaseModifiableEntity
-import com.friends.friendship.entity.Friendship
 import com.friends.profile.entity.Profile
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -38,8 +37,8 @@ class Member(
     val authorities: MutableList<Authority> = ArrayList(),
     @OneToOne(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val profile: Profile? = null,
-    @OneToMany(mappedBy = "member")
-    var friendList: List<Friendship> = ArrayList(),
+//    @OneToMany(mappedBy = "member")
+//    var friendList: List<Friendship> = ArrayList(),
 ) : BaseModifiableEntity() {
     companion object {
         /**

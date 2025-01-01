@@ -59,7 +59,7 @@ class ChatRoomCommandService(
     ) {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        if (!chatRoomMemberRepository.existsByMemberIdAndChatRoomId(memberId, chatRoomId)) {
+        if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
             val enterMessage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
             chatWebSocketHandler.sendMessage(chatRoomId, enterMessage)
