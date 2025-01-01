@@ -115,5 +115,15 @@ class ChatRoomMemberRepositoryTest(
                     }
                 }
             }
+
+            describe("findFirstByChatRoomOrderByCreatedAt") {
+                context("채팅방을 조회하면") {
+                    it("먼저 들어온 채팅방멤버 연관 엔티티를 반환한다") {
+                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember.id
+                        chatRoomMemberRepository.delete(chatRoomMember)
+                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember2.id
+                    }
+                }
+            }
         }
     })

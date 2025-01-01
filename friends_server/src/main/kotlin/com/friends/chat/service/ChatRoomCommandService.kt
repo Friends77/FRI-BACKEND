@@ -66,7 +66,7 @@ class ChatRoomCommandService(
     }
 
     @Transactional
-    fun deleteChatRoom(
+    fun leaveChatRoom(
         chatRoomId: Long,
         memberId: Long,
     ) {
@@ -76,7 +76,7 @@ class ChatRoomCommandService(
         val chatRoom = chatRoomRepository.findByIdWithLock(chatRoomId) ?: throw ChatRoomNotFoundException()
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw NotChatRoomMemberException()
-        chatRoomMemberRepository.deleteById(chatRoomMember.id)
+        chatRoomMemberRepository.delete(chatRoomMember)
         if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
             messageRepository.deleteByChatRoom(chatRoom)
             chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
@@ -84,6 +84,12 @@ class ChatRoomCommandService(
         } else {
             val exitMessage = messageRepository.save(Message.createExitMessage(member, chatRoom))
             chatWebSocketHandler.sendMessage(chatRoomId, exitMessage)
+            if (chatRoom.manager == member) {
+                val newManager = chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom).member
+                chatRoom.changeManager(newManager)
+                val managerChangeMessage = messageRepository.save(Message.createManagerChangeMessage(newManager, chatRoom))
+                chatWebSocketHandler.sendMessage(chatRoomId, managerChangeMessage)
+            }
         }
     }
 }

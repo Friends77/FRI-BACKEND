@@ -46,6 +46,11 @@ class Message(
             sender: Member,
             chatRoom: ChatRoom,
         ): Message = of(chatRoom, sender, "${sender.nickname} 님이 퇴장하셨습니다.", MessageType.SYSTEM)
+
+        fun createManagerChangeMessage(
+            newManager: Member,
+            chatRoom: ChatRoom,
+        ): Message = of(chatRoom, newManager, "${newManager.nickname} 님이 새로운 방장으로 임명되었습니다", MessageType.SYSTEM)
     }
 }
 

@@ -75,13 +75,13 @@ class ChatRoomController(
     }
 
     @DeleteMapping("/{chatRoomId}")
-    override fun deleteChatRoom(
+    override fun leaveChatRoom(
         @PathVariable
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void> {
-        chatRoomCommandService.deleteChatRoom(chatRoomId, memberId)
+        chatRoomCommandService.leaveChatRoom(chatRoomId, memberId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }

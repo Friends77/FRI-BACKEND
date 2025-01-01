@@ -45,6 +45,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.CHAT_ROOM_TITLE_INVALID_LENGTH,
             ErrorCode.CHAT_ROOM_CATEGORY_INVALID_SIZE,
             ErrorCode.CHAT_ROOM_CATEGORY_NOT_FOUND,
+            ErrorCode.NOT_FOUND_MEMBER,
         ],
     )
     fun createChatRoom(
@@ -76,6 +77,7 @@ interface ChatRoomControllerSpec {
         [
             ErrorCode.INVALID_SIZE,
             ErrorCode.INVALID_LAST_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
         ],
     )
     fun getChatRooms(
@@ -112,6 +114,7 @@ interface ChatRoomControllerSpec {
         [
             ErrorCode.INVALID_CHAT_ROOM_ID,
             ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.NOT_FOUND_MEMBER,
         ],
     )
     fun getChatRoomDetail(
@@ -135,6 +138,7 @@ interface ChatRoomControllerSpec {
         [
             ErrorCode.CHAT_ROOM_NOT_FOUND,
             ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
         ],
     )
     fun enterChatRoom(
@@ -157,10 +161,14 @@ interface ChatRoomControllerSpec {
     @ApiErrorCodeExamples(
         [
             ErrorCode.NOT_A_MEMBER_OF_CHAT_ROOM,
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
         ],
     )
-    fun deleteChatRoom(
+    fun leaveChatRoom(
         @PathVariable
+        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,

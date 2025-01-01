@@ -10,7 +10,9 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
+import com.friends.member.MemberNotFoundException
 import com.friends.member.entity.Member
+import com.friends.member.repository.MemberRepository
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,6 +23,7 @@ class ChatRoomQueryService(
     private val messageRepository: MessageRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomLikeRepository: ChatRoomLikeRepository,
+    private val memberRepository: MemberRepository,
 ) {
     @Transactional
     fun getChatRooms(
@@ -29,6 +32,7 @@ class ChatRoomQueryService(
         lastChatRoomMemberId: Long?,
         nickname: String?,
     ): SliceBaseResponse<ChatRoomInfoResponseDto> {
+        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         val friends: List<Member> =
             if (nickname != null) {
                 listOf() // TODO: 닉네임으로 친구 조회(Like 검색?)
@@ -54,6 +58,7 @@ class ChatRoomQueryService(
         memberId: Long,
     ): ChatRoomDetailResponseDto {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         return toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId))
     }
 }

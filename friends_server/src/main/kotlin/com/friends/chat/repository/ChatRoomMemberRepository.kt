@@ -28,6 +28,10 @@ interface ChatRoomMemberRepository :
         chatRoom: ChatRoom,
         member: Member,
     ): Boolean
+
+    fun findFirstByChatRoomOrderByCreatedAt(
+        chatRoom: ChatRoom,
+    ): ChatRoomMember
 }
 
 interface ChatRoomMemberCustomRepository {
