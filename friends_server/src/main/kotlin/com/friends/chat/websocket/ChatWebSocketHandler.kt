@@ -16,8 +16,10 @@ import java.util.concurrent.CopyOnWriteArraySet
 class ChatWebSocketHandler(
     private val messageCommandService: MessageCommandService,
 ) : TextWebSocketHandler() {
-    // 채팅방 ID를 키로 하고, 각 채팅방의 세션을 Set으로 저장
-    private val chatRooms: MutableMap<Long, MutableSet<WebSocketSession>> = ConcurrentHashMap()
+    // 채팅방 ID를 키로 하고, 참여하고 있는 member의 id를 value로 하는 Map
+    private val participants = ConcurrentHashMap<Long, MutableSet<Long>>()
+    // memberId 를 키로 하고, WebSocketSession을 value로 하는 Map
+    private val sessions = ConcurrentHashMap<Long, WebSocketSession>()
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         val chatRoomId = getChatRoomId(session)
