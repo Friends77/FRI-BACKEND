@@ -27,7 +27,6 @@ class Profile(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "profile_id")
     val id: Long = 0L,
-    //member 엔티티에서 닉네임만 받아옵니다
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     val member: Member,
@@ -43,19 +42,9 @@ class Profile(
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true, mappedBy = "profile")
     @Column(name = "Category", length = 225)
     var interestTag: MutableSet<ProfileInterestTag> = mutableSetOf(),
-    //기본이미지가 있기 때문에 null이 될 수 없습니다
     @Column(name = "image_url")
     var imageUrl: String,
 ) : BaseModifiableEntity() {
-    /*
-    oneToMany가 되면서 해당 검사를 할 수 없습니다
-    @PrePersist
-    @PreUpdate
-    fun validate() {
-        if (interestTag.isEmpty()) {
-            throw IllegalArgumentException("관심사 태그는 최소 1개 이상 선택되어야 합니다.")
-        }
-    }*/
 
     fun update(
         profileUpdateDto: ProfileUpdateDto,

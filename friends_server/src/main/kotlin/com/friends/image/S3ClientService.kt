@@ -36,4 +36,10 @@ class S3ClientService(
 
         return "https://$bucketName.s3.$region.amazonaws.com/$filename"
     }
+
+    //프로필 수정 시, 이전 이미지 s3 버킷에서 삭제 로직
+    fun deleteS3Object(fileUrl: String){
+        val fileKey = fileUrl.substringAfterLast("/")
+        s3Client.deleteObject(bucketName, fileKey)
+    }
 }
