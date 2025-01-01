@@ -88,13 +88,13 @@ class ChatRoomMemberRepositoryTest(
         describe("existsByMemberIdAndChatRoomId") {
             context("존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
                 it("true를 반환한다.") {
-                    chatRoomMemberRepository.existsByMemberIdAndChatRoomId(member1.id, chatRoom1.id) shouldBe true
+                    chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom1, member1) shouldBe true
                 }
             }
 
             context("존재하지 않는 ChatRoomId와 MemberId가 들어오는 경우") {
                 it("false를 반환한다.") {
-                    chatRoomMemberRepository.existsByMemberIdAndChatRoomId(member1.id, chatRoom3.id) shouldBe false
+                    chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom3, member1) shouldBe false
                 }
             }
         }

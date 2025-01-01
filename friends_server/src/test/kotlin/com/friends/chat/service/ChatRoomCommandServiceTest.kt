@@ -76,7 +76,7 @@ class ChatRoomCommandServiceTest :
             given("enterChatRoom 테스트") {
                 every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom())
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
-                every { chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any()) } returns false
+                every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns false
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { messageRepository.save(any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
                 every { chatWebSocketHandler.sendMessage(any(), any()) } returns Unit
@@ -91,11 +91,11 @@ class ChatRoomCommandServiceTest :
                 }
 
                 `when`("이미 채팅방 멤버인 경우") {
-                    every { chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any()) } returns true
+                    every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns true
                     then("채팅방 멤버가 저장되지 않는다.") {
                         chatRoomCommandService.enterChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
                         verify(exactly = 1) {
-                            chatRoomMemberRepository.existsByMemberIdAndChatRoomId(any(), any())
+                            chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any())
                         }
                         verify(exactly = 0) {
                             chatRoomMemberRepository.save(any())
