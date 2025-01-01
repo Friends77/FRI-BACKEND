@@ -51,15 +51,15 @@ class ChatRoomMemberRepositoryTest(
             chatRoomMember4 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member3, message))
             chatRoomMember5 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom3, member2, message))
         }
-    describe("save") {
-        context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
-            it("에러가 난다.") {
-                shouldThrow<Exception> {
-                    chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member))
+        describe("save") {
+            context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
+                it("에러가 난다.") {
+                    shouldThrow<Exception> {
+                        chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1))
+                    }
                 }
             }
         }
-    }
 
         describe("countByChatRoomId 메서드는") {
             context("존재하는 채팅방 ID를 받으면") {

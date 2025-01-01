@@ -12,6 +12,7 @@ import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.websocket.ChatWebSocketHandler
+import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.repository.MessageRepository
@@ -47,6 +48,7 @@ class ChatRoomCommandService(
         return CreateChatRoomResponseDto(chatRoom.id)
     }
 
+    @Transactional
     fun enterChatRoom(
         chatRoomId: Long,
         memberId: Long,
@@ -60,16 +62,25 @@ class ChatRoomCommandService(
         }
     }
 
+    @Transactional
     fun deleteChatRoom(
         chatRoomId: Long,
         memberId: Long,
     ) {
-        val chatRoomMember = chatRoomMemberRepository.getByMemberIdAndChatRoomId(memberId, chatRoomId)
+        // postgreSQL에서는 격리수준 default가 read committed이므로,
+        // 만일 채팅방의 최후 2인이 동시에 나갈 경우, 각 트랜잭션에선 본인이 나가더라도 1명이 남아있을 것으로 잘못 판단하고 방이 사라지지않는 문제가 발생할 수 있습니다.
+        // 따라서, chatRoom에 비관적 베타락을 걸어서 한 요청을 처리하는 동안 다른 트랜잭션이 chatRoom에 접근하지 못하도록 합니다.
+        val chatRoom = chatRoomRepository.findByIdWithLock(chatRoomId) ?: throw ChatRoomNotFoundException()
+        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw ChatRoomNotFoundException()
         chatRoomMemberRepository.deleteById(chatRoomMember.id)
-        if (chatRoomMemberRepository.countByChatRoomId(chatRoomId) == 0) {
-            messageRepository.deleteByChatRoomId(chatRoomId)
-            chatRoomCategoryRepository.deleteByChatRoomId(chatRoomId)
-            chatRoomRepository.deleteById(chatRoomId)
+        if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
+            messageRepository.deleteByChatRoom(chatRoom)
+            chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
+            chatRoomRepository.delete(chatRoom)
+        } else {
+            val exitMessage = messageRepository.save(Message.createExitMessage(member, chatRoom))
+            chatWebSocketHandler.sendMessage(chatRoomId, exitMessage)
         }
     }
 }

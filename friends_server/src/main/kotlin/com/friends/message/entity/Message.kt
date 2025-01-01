@@ -41,6 +41,11 @@ class Message(
             sender: Member,
             chatRoom: ChatRoom,
         ): Message = of(chatRoom, sender, "${sender.nickname} 님이 입장하셨습니다.", MessageType.SYSTEM)
+
+        fun createExitMessage(
+            sender: Member,
+            chatRoom: ChatRoom,
+        ): Message = of(chatRoom, sender, "${sender.nickname} 님이 퇴장하셨습니다.", MessageType.SYSTEM)
     }
 }
 

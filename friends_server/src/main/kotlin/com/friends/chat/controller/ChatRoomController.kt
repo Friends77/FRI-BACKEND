@@ -13,9 +13,9 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -78,6 +78,7 @@ class ChatRoomController(
     override fun deleteChatRoom(
         @PathVariable
         chatRoomId: Long,
+        @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void> {
         chatRoomCommandService.deleteChatRoom(chatRoomId, memberId)

@@ -18,6 +18,8 @@ interface MessageRepository :
     JpaRepository<Message, Long>,
     MessageCustomRepository {
     fun findFirstByChatRoomOrderByIdDesc(chatRoom: ChatRoom): Message?
+
+    fun deleteByChatRoom(chatRoom: ChatRoom)
 }
 
 interface MessageCustomRepository {
