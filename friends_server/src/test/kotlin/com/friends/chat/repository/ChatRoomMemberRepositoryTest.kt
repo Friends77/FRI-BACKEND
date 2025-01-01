@@ -107,5 +107,13 @@ class ChatRoomMemberRepositoryTest(
                     chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom3, member1) shouldBe false
                 }
             }
+
+            describe("findByChatRoomAndMember") {
+                context("참여중인 채팅방을 조회하면") {
+                    it("해당 채팅방을 반환한다") {
+                        chatRoomMemberRepository.findByChatRoomAndMember(chatRoom1, member1)?.id shouldBe chatRoomMember.id
+                    }
+                }
+            }
         }
     })

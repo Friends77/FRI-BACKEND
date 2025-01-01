@@ -3,6 +3,7 @@ package com.friends.chat.service
 import com.friends.board.repository.CategoryRepository
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.entity.ChatRoom
@@ -13,8 +14,6 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.websocket.ChatWebSocketHandler
 import com.friends.image.S3ClientService
-import com.friends.member.MemberNotFoundException
-import com.friends.chat.websocket.ChatWebSocketHandler
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
@@ -76,7 +75,7 @@ class ChatRoomCommandService(
         // 따라서, chatRoom에 비관적 베타락을 걸어서 한 요청을 처리하는 동안 다른 트랜잭션이 chatRoom에 접근하지 못하도록 합니다.
         val chatRoom = chatRoomRepository.findByIdWithLock(chatRoomId) ?: throw ChatRoomNotFoundException()
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw ChatRoomNotFoundException()
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw NotChatRoomMemberException()
         chatRoomMemberRepository.deleteById(chatRoomMember.id)
         if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
             messageRepository.deleteByChatRoom(chatRoom)
