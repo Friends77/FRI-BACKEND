@@ -20,7 +20,7 @@ class ChatWebSocketHandler(
     // 채팅방 ID를 키로 하고, 참여하고 있는 member의 id를 value로 하는 Map
     private val connectedParticipants = ConcurrentHashMap<Long, MutableSet<Long>>()
     // memberId 를 키로 하고, WebSocketSession을 value로 하는 Map
-    private val sessions = ConcurrentHashMap<Long, WebSocketSession>()
+    private val sessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
 
     private fun addParticipant(
         chatRoomId: Long,
@@ -39,12 +39,30 @@ class ChatWebSocketHandler(
         connectedParticipants[chatRoomId]?.remove(memberId)
     }
 
+    private fun addSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        val userSessions =
+            sessions.computeIfAbsent(memberId) {
+                ConcurrentHashMap.newKeySet()
+            }
+        userSessions.add(session)
+    }
+
+    private fun removeSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        sessions[memberId]?.remove(session)
+    }
+
     override fun afterConnectionEstablished(session: WebSocketSession) {
         /**
          * 웹소켓 연결 후 메세지를 수신받기 위해 sessions Map 에 저장합니다.
          */
         val memberId = getMemberId(session)
-        sessions.putIfAbsent(memberId, session)
+        addSession(memberId, session)
 
         /**
          * 메세지를 수신할 채팅방(참여중인 모든 채팅방)을 추가합니다.
@@ -68,10 +86,12 @@ class ChatWebSocketHandler(
          */
         val sendMessageDto = messageCommandService.saveMessage(chatRoomId, memberId, chatMessage.message, MessageType.TEXT)
         /**
-         * 채팅방에 참여하고 있는 모든 유저에게 메세지를 전송합니다.
+         * 채팅방에 참여하고 있는 모든 유저의 디바이스에 메세지를 전송합니다.
          */
         connectedParticipants[chatRoomId]?.forEach { participantId ->
-            sessions[participantId]?.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
+            sessions[participantId]?.forEach { participantSession ->
+                participantSession.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
+            }
         }
         // TODO : 메세지 전송 실패 시 에러 처리
     }
@@ -84,7 +104,7 @@ class ChatWebSocketHandler(
          * 웹소켓 연결 종료 후 sessions Map 에서 제거합니다.
          */
         val memberId = getMemberId(session)
-        sessions.remove(memberId)
+        removeSession(memberId, session)
         /**
          * 메세지를 수신하지 않도록 연결된 채팅방을 제거합니다.
          */
