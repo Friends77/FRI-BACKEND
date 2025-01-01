@@ -24,9 +24,9 @@ interface ChatRoomMemberRepository :
         member: Member,
     ): ChatRoomMember?
 
-    fun existsByMemberIdAndChatRoomId(
-        memberId: Long,
-        chatRoomId: Long,
+    fun existsChatRoomMemberByChatRoomAndMember(
+        chatRoom: ChatRoom,
+        member: Member,
     ): Boolean
 }
 

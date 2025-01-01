@@ -6,6 +6,7 @@ import org.apache.tomcat.util.http.fileupload.FileUploadException
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.util.Date
 
 @Service
 class S3ClientService(
@@ -26,6 +27,7 @@ class S3ClientService(
         val objectMetadata = ObjectMetadata()
         objectMetadata.contentType = multipartFile.contentType
         objectMetadata.contentLength = multipartFile.size
+        objectMetadata.expirationTime = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3) // 3일
         try {
             s3Client.putObject(bucketName, filename, multipartFile.inputStream, objectMetadata)
         } catch (e: Exception) {

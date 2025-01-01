@@ -40,7 +40,8 @@ class BoardController(
         @PathVariable id: Long,
     ): ResponseEntity<BoardResponseDto> {
         val boardDto = boardQueryService.getBoard(id)
-        return ResponseEntity.ok(boardDto) }
+        return ResponseEntity.ok(boardDto)
+    }
 
     // 게시글 삭제
     @DeleteMapping("api/user/board/{id}")
