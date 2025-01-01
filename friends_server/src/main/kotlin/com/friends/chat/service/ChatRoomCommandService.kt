@@ -1,6 +1,6 @@
 package com.friends.chat.service
 
-import com.friends.board.repository.CategoryRepository
+import com.friends.category.repository.CategoryRepository
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatRoomCreateRequestDto

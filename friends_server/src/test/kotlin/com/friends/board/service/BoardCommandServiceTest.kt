@@ -12,7 +12,7 @@ import com.friends.board.createTestMember
 import com.friends.board.entity.BoardCategory
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.board.repository.CategoryRepository
+import com.friends.category.repository.CategoryRepository
 import com.friends.member.repository.MemberRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
