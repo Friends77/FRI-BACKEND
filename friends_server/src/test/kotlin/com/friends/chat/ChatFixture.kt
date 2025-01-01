@@ -3,6 +3,7 @@ package com.friends.chat
 import com.friends.TEST_CATEGORY_ID
 import com.friends.TEST_SIZE
 import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.dto.ToggleLikeResponseDto
 import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
 import com.friends.chat.dto.mapper.toChatRoomInfoResponse
@@ -83,3 +84,7 @@ fun createTestChatRoomDetailResponseDto(
     memberCount: Int = TEST_SIZE,
     like: Boolean = false,
 ) = toChatRoomDetailResponseDto(chatRoom, memberCount, like)
+
+fun createTestCreateChatRoomResponseDto(
+    chatRoomId: Long = TEST_CHAT_ROOM_ID,
+) = CreateChatRoomResponseDto(chatRoomId)
