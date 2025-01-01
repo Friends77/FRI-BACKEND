@@ -11,8 +11,8 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.image.S3ClientService
 import com.friends.chat.websocket.ChatWebSocketHandler
+import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
@@ -50,6 +50,7 @@ class ChatRoomCommandService(
         return CreateChatRoomResponseDto(chatRoom.id)
     }
 
+    @Transactional
     fun enterChatRoom(
         chatRoomId: Long,
         memberId: Long,
