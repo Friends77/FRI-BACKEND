@@ -44,12 +44,12 @@ class ProfileController(
     //프로필 작성(초기화면)
     @PostMapping(
         value = ["api/user/profile"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
     )
     override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart("profileImage") profileImage: MultipartFile
+        @RequestPart("profileImage") profileImage: MultipartFile,
     ): ResponseEntity<Void> {
         profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
         return ResponseEntity.noContent().build()
@@ -60,7 +60,7 @@ class ProfileController(
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart profileImage: MultipartFile
+        @RequestPart profileImage: MultipartFile,
     ): ResponseEntity<ProfileUpdateDto> {
         profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
         return ResponseEntity.ok(profileUpdateDto)

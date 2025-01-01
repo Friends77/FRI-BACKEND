@@ -22,13 +22,13 @@ class ProfileCommandService(
     private val memberRepository: MemberRepository,
     private val categoryRepository: CategoryRepository,
     private val profileInterestTagRepository: ProfileInterestTagRepository,
-    private val s3ClientService: S3ClientService
+    private val s3ClientService: S3ClientService,
 ) {
     //프로필 초기 작성
     fun createProfile(
         requestMemberId: Long,
         profileCreateDto: ProfileCreateDto,
-        profileImage: MultipartFile
+        profileImage: MultipartFile,
     ) {
         val member =
             memberRepository
@@ -36,9 +36,10 @@ class ProfileCommandService(
                 .orElseThrow { MemberNotFoundException() }
 
         val profileInterestTag = categoryRepository.findByIdIn(profileCreateDto.interestTag)
-        val imageUrl = profileImage.let {
-            s3ClientService.upload(it)
-        }
+        val imageUrl =
+            profileImage.let {
+                s3ClientService.upload(it)
+            }
         val profile =
             Profile(
                 birth = profileCreateDto.birth,
@@ -64,7 +65,7 @@ class ProfileCommandService(
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile? //파일은 선택사항
+        profileImage: MultipartFile?, //파일은 선택사항
     ) {
         val profile =
             profileRepository.findByMemberId(requestMemberId)

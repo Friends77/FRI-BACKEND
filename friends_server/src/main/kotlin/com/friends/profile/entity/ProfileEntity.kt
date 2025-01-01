@@ -45,7 +45,6 @@ class Profile(
     @Column(name = "image_url")
     var imageUrl: String,
 ) : BaseModifiableEntity() {
-
     fun update(
         profileUpdateDto: ProfileUpdateDto,
     ) {

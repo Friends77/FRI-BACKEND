@@ -54,7 +54,7 @@ interface ProfileControllerSpec {
     fun createProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart profileImage: MultipartFile
+        @RequestPart profileImage: MultipartFile,
     ): ResponseEntity<Void>
 
     @Operation(
@@ -69,6 +69,6 @@ interface ProfileControllerSpec {
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart profileImage: MultipartFile
+        @RequestPart profileImage: MultipartFile,
     ): ResponseEntity<ProfileUpdateDto>
 }
