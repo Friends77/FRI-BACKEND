@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class ProfileController(
@@ -43,8 +45,9 @@ class ProfileController(
     override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart profileImage: MultipartFile
     ): ResponseEntity<Void> {
-        profileCommandService.createProfile(memberId, profileCreateDto)
+        profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
         return ResponseEntity.noContent().build()
     }
 
@@ -53,8 +56,9 @@ class ProfileController(
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestPart profileImage: MultipartFile
     ): ResponseEntity<ProfileUpdateDto> {
-        profileCommandService.updateProfile(memberId, profileUpdateDto)
+        profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
         return ResponseEntity.ok(profileUpdateDto)
     }
 }

@@ -13,9 +13,17 @@ import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
 import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 val PROFILE_ID = 1L
+val PROFILE_IMAGE: MultipartFile = MockMultipartFile(
+    "file", // 필드 이름
+    "profile.img", // 파일 이름
+    "image/jpeg", // 콘텐츠 타입
+    byteArrayOf(1, 2, 3, 4) // 파일 내용 (예제 데이터)
+)
 
 fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE)
 
@@ -31,3 +39,5 @@ fun createTestProfileInterestTag(
     profile: Profile = createTestProfile(),
     category: Category = createTestCategory(),
 ) = ProfileInterestTag(profile = profile, category = category)
+
+
