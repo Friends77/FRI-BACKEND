@@ -3,6 +3,7 @@ package com.friends.security
 import com.friends.member.entity.OAuth2Provider
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.MbtiEnum
+import java.util.Date
 
 data class LoginRequestDto(
     val email: String,
@@ -12,6 +13,7 @@ data class LoginRequestDto(
 data class LoginResponseDto(
     val memberId: Long,
     val accessToken: String,
+    val refreshTokenExpiration: Date,
 )
 
 data class RegisterRequestDto(
@@ -62,10 +64,12 @@ data class OAuth2LoginResponseDto(
     val nickname: String? = null,
     val imageUrl: String? = null,
     val authToken: String? = null,
+    val refreshTokenExpiration: Date? = null,
 )
 
 data class RefreshResponseDto(
     val accessToken: String,
+    val refreshTokenExpiration: Date,
 )
 
 data class LogoutRequestDto(
