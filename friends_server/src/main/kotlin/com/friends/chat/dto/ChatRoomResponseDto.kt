@@ -39,3 +39,8 @@ data class ChatRoomDetailResponseDto(
     @Schema(description = "해당 채팅방 좋아요 여부(좋아요 눌렀을 시, true)")
     val isLike: Boolean,
 )
+
+data class CreateChatRoomResponseDto(
+    @Schema(description = "채팅방 ID")
+    val chatRoomId: Long,
+)
