@@ -26,8 +26,10 @@ class ChatWebSocketHandler(
         chatRoomId: Long,
         memberId: Long,
     ) {
-        connectedParticipants.putIfAbsent(chatRoomId, mutableSetOf())
-        connectedParticipants[chatRoomId]?.add(memberId)
+        connectedParticipants
+            .computeIfAbsent(chatRoomId) {
+                ConcurrentHashMap.newKeySet()
+            }.add(memberId)
     }
 
     private fun removeParticipant(
