@@ -15,7 +15,7 @@ class WebSocketConfig(
 ) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry
-            .addHandler(chatWebSocketHandler, "/ws/chatRoom/{chatRoomId}")
+            .addHandler(chatWebSocketHandler, "/ws/chat")
             .addInterceptors(chatWebsocketInterceptor)
             .setAllowedOrigins("*") // CORS 허용
     }

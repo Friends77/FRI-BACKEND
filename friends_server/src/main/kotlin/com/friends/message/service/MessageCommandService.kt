@@ -64,6 +64,7 @@ class MessageCommandService(
 
         val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message, type))
         return ChatSendMessageDto(
+            chatRoomId = chatRoom.id,
             senderId = sender.id,
             message = savedMessage.content,
             sendTime = savedMessage.createdAt,
