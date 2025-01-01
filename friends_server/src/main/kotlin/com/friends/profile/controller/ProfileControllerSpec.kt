@@ -53,7 +53,7 @@ interface ProfileControllerSpec {
     )
     fun createProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart @Valid profileCreateDto: ProfileCreateDto,
         @RequestPart profileImage: MultipartFile
     ): ResponseEntity<Void>
 

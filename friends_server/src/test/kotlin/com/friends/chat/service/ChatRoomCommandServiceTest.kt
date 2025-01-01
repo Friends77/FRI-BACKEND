@@ -10,6 +10,7 @@ import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.createTestCategory
+import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
@@ -31,7 +32,8 @@ class ChatRoomCommandServiceTest :
             val categoryRepository = mockk<CategoryRepository>()
             val chatRoomCategoryRepository = mockk<ChatRoomCategoryRepository>()
             val messageRepository = mockk<MessageRepository>()
-            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository)
+            val s3ClientService = mockk<S3ClientService>()
+            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository, s3ClientService)
 
             given("createChatRoom 테스트") {
                 val request = createTestChatRoomCreateRequestDto()

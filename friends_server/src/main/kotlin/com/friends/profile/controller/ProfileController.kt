@@ -6,6 +6,7 @@ import com.friends.profile.dto.ProfileUpdateDto
 import com.friends.profile.service.ProfileCommandService
 import com.friends.profile.service.ProfileQueryService
 import jakarta.validation.Valid
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -41,11 +42,14 @@ class ProfileController(
     }
 
     //프로필 작성(초기화면)
-    @PostMapping("api/user/profile")
+    @PostMapping(
+        value = ["api/user/profile"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE]
+    )
     override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart profileImage: MultipartFile
+        @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart("profileImage") profileImage: MultipartFile
     ): ResponseEntity<Void> {
         profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
         return ResponseEntity.noContent().build()
