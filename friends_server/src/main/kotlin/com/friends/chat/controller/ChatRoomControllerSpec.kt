@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.util.SliceChatRoomInfoResponseDto
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.exception.ErrorCode
@@ -114,4 +115,25 @@ interface ChatRoomControllerSpec {
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<ChatRoomDetailResponseDto>
+
+    @Operation(
+        description = "채팅방 수정 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 수정 성공",
+            ),
+        ],
+    )
+    fun updateChatRoom(
+        @PathVariable
+        chatRoomId: Long,
+        @RequestPart
+        @Valid
+        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto,
+        @RequestPart(required = false)
+        backgroundImage: MultipartFile?,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>
 }

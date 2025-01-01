@@ -58,6 +58,12 @@ enum class ErrorCode(
     INVALID_LAST_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17007, "lastChatRoomMemberId는 양수여야 합니다."),
     INVALID_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17008, "채팅방 ID는 양수여야 합니다."),
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, -17009, "채팅방에 존재하지 않는 멤버입니다."),
+    UNEXPECTED_CHAT_ROOM(HttpStatus.INTERNAL_SERVER_ERROR, -17010, "예상치 못한 채팅방 오류입니다."),
+    NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17011, "참여중인 채팅방이 아닙니다."),
+    NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17012, "채팅방 관리자가 아닙니다."),
+    CHAT_ROOM_UPDATE_NOTHING(HttpStatus.BAD_REQUEST, -17013, "이전과 동일하여 수정할 내용이 없습니다."),
+    // 기본 이미지는 삭제할 수 없습니다.
+    CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE(HttpStatus.BAD_REQUEST, -17014, "기본 이미지는 삭제할 수 없습니다."),
 
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),

@@ -2,14 +2,18 @@ package com.friends.chat.service
 
 import com.friends.board.repository.CategoryRepository
 import com.friends.chat.ChatRoomCategoryNotFoundException
+import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.createTestChatRoom
+import com.friends.chat.createTestChatRoomCategory
 import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.createTestChatRoomMember
+import com.friends.chat.createTestChatRoomUpdateRequestDto
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.createTestCategory
+import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
@@ -20,6 +24,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.util.Optional
 
 class ChatRoomCommandServiceTest :
@@ -31,7 +36,8 @@ class ChatRoomCommandServiceTest :
             val categoryRepository = mockk<CategoryRepository>()
             val chatRoomCategoryRepository = mockk<ChatRoomCategoryRepository>()
             val messageRepository = mockk<MessageRepository>()
-            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository)
+            val s3ClientService = mockk<S3ClientService>()
+            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, messageRepository, s3ClientService)
 
             given("createChatRoom 테스트") {
                 val request = createTestChatRoomCreateRequestDto()
@@ -60,6 +66,37 @@ class ChatRoomCommandServiceTest :
                         every { categoryRepository.findByIdIn(any()) } returns emptyList()
                         shouldThrow<ChatRoomCategoryNotFoundException> {
                             chatRoomCommandService.createChatRoom(request, MEMBER_ID, null)
+                        }
+                    }
+                }
+            }
+            given("updateChatRoom 테스트") {
+                val member = createTestMember()
+                val chatRoom = createTestChatRoom(categories = listOf(createTestChatRoomCategory()), manager = member)
+                every { chatRoomRepository.findById(any()) } returns Optional.of(chatRoom)
+                every { memberRepository.findById(any()) } returns Optional.of(member)
+
+                `when`("카테고리가 추가되고 제거될 때") {
+                    val request = createTestChatRoomUpdateRequestDto(addCategoryIds = setOf(2), removeCategoryIds = chatRoom.categories.map { it.id }.toSet())
+                    every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory(2L, "test"))
+                    every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(chatRoom, createTestCategory()))
+                    every { chatRoomCategoryRepository.deleteAll(any<List<ChatRoomCategory>>()) } returns Unit
+
+                    then("채팅방 정보가 변경된다") {
+                        chatRoomCommandService.updateChatRoom(chatRoom.id, request, member.id, null)
+                        verify { chatRoomCategoryRepository.saveAll(any<Set<ChatRoomCategory>>()) }
+                        verify { chatRoomCategoryRepository.deleteAll(any<Set<ChatRoomCategory>>()) }
+                    }
+                }
+
+                `when`("모든 카테고리가 제거될 때") {
+                    val request = createTestChatRoomUpdateRequestDto(removeCategoryIds = chatRoom.categories.map { it.id }.toSet())
+                    every { categoryRepository.findByIdIn(any()) } returns emptyList()
+                    every { chatRoomCategoryRepository.deleteAll(any<List<ChatRoomCategory>>()) } returns Unit
+
+                    then("ChatRoomMustHaveCategoryException이 발생한다") {
+                        shouldThrow<ChatRoomMustHaveCategoryException> {
+                            chatRoomCommandService.updateChatRoom(chatRoom.id, request, member.id, null)
                         }
                     }
                 }

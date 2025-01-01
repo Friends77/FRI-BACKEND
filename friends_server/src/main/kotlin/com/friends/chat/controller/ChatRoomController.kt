@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
 import com.friends.common.dto.SliceBaseResponse
@@ -13,6 +14,7 @@ import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -63,4 +65,14 @@ class ChatRoomController(
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<ChatRoomDetailResponseDto> = ResponseEntity.ok(chatRoomQueryService.getChatRoomDetail(chatRoomId, memberId))
+
+    @PatchMapping
+    override fun updateChatRoom(
+        chatRoomId: Long,
+        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto,
+        backgroundImage: MultipartFile?,
+        memberId: Long,
+    ): ResponseEntity<Void> {
+        TODO("Not yet implemented")
+    }
 }
