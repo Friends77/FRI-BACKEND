@@ -165,25 +165,4 @@ interface ChatRoomControllerSpec {
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void>
-
-    /*@Operation(
-        description = "채팅방 수정 API",
-        responses = [
-            ApiResponse(
-                responseCode = "204",
-                description = "채팅방 수정 성공",
-            ),
-        ],
-    )
-    fun updateChatRoom(
-        @PathVariable
-        chatRoomId: Long,
-        @RequestPart
-        @Valid
-        chatRoomCreateRequestDto: ChatRoomCreateRequestDto,
-        @RequestPart(required = false)
-        backgroundImage: MultipartFile?,
-        @AuthenticationPrincipal
-        memberId: Long,
-    ): ResponseEntity<Void>*/
 }

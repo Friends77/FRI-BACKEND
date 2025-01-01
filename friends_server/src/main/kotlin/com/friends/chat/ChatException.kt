@@ -18,7 +18,3 @@ class ChatRoomCategoryNotFoundException : ChatException(ErrorCode.CHAT_ROOM_CATE
 class UnexpectedChatRoomException(
     cause: Throwable,
 ) : ChatException(ErrorCode.UNEXPECTED_CHAT_ROOM, cause)
-
-class NotChatRoomManagerException : ChatException(ErrorCode.NOT_CHAT_ROOM_MANAGER)
-
-class NotChatRoomMemberException : ChatException(ErrorCode.NOT_A_MEMBER_OF_CHAT_ROOM)
