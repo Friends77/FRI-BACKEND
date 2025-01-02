@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 
 @Entity
-class Vote (
+class Vote(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_id")
     val id: Long? = 0L,
