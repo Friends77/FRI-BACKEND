@@ -65,12 +65,12 @@ class ProfileCommandService(
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile?, //파일은 선택사항
+        profileImage: MultipartFile,
     ) {
         val profile =
             profileRepository.findByMemberId(requestMemberId)
                 ?: throw ProfileNullResponseException()
-        profileImage?.let {
+        profileImage.let {
             val newImageUrl = s3ClientService.upload(it)
             profileUpdateDto.imageUrl = newImageUrl
         }

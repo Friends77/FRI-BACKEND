@@ -56,11 +56,14 @@ class ProfileController(
     }
 
     //프로필 수정
-    @PutMapping("api/user/profile")
+    @PutMapping(
+        value = ["api/user/profile"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+    )
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart profileImage: MultipartFile,
+        @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestPart("profileImage") profileImage: MultipartFile,
     ): ResponseEntity<ProfileUpdateDto> {
         profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
         return ResponseEntity.ok(profileUpdateDto)
