@@ -3,6 +3,7 @@ package com.friends.profile.repository
 import com.friends.profile.dto.ProfileWithDistanceDto
 import com.friends.profile.entity.Profile
 import io.lettuce.core.dynamic.annotation.Param
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -29,5 +30,6 @@ interface ProfileRepository : JpaRepository<Profile, Long> {
         @Param("latitude") latitude: Double,
         @Param("longitude") longitude: Double,
         @Param("distance") distance: Double,
+        pageable: Pageable? = null,
     ): List<ProfileWithDistanceDto>
 }
