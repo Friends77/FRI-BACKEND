@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/global/recommendation")
 class UserRecommendationController(
     private val userRecommendationService: UserRecommendationService,
-) {
+) : UserRecommendationControllerSpec {
     @GetMapping("/distance")
-    fun getDistanceRecommendation(
+    override fun getDistanceRecommendation(
         @AuthenticationPrincipal memberId: Long,
         @RequestParam distance: Double,
         @RequestParam size: Int,
