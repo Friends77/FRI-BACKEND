@@ -25,7 +25,7 @@ interface ProfileRepository : JpaRepository<Profile, Long> {
               SIN(RADIANS(:latitude)) * SIN(RADIANS(p.location.latitude)))) <= :distance
     """,
     )
-    fun findWithInDistance(
+    fun findAllInDistance(
         @Param("latitude") latitude: Double,
         @Param("longitude") longitude: Double,
         @Param("distance") distance: Double,
