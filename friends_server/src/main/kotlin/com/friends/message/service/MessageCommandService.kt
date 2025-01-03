@@ -11,7 +11,6 @@ import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.socket.WebSocketSession
 
 @Service
 class MessageCommandService(
@@ -28,7 +27,6 @@ class MessageCommandService(
     fun disconnectChatRoom(
         chatRoomId: Long,
         memberId: Long,
-        session: WebSocketSession,
     ) {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: return // 채팅방이 없을 경우 무시
         val member = memberRepository.findById(memberId).orElse(null) ?: return // 멤버가 없을 경우 무시
@@ -64,6 +62,7 @@ class MessageCommandService(
 
         val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message, type))
         return ChatSendMessageDto(
+            chatRoomId = chatRoomId,
             senderId = sender.id,
             message = savedMessage.content,
             sendTime = savedMessage.createdAt,
