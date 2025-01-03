@@ -46,6 +46,7 @@ class ChatRoomCommandServiceTest :
                 every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
                 every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
                 every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                every { messageCommandService.setChatRoomOnline(any(), any()) } returns Unit
                 every { s3ClientService.upload(any()) } returns "test"
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방이 저장된다.") {
@@ -77,6 +78,7 @@ class ChatRoomCommandServiceTest :
                 every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns false
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                every { messageCommandService.setChatRoomOnline(any(), any()) } returns Unit
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방 멤버가 저장된다.") {
                         chatRoomCommandService.enterChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
