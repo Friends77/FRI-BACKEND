@@ -30,8 +30,6 @@ interface ChatRoomMemberRepository :
         chatRoom: ChatRoom,
         member: Member,
     ): Boolean
-
-    fun findAllByMemberId(memberId: Long): List<ChatRoomMember>
 }
 
 interface ChatRoomMemberCustomRepository {
