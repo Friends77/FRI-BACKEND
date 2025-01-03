@@ -178,14 +178,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
 
-    private fun MethodArgumentNotValidException.messages(): List<String> = bindingResult.fieldErrors.map { "${it.field}: ${it.defaultMessage.orEmpty()}" }
+    private fun MethodArgumentNotValidException.messages(): List<String> = bindingResult.fieldErrors.map { "${it.field}: ${it.defaultMessage.orEmpty()}" } // 필드 이름과 기본 메세지 반환
 
     private fun HandlerMethodValidationException.messages(): List<String> =
         this.allErrors.map {
-            it.defaultMessage.orEmpty()
+            it.defaultMessage.orEmpty() // 기본 메세지 그대로 반환
         }
 
-    private fun getInvalidRequestResponse(
+    private fun getInvalidRequestResponse( // 기본 틀
         errorMessage: String?,
         httpStatus: HttpStatus = HttpStatus.BAD_REQUEST,
     ): ResponseEntity<Any> {
