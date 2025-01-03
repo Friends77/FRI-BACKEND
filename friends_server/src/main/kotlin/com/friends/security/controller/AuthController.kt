@@ -55,7 +55,7 @@ class AuthController(
             .ok()
             // refresh token 을 쿠키로 전달합니다.
             .header(COOKIE_HEARER, getRefreshTokenCookie(atRtDto.refreshToken).toString())
-            .body(LoginResponseDto(memberId, atRtDto.accessToken))
+            .body(LoginResponseDto(memberId, atRtDto.accessToken, atRtService.getExpiration(atRtDto.refreshToken)))
     }
 
     @PostMapping("/oauth2")
@@ -69,7 +69,14 @@ class AuthController(
             return ResponseEntity
                 .ok()
                 .header(COOKIE_HEARER, getRefreshTokenCookie(oauth2LoginDto.refreshToken!!).toString())
-                .body(OAuth2LoginResponseDto(memberId = memberId, accessToken = oauth2LoginDto.accessToken, isRegistered = true))
+                .body(
+                    OAuth2LoginResponseDto(
+                        memberId = memberId,
+                        accessToken = oauth2LoginDto.accessToken,
+                        isRegistered = true,
+                        refreshTokenExpiration = atRtService.getExpiration(oauth2LoginDto.refreshToken),
+                    ),
+                )
         } else {
             return ResponseEntity
                 .ok()
@@ -95,7 +102,7 @@ class AuthController(
             .ok()
             // refresh token 을 쿠키로 전달합니다.
             .header(COOKIE_HEARER, getRefreshTokenCookie(atRtDto.refreshToken).toString())
-            .body(RefreshResponseDto(atRtDto.accessToken))
+            .body(RefreshResponseDto(atRtDto.accessToken, atRtService.getExpiration(atRtDto.refreshToken)))
     }
 
     @PostMapping("/logout")
