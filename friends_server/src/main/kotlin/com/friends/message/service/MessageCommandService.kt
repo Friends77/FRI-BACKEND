@@ -42,7 +42,7 @@ class MessageCommandService(
     /**
      * 참여하고 있는 모든 채팅방에 온라인 유저로 등록됩니다.
      */
-    fun setOnlineForAllChatRooms(
+    fun setAllChatRoomsOnline(
         memberId: Long,
         session: WebSocketSession,
     ) {
@@ -62,9 +62,9 @@ class MessageCommandService(
     }
 
     /**
-     * 참여하고 있는 모든 채팅방에서 온라인 유저를 제거합니다.
+     * 참여하고 있는 모든 채팅방에서 오프라인 상태가 됩니다.
      */
-    fun removeOnlineForAllChatRooms(
+    fun setAllChatRoomsOffline(
         memberId: Long,
         session: WebSocketSession,
     ) {
@@ -75,6 +75,33 @@ class MessageCommandService(
             .forEach { chatRoomMember ->
                 onlineUsers[chatRoomMember.chatRoom.id]?.remove(memberId)
             }
+    }
+
+    /**
+     * 유저가 채팅방에 온라인 상태가 됩니다.
+     */
+    fun setChatRoomOnline(
+        memberId: Long,
+        chatRoomId: Long,
+    ) {
+        // 웹소켓이 연결되지 않은 경우에는 무시합니다.
+        if (sessions[memberId]?.isEmpty() == true) {
+            return
+        }
+        onlineUsers
+            .computeIfAbsent(chatRoomId) {
+                ConcurrentHashMap.newKeySet()
+            }.add(memberId)
+    }
+
+    /**
+     * 유저가 채팅방에 오프라인 상태가 됩니다.
+     */
+    fun setChatRoomOffline(
+        memberId: Long,
+        chatRoomId: Long,
+    ) {
+        onlineUsers[chatRoomId]?.remove(memberId)
     }
 
     /**
@@ -97,7 +124,7 @@ class MessageCommandService(
     }
 
     /**
-     * 채팅방에 메세지를 보낼 메세지를 저장합니다.
+     * 채팅방에 메세지를 보내고 메세지를 저장합니다.
      * 채팅방이 없거나 멤버가 없을 경우 예외를 발생시킵니다.
      */
     @Transactional
@@ -119,34 +146,38 @@ class MessageCommandService(
         val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
 
-        // 온라인 유저에게 메세지 전송
-        val sessions = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
-        sessions.forEach { session ->
-            CompletableFuture // 비동기 처리
-                .supplyAsync(
-                    {
-                        if (session.isOpen) {
-                            try {
-                                session.sendMessage(
-                                    TextMessage(
-                                        JsonUtil.toJson(
-                                            ChatSendMessageDto(
-                                                message.chatRoom.id,
-                                                message.sender.id,
-                                                message.content,
-                                                message.createdAt,
-                                                message.type,
+        // 채팅방의 모든 온라인 유저에게 메세지 전송
+        val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
+        onlineUserIdSet.forEach {
+            val sessions = sessions[it] ?: return@forEach // 온라인 유저의 세션이 없으면 메세지를 보낼 필요가 없습니다.
+            // 온라인 유저와 연결된 모든 웹소켓에 메세지 전송
+            sessions.forEach { session ->
+                CompletableFuture // 비동기 처리
+                    .supplyAsync(
+                        {
+                            if (session.isOpen) {
+                                try {
+                                    session.sendMessage(
+                                        TextMessage(
+                                            JsonUtil.toJson(
+                                                ChatSendMessageDto(
+                                                    chatRoom.id,
+                                                    sender.id,
+                                                    message.content,
+                                                    message.createdAt,
+                                                    message.type,
+                                                ),
                                             ),
                                         ),
-                                    ),
-                                )
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
                             }
-                        }
-                    },
-                    executor,
-                )
+                        },
+                        executor,
+                    )
+            }
         }
         return message
     }

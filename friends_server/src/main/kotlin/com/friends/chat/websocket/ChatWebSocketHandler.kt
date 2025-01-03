@@ -18,7 +18,7 @@ class ChatWebSocketHandler(
     override fun afterConnectionEstablished(session: WebSocketSession) {
         try {
             val memberId = getMemberId(session)
-            messageCommandService.setOnlineForAllChatRooms(memberId, session)
+            messageCommandService.setAllChatRoomsOnline(memberId, session)
         } catch (e: Exception) {
             session.close(CloseStatus.SERVER_ERROR)// 채팅방 연결 종료 후 에러 처리
             throw UnexpectedChatRoomException(e)
@@ -52,7 +52,7 @@ class ChatWebSocketHandler(
          * 웹소켓 연결이 종료되면 온라인 유저 목록에서 제거됩니다.
          */
         val memberId = getMemberId(session)
-        messageCommandService.removeOnlineForAllChatRooms(memberId, session)
+        messageCommandService.setAllChatRoomsOffline(memberId, session)
         // TODO : 채팅방 나가기 실패 시 에러 처리
     }
 
