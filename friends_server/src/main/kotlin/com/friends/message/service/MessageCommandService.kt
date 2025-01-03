@@ -84,10 +84,6 @@ class MessageCommandService(
         memberId: Long,
         chatRoomId: Long,
     ) {
-        // 웹소켓이 연결되지 않은 경우에는 무시합니다.
-        if (sessions[memberId]?.isEmpty() == true) {
-            return
-        }
         onlineUsers
             .computeIfAbsent(chatRoomId) {
                 ConcurrentHashMap.newKeySet()
