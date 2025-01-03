@@ -1,10 +1,13 @@
 package com.friends.chat.service
 
 import com.friends.board.repository.CategoryRepository
+import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
-import com.friends.chat.ChatRoomNotFoundException
-import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.ChatRoomMustHaveCategoryException
+import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.ChatRoomUpdateException
+import com.friends.chat.NotChatRoomManagerException
+import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCategory
 import com.friends.chat.createTestChatRoomCreateRequestDto
@@ -122,28 +125,53 @@ class ChatRoomCommandServiceTest :
                 val chatRoom = createTestChatRoom(categories = listOf(createTestChatRoomCategory()), manager = member)
                 every { chatRoomRepository.findById(any()) } returns Optional.of(chatRoom)
                 every { memberRepository.findById(any()) } returns Optional.of(member)
+                every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(chatRoom, createTestCategory()))
+                every { chatRoomCategoryRepository.deleteAllInBatch(any()) } returns Unit
 
                 `when`("카테고리가 추가되고 제거될 때") {
-                    val request = createTestChatRoomUpdateRequestDto(addCategoryIds = setOf(2), removeCategoryIds = chatRoom.categories.map { it.id }.toSet())
-                    every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory(2L, "test"))
-                    every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(chatRoom, createTestCategory()))
-                    every { chatRoomCategoryRepository.deleteAll(any<List<ChatRoomCategory>>()) } returns Unit
-
-                    then("채팅방 정보가 변경된다") {
-                        chatRoomCommandService.updateChatRoom(chatRoom.id, request, member.id, null)
-                        verify { chatRoomCategoryRepository.saveAll(any<Set<ChatRoomCategory>>()) }
-                        verify { chatRoomCategoryRepository.deleteAll(any<Set<ChatRoomCategory>>()) }
+                    every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory(10L, "test"))
+                    val request = createTestChatRoomUpdateRequestDto(addCategoryIds = setOf(10L), removeCategoryIds = chatRoom.categories.map { it.category.id }.toSet())
+                    then("카테고리가 추가되고 제거된다.") {
+                        chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)
+                        verify(exactly = 1) {
+                            chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>())
+                            chatRoomCategoryRepository.deleteAllInBatch(any())
+                        }
                     }
                 }
 
-                `when`("모든 카테고리가 제거될 때") {
-                    val request = createTestChatRoomUpdateRequestDto(removeCategoryIds = chatRoom.categories.map { it.id }.toSet())
-                    every { categoryRepository.findByIdIn(any()) } returns emptyList()
-                    every { chatRoomCategoryRepository.deleteAll(any<List<ChatRoomCategory>>()) } returns Unit
+                `when`("방장이 아닌 경우") {
+                    val request = createTestChatRoomUpdateRequestDto()
+                    then("NotChatRoomManagerException이 발생한다.") {
+                        shouldThrow<NotChatRoomManagerException> {
+                            chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, MEMBER_ID, null)
+                        }
+                    }
+                }
 
-                    then("ChatRoomMustHaveCategoryException이 발생한다") {
+                `when`("기본 이미지를 삭제하려고 할 때") {
+                    val request = createTestChatRoomUpdateRequestDto(backgroundImageDelete = true)
+                    then("ChatRoomBaseImageCannotDeleteException이 발생한다.") {
+                        shouldThrow<ChatRoomBaseImageCannotDeleteException> {
+                            chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)
+                        }
+                    }
+                }
+
+                `when`("마지막 카테고리가 제거될 때") {
+                    every { categoryRepository.findByIdIn(any()) } returns emptyList()
+                    val request = createTestChatRoomUpdateRequestDto(removeCategoryIds = chatRoom.categories.map { it.category.id }.toSet(), addCategoryIds = emptySet())
+                    then("ChatRoomMustHaveCategoryException이 발생한다.") {
                         shouldThrow<ChatRoomMustHaveCategoryException> {
-                            chatRoomCommandService.updateChatRoom(chatRoom.id, request, member.id, null)
+                            chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)
+                        }
+                    }
+                }
+
+                `when`("업데이트할 내용이 없을 때") {
+                    then("ChatRoomUpdateException이 발생한다.") {
+                        shouldThrow<ChatRoomUpdateException> {
+                            chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, null, member.id, null)
                         }
                     }
                 }

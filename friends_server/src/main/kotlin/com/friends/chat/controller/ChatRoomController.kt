@@ -3,8 +3,8 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
-import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
 import com.friends.common.dto.SliceBaseResponse
@@ -75,13 +75,20 @@ class ChatRoomController(
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
-    @PatchMapping
+    @PatchMapping("/{id}", consumes = [MULTIPART_FORM_DATA_VALUE])
     override fun updateChatRoom(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
-        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto,
+        @RequestPart(required = false)
+        @Valid
+        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto?,
+        @RequestPart(required = false)
         backgroundImage: MultipartFile?,
+        @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void> {
-        TODO("Not yet implemented")
+        chatRoomCommandService.updateChatRoom(chatRoomId, chatRoomUpdateRequestDto, memberId, backgroundImage)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
