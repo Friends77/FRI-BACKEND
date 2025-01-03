@@ -27,40 +27,53 @@ class MessageCommandService(
     private val executor: ExecutorService,
 ) {
     /**
-     * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 WebSocketSession을 값으로 하는 Map입니다.
+     * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 아이디를 값으로 하는 Map입니다.
      * ConcurrentHashMap을 사용하여 thread-safe하게 구현합니다.
      * value 의 MutableSet은 thread-safe 하지 않아서 ConcurrentHashMap.newKeySet()을 사용하여 thread-safe하게 구현합니다.
      */
-    private val onlineUsers = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+    private val onlineUsers = ConcurrentHashMap<Long, MutableSet<Long>>()
+
+    /**
+     * 유저 ID를 키로 하고, 참여하고 있는 온라인 유저의 세션을 값으로 하는 Map입니다.
+     * 하나의 유저가 여러개의 세션을 가질 수 있기 때문에 MutableSet을 사용합니다. (ex. 웹, 모바일 에서 동시 접속)
+     */
+    private val sessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
 
     /**
      * 참여하고 있는 모든 채팅방에 온라인 유저로 등록됩니다.
      */
-    fun addOnlineUser(
+    fun setOnlineForAllChatRooms(
         memberId: Long,
         session: WebSocketSession,
     ) {
+        sessions
+            .computeIfAbsent(memberId) {
+                ConcurrentHashMap.newKeySet()
+            }.add(session)
+
         chatRoomMemberRepository
             .findAllByMemberId(memberId)
             .forEach { chatRoomMember ->
                 onlineUsers
                     .computeIfAbsent(chatRoomMember.chatRoom.id) {
                         ConcurrentHashMap.newKeySet()
-                    }.add(session)
+                    }.add(memberId)
             }
     }
 
     /**
      * 참여하고 있는 모든 채팅방에서 온라인 유저를 제거합니다.
      */
-    fun removeOnlineUser(
+    fun removeOnlineForAllChatRooms(
         memberId: Long,
         session: WebSocketSession,
     ) {
+        sessions[memberId]?.remove(session)
+
         chatRoomMemberRepository
             .findAllByMemberId(memberId)
             .forEach { chatRoomMember ->
-                onlineUsers[chatRoomMember.chatRoom.id]?.remove(session)
+                onlineUsers[chatRoomMember.chatRoom.id]?.remove(memberId)
             }
     }
 
