@@ -62,7 +62,6 @@ enum class ErrorCode(
     NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17011, "참여중인 채팅방이 아닙니다."),
     NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17012, "채팅방 관리자가 아닙니다."),
     CHAT_ROOM_UPDATE_NOTHING(HttpStatus.BAD_REQUEST, -17013, "이전과 동일하여 수정할 내용이 없습니다."),
-    // 기본 이미지는 삭제할 수 없습니다.
     CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE(HttpStatus.BAD_REQUEST, -17014, "기본 이미지는 삭제할 수 없습니다."),
 
     // Comment API error 18000대

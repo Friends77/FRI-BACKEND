@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.util.SliceChatRoomInfoResponseDto
 import com.friends.common.dto.SliceBaseResponse
@@ -30,6 +31,12 @@ interface ChatRoomControllerSpec {
             ApiResponse(
                 responseCode = "201",
                 description = "채팅방 생성 성공",
+                content = [
+                    Content(
+                        mediaType = "application/json",
+                        schema = Schema(implementation = CreateChatRoomResponseDto::class),
+                    ),
+                ],
             ),
         ],
     )
@@ -49,7 +56,7 @@ interface ChatRoomControllerSpec {
         backgroundImage: MultipartFile?,
         @AuthenticationPrincipal
         memberId: Long,
-    ): ResponseEntity<Void>
+    ): ResponseEntity<CreateChatRoomResponseDto>
 
     @Operation(
         description = "채팅방 리스트 조회 API",
@@ -115,6 +122,29 @@ interface ChatRoomControllerSpec {
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<ChatRoomDetailResponseDto>
+
+    @Operation(
+        description = "채팅방 입장 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 입장 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+        ],
+    )
+    fun enterChatRoom(
+        @PathVariable
+        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>
 
     @Operation(
         description = "채팅방 수정 API",

@@ -4,6 +4,7 @@ import com.friends.TEST_CATEGORY_ID
 import com.friends.TEST_SIZE
 import com.friends.category.entity.Category
 import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.ToggleLikeResponseDto
 import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
@@ -88,6 +89,10 @@ fun createTestChatRoomDetailResponseDto(
     memberCount: Int = TEST_SIZE,
     like: Boolean = false,
 ) = toChatRoomDetailResponseDto(chatRoom, memberCount, like)
+
+fun createTestCreateChatRoomResponseDto(
+    chatRoomId: Long = TEST_CHAT_ROOM_ID,
+) = CreateChatRoomResponseDto(chatRoomId)
 
 fun createTestChatRoomUpdateRequestDto(
     title: String? = null,
