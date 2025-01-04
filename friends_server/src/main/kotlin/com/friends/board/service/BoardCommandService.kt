@@ -8,8 +8,8 @@ import com.friends.board.entity.Board
 import com.friends.board.entity.BoardCategory
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
-import com.friends.board.repository.CategoryRepository
 import com.friends.category.entity.Category
+import com.friends.category.repository.CategoryRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
