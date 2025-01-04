@@ -1,10 +1,14 @@
 package com.friends.chat.service
 
-
-import com.friends.board.repository.CategoryRepository
+import com.friends.category.repository.CategoryRepository
+import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
+import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.ChatRoomUpdateException
+import com.friends.chat.NotChatRoomManagerException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomCategory
