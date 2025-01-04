@@ -19,6 +19,8 @@ interface ChatRoomMemberRepository :
     ChatRoomMemberCustomRepository {
     fun countByChatRoom(chatRoom: ChatRoom): Int
 
+    fun findAllByMemberId(memberId: Long): List<ChatRoomMember>
+
     fun findByChatRoomAndMember(
         chatRoom: ChatRoom,
         member: Member,

@@ -47,7 +47,7 @@ class ProfileRepositoryTest
         @Test
         fun `5000 미터 이내의 TestPoint 검색`() {
             // (10,10) (10.1,10.1) 사이의 거리는 약 15,000 m 입니다
-            val foundPoints = profileRepository.findWithInDistance(10.0, 10.0, 5000.0)
+            val foundPoints = profileRepository.findAllInDistance(10.0, 10.0, 5000.0)
             for (point in foundPoints) {
                 println(point)
             }
@@ -57,7 +57,7 @@ class ProfileRepositoryTest
         @Test
         fun `20000 미터 이내의 TestPoint 검색`() {
             // (10,10) (20,20) 사이의 거리는 10,000,000 m 이상입니다
-            val foundPoints = profileRepository.findWithInDistance(10.0, 10.0, 20000.0)
+            val foundPoints = profileRepository.findAllInDistance(10.0, 10.0, 20000.0)
             for (point in foundPoints) {
                 println(point)
             }
@@ -66,7 +66,7 @@ class ProfileRepositoryTest
 
         @Test
         fun `20000000 미터 이내의 TestPoint 검색`() {
-            val foundPoints = profileRepository.findWithInDistance(10.0, 10.0, 20000000.0)
+            val foundPoints = profileRepository.findAllInDistance(10.0, 10.0, 20000000.0)
             for (point in foundPoints) {
                 println(point)
             }

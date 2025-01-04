@@ -42,6 +42,10 @@ class Message(
             chatRoom: ChatRoom,
         ): Message = of(chatRoom, sender, "${sender.nickname} 님이 입장하셨습니다.", MessageType.SYSTEM)
 
+        fun enterMessage(
+            nickname: String,
+        ): String = "$nickname 님이 입장하셨습니다."
+
         fun createExitMessage(
             sender: Member,
             chatRoom: ChatRoom,

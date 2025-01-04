@@ -40,6 +40,7 @@ enum class ErrorCode(
 
     // Profile API error 15000대
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
+    PROFILE_LOCATION_NULL(HttpStatus.NOT_FOUND, -15002, "프로필 위치 정보가 존재하지 않습니다."),
 
     // Board API error 16000대
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
