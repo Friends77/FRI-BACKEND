@@ -16,13 +16,12 @@ import jakarta.persistence.OneToOne
 class Vote(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_id")
-    val id: Long? = 0L,
+    val id: Long = 0L,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     var board: Board,
-    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL])
     var options: MutableList<VoteOption> = mutableListOf(),
-    var isMultipleChoice: Boolean = false, // 단일/다중 선택지 여부
 )
 
 /*
@@ -32,10 +31,10 @@ class Vote(
 class VoteOption(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vote_option_id")
-    val id: Long? = 0L,
-    @ManyToOne(fetch = FetchType.LAZY)
+    val id: Long = 0L,
+    @ManyToOne
     @JoinColumn(name = "vote_id", nullable = false)
-    var vote: Vote,
+    val vote: Vote,
     @Column(length = 255, nullable = false)
     var content: String,
     var voteCount: Int = 0,
