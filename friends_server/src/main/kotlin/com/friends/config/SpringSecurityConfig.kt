@@ -1,5 +1,6 @@
 package com.friends.config
 
+import com.friends.jwt.JwtService
 import com.friends.member.entity.Role
 import com.friends.security.authentication.AuthenticationCreator
 import com.friends.security.filter.JwtFilter
@@ -25,6 +26,7 @@ class SpringSecurityConfig(
     private val jwtFilterAccessDeniedHandler: JwtFilterAccessDeniedHandler,
     private val jwtFilterAuthenticationEntryPoint: JwtFilterAuthenticationEntryPoint,
     private val authenticationCreator: AuthenticationCreator,
+    private val jwtService: JwtService,
 ) {
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
@@ -34,7 +36,7 @@ class SpringSecurityConfig(
         http.csrf { it.disable() }
 
         http
-            .addFilterBefore(JwtFilter(authenticationCreator), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtFilter(authenticationCreator, jwtService), UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling {
                 it
                     .accessDeniedHandler(jwtFilterAccessDeniedHandler)
