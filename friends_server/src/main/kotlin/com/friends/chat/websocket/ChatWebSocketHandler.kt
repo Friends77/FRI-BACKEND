@@ -92,7 +92,7 @@ class ChatWebSocketHandler(
 
     // 채팅방 ID를 URI에서 추출하는 함수
     private fun getChatRoomId(session: WebSocketSession): Long {
-        val uri = session.uri.toString()
+        val uri = session.uri.toString().split("?")[0]
         return uri.substringAfterLast("/").toLong()
         // TODO : 채팅방 아이디 얻기 실패 시 에러 처리
     }

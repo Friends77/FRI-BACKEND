@@ -11,11 +11,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 class WebSocketConfig(
     private val chatWebSocketHandler: ChatWebSocketHandler,
+    private val chatWebsocketInterceptor: ChatWebsocketInterceptor,
 ) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
         registry
             .addHandler(chatWebSocketHandler, "/ws/chatRoom/{chatRoomId}")
-            .addInterceptors(ChatWebsocketInterceptor())
+            .addInterceptors(chatWebsocketInterceptor)
             .setAllowedOrigins("*") // CORS 허용
     }
 }
