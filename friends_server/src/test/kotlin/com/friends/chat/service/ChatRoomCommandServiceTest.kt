@@ -130,7 +130,7 @@ class ChatRoomCommandServiceTest :
 
                 `when`("카테고리가 추가되고 제거될 때") {
                     every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory(10L, "test"))
-                    val request = createTestChatRoomUpdateRequestDto(addCategoryIds = setOf(10L), removeCategoryIds = chatRoom.categories.map { it.category.id }.toSet())
+                    val request = createTestChatRoomUpdateRequestDto(categoryIds = setOf(10L))
                     then("카테고리가 추가되고 제거된다.") {
                         chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)
                         verify(exactly = 1) {
@@ -158,9 +158,19 @@ class ChatRoomCommandServiceTest :
                     }
                 }
 
-                `when`("마지막 카테고리가 제거될 때") {
+                `when`("전부 존재하지 않는 카테고리 ID가 들어올 경우") {
+                    val request = createTestChatRoomUpdateRequestDto(categoryIds = setOf(10L))
                     every { categoryRepository.findByIdIn(any()) } returns emptyList()
-                    val request = createTestChatRoomUpdateRequestDto(removeCategoryIds = chatRoom.categories.map { it.category.id }.toSet(), addCategoryIds = emptySet())
+                    then("ChatRoomMustHaveCategoryException이 발생한다.") {
+                        shouldThrow<ChatRoomMustHaveCategoryException> {
+                            chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)
+                        }
+                    }
+                }
+
+                `when`("카테고리 ID가 empty일 경우") {
+                    val request = createTestChatRoomUpdateRequestDto(categoryIds = emptySet())
+                    every { categoryRepository.findByIdIn(any()) } returns emptyList()
                     then("ChatRoomMustHaveCategoryException이 발생한다.") {
                         shouldThrow<ChatRoomMustHaveCategoryException> {
                             chatRoomCommandService.updateChatRoom(TEST_CHAT_ROOM_ID, request, member.id, null)

@@ -21,10 +21,8 @@ data class ChatRoomUpdateRequestDto(
     @field:NullOrNotBlank(message = "채팅방 제목은 공백일 수 없습니다.") // null 허용, 공백은 안됨
     @field:Length(min = 1, max = 20, message = "채팅방 제목은 1자 이상 20자 이하로 입력해주세요.")
     val title: String?,
-    @Schema(description = "삭제할 카테고리 ID 리스트 (안 바뀌면 null으로 보내주세요.)")
-    val removeCategoryIds: Set<Long>?,
-    @Schema(description = "추가할 카테고리 ID 리스트 (안 바뀌면 null으로 보내주세요.)")
-    val addCategoryIds: Set<Long>?,
+    @Schema(description = "안 바뀌면 null로 보내주세요. 바뀌면 카테고리 ID 리스트 전체를 보내주세요.")
+    val categoryIdList: Set<Long>?,
     @Schema(description = "기존 배경 이미지 삭제시 true, 변경 안 할 시 false)")
     val backgroundImageDelete: Boolean,
 )

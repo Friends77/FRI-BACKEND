@@ -122,31 +122,22 @@ class ChatRoomCommandService(
             chatRoom.title = request.title
             changeChatRoomInfo = true
         }
-        // 채팅방의 카테고리 중 없는 카테고리 ID이면서 삭제될 카테고리 리스트에 포함되지 않은 ID를 필터링해서 카테고리 ID 리스트 가져오기
-        val addCategoryList =
-            request.addCategoryIds
-                ?.filter { it !in chatRoom.categories.map { c -> c.category.id } && it !in request.removeCategoryIds.orEmpty() }
-                ?.toSet()
-                ?.let { categoryRepository.findByIdIn(it) } ?: emptySet()
-        if (addCategoryList.isNotEmpty()) {
-            chatRoomCategoryRepository.saveAll(
-                addCategoryList
-                    .map { ChatRoomCategory.of(chatRoom, it) },
-            )
-            changeChatRoomInfo = true
-        }
-        val categoriesToRemove =
-            request.removeCategoryIds
-                ?.let { removeCategoryIds ->
-                    chatRoom.categories.filter { it.category.id in removeCategoryIds }
-                }?.toSet() ?: emptySet()
-        if (categoriesToRemove.isNotEmpty()) {
-            chatRoomCategoryRepository.deleteAllInBatch(categoriesToRemove)
-            changeChatRoomInfo = true
-        }
-
-        if (chatRoom.categories.size + addCategoryList.size - categoriesToRemove.size == 0) {
-            throw ChatRoomMustHaveCategoryException()
+        if (request.categoryIdList != null) {
+            val categoryList = categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomMustHaveCategoryException() }
+            // 채팅방의 카테고리 중 없는 카테고리 ID 리스트에 포함되지 않은 ID를 필터링해서 가져오기
+            val addCategoryList = categoryList.filter { it !in chatRoom.categories.map { chatRoomCategory -> chatRoomCategory.category } }
+            if (addCategoryList.isNotEmpty()) {
+                chatRoomCategoryRepository.saveAll(
+                    addCategoryList
+                        .map { ChatRoomCategory.of(chatRoom, it) },
+                )
+                changeChatRoomInfo = true
+            }
+            val categoriesToRemove = chatRoom.categories.filter { it.category !in categoryList }
+            if (categoriesToRemove.isNotEmpty()) {
+                chatRoomCategoryRepository.deleteAllInBatch(categoriesToRemove)
+                changeChatRoomInfo = true
+            }
         }
 
         return changeChatRoomInfo
