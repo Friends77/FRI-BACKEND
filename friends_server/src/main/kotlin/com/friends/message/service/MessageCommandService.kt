@@ -4,6 +4,7 @@ import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatSendMessageDto
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
@@ -11,7 +12,11 @@ import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
 
 @Service
 class MessageCommandService(
@@ -19,7 +24,46 @@ class MessageCommandService(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val executor: ExecutorService,
 ) {
+    /**
+     * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 WebSocketSession을 값으로 하는 Map입니다.
+     * ConcurrentHashMap을 사용하여 thread-safe하게 구현합니다.
+     * value 의 MutableSet은 thread-safe 하지 않아서 ConcurrentHashMap.newKeySet()을 사용하여 thread-safe하게 구현합니다.
+     */
+    private val onlineUsers = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    /**
+     * 참여하고 있는 모든 채팅방에 온라인 유저로 등록됩니다.
+     */
+    fun addOnlineUser(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        chatRoomMemberRepository
+            .findAllByMemberId(memberId)
+            .forEach { chatRoomMember ->
+                onlineUsers
+                    .computeIfAbsent(chatRoomMember.chatRoom.id) {
+                        ConcurrentHashMap.newKeySet()
+                    }.add(session)
+            }
+    }
+
+    /**
+     * 참여하고 있는 모든 채팅방에서 온라인 유저를 제거합니다.
+     */
+    fun removeOnlineUser(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        chatRoomMemberRepository
+            .findAllByMemberId(memberId)
+            .forEach { chatRoomMember ->
+                onlineUsers[chatRoomMember.chatRoom.id]?.remove(session)
+            }
+    }
+
     /**
      * 채팅방을 나갈 때마다 마지막으로 읽은 메세지 ID를 업데이트합니다.
      * 채팅방이 없거나 멤버가 없거나 채팅방 멤버가 아닐 경우 무시합니다.
@@ -28,7 +72,6 @@ class MessageCommandService(
     fun disconnectChatRoom(
         chatRoomId: Long,
         memberId: Long,
-        session: WebSocketSession,
     ) {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: return // 채팅방이 없을 경우 무시
         val member = memberRepository.findById(memberId).orElse(null) ?: return // 멤버가 없을 경우 무시
@@ -45,12 +88,12 @@ class MessageCommandService(
      * 채팅방이 없거나 멤버가 없을 경우 예외를 발생시킵니다.
      */
     @Transactional
-    fun saveMessage(
+    fun sendMessage(
         chatRoomId: Long,
         memberId: Long,
-        message: String,
+        content: String,
         type: MessageType,
-    ): ChatSendMessageDto {
+    ): Message {
         /**
          * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
          * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
@@ -61,13 +104,37 @@ class MessageCommandService(
          */
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
+        val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
 
-        val savedMessage = messageRepository.save(Message.of(chatRoom, sender, message, type))
-        return ChatSendMessageDto(
-            senderId = sender.id,
-            message = savedMessage.content,
-            sendTime = savedMessage.createdAt,
-            type = savedMessage.type,
-        )
+        // 온라인 유저에게 메세지 전송
+        val sessions = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
+        sessions.forEach { session ->
+            CompletableFuture // 비동기 처리
+                .supplyAsync(
+                    {
+                        if (session.isOpen) {
+                            try {
+                                session.sendMessage(
+                                    TextMessage(
+                                        JsonUtil.toJson(
+                                            ChatSendMessageDto(
+                                                message.chatRoom.id,
+                                                message.sender.id,
+                                                message.content,
+                                                message.createdAt,
+                                                message.type,
+                                            ),
+                                        ),
+                                    ),
+                                )
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    },
+                    executor,
+                )
+        }
+        return message
     }
 }

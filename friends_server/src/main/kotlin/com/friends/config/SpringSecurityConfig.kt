@@ -48,7 +48,7 @@ class SpringSecurityConfig(
                     "/api/global/**",
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "ws/chatRoom/**",
+                    "ws/chat/**",
                 ).permitAll()
                 .requestMatchers("/api/user/**")
                 .hasAuthority(Role.ROLE_USER.name)

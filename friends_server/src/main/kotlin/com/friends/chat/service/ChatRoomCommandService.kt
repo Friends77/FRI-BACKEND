@@ -11,12 +11,12 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.chat.websocket.ChatWebSocketHandler
 import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
-import com.friends.message.repository.MessageRepository
+import com.friends.message.entity.MessageType
+import com.friends.message.service.MessageCommandService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -28,9 +28,8 @@ class ChatRoomCommandService(
     private val memberRepository: MemberRepository,
     private val categoryRepository: CategoryRepository,
     private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
-    private val messageRepository: MessageRepository,
     private val s3ClientService: S3ClientService,
-    private val chatWebSocketHandler: ChatWebSocketHandler,
+    private val messageCommandService: MessageCommandService,
 ) {
     @Transactional
     fun createChatRoom(
@@ -45,7 +44,7 @@ class ChatRoomCommandService(
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
-        val enterMassage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
+        val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
         return CreateChatRoomResponseDto(chatRoom.id)
     }
@@ -58,9 +57,8 @@ class ChatRoomCommandService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
-            val enterMessage = messageRepository.save(Message.createEnterMessage(member, chatRoom))
+            val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
-            chatWebSocketHandler.sendMessage(chatRoomId, enterMessage)
         }
     }
 }
