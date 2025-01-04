@@ -17,7 +17,7 @@ data class ChatRoomCreateRequestDto(
 )
 
 data class ChatRoomUpdateRequestDto(
-    @Schema(description = "안 바뀌면 그래도 보내주세요.")
+    @Schema(description = "안 바뀌면 null로 보내주세요.")
     @field:NullOrNotBlank(message = "채팅방 제목은 공백일 수 없습니다.") // null 허용, 공백은 안됨
     @field:Length(min = 1, max = 20, message = "채팅방 제목은 1자 이상 20자 이하로 입력해주세요.")
     val title: String?,
