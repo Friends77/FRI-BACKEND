@@ -17,6 +17,7 @@ import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
+import com.friends.message.repository.MessageRepository
 import com.friends.message.service.MessageCommandService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,6 +32,7 @@ class ChatRoomCommandService(
     private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
     private val s3ClientService: S3ClientService,
     private val messageCommandService: MessageCommandService,
+    private val messageRepository: MessageRepository,
 ) {
     @Transactional
     fun createChatRoom(
@@ -77,19 +79,22 @@ class ChatRoomCommandService(
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw NotChatRoomMemberException()
         chatRoomMemberRepository.delete(chatRoomMember)
+        messageCommandService.setChatRoomOffline(memberId, chatRoomId) // 채팅방에서 나가면 온라인 유저에서도 제거
         if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
-            messageRepository.deleteByChatRoom(chatRoom)
-            chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
-            chatRoomRepository.delete(chatRoom)
+            deleteChatRoom(chatRoom)
         } else {
-            val exitMessage = messageRepository.save(Message.createExitMessage(member, chatRoom))
-            chatWebSocketHandler.sendMessage(chatRoomId, exitMessage)
+            messageCommandService.sendMessage(chatRoomId, memberId, Message.exitMessage(member.nickname), MessageType.SYSTEM) // 채팅방에 나갔다는 메세지 전송
             if (chatRoom.manager == member) {
                 val newManager = chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom).member
                 chatRoom.changeManager(newManager)
-                val managerChangeMessage = messageRepository.save(Message.createManagerChangeMessage(newManager, chatRoom))
-                chatWebSocketHandler.sendMessage(chatRoomId, managerChangeMessage)
+                messageCommandService.sendMessage(chatRoomId, newManager.id, Message.changeManagerMessage(newManager.nickname), MessageType.SYSTEM) // 새로운 매니저에게 매니저 변경 메세지 전송
             }
         }
+    }
+
+    private fun deleteChatRoom(chatRoom: ChatRoom) {
+        messageRepository.deleteByChatRoom(chatRoom)
+        chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
+        chatRoomRepository.delete(chatRoom)
     }
 }
