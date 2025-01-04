@@ -19,6 +19,7 @@ class Category(
     val name: String,
     @Column(nullable = false)
     val type: CategoryType,
+    val image: String? = null,
 )
 
 enum class CategoryType {
