@@ -12,6 +12,7 @@ import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
+import com.friends.message.entity.MessageType
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
@@ -36,8 +37,8 @@ class MessageRepositoryTest(
                 member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL))
                 chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member))
                 chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
-                val enterMessage = messageRepository.save(Message.createEnterMessage(member, chatRoom1))
-                messageRepository.save(Message.createEnterMessage(member2, chatRoom1))
+                val enterMessage = messageRepository.save(createTestMessage(chatRoom1, member, Message.enterMessage(member.nickname), MessageType.SYSTEM))
+                messageRepository.save(createTestMessage(chatRoom1, member2, Message.enterMessage(member2.nickname), MessageType.SYSTEM))
                 message = messageRepository.save(createTestMessage(chatRoom1, member2))
                 chatRoomMember1 = chatRoomMemberRepository.save(createTestChatRoomMember(member = member, chatRoom = chatRoom1, lastReadMessage = enterMessage))
                 chatRoomMember2 = chatRoomMemberRepository.save(createTestChatRoomMember(member = member2, chatRoom = chatRoom1, lastReadMessage = message))

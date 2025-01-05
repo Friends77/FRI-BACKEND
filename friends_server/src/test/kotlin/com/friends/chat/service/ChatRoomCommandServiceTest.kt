@@ -3,6 +3,7 @@ package com.friends.chat.service
 import com.friends.category.repository.CategoryRepository
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCreateRequestDto
@@ -14,9 +15,13 @@ import com.friends.chat.repository.ChatRoomRepository
 import com.friends.createTestCategory
 import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
+import com.friends.member.MEMBER_NICKNAME
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
+import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
+import com.friends.message.entity.MessageType
+import com.friends.message.repository.MessageRepository
 import com.friends.message.service.MessageCommandService
 import com.friends.support.createTestImageFile
 import io.kotest.assertions.throwables.shouldThrow
@@ -36,7 +41,8 @@ class ChatRoomCommandServiceTest :
             val chatRoomCategoryRepository = mockk<ChatRoomCategoryRepository>()
             val s3ClientService = mockk<S3ClientService>()
             val messageCommandService = mockk<MessageCommandService>()
-            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, s3ClientService, messageCommandService)
+            val messageRepository = mockk<MessageRepository>()
+            val chatRoomCommandService = ChatRoomCommandService(chatRoomRepository, chatRoomMemberRepository, memberRepository, categoryRepository, chatRoomCategoryRepository, s3ClientService, messageCommandService, messageRepository)
 
             given("createChatRoom 테스트") {
                 val request = createTestChatRoomCreateRequestDto()
@@ -45,7 +51,7 @@ class ChatRoomCommandServiceTest :
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
                 every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
                 every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
-                every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns createTestMessage(content = Message.enterMessage(MEMBER_NICKNAME), type = MessageType.SYSTEM)
                 every { messageCommandService.setChatRoomOnline(any(), any()) } returns Unit
                 every { s3ClientService.upload(any()) } returns "test"
                 `when`("정상적인 데이터가 들어올 경우") {
@@ -77,7 +83,7 @@ class ChatRoomCommandServiceTest :
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
                 every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns false
                 every { chatRoomMemberRepository.save(any()) } returns createTestChatRoomMember()
-                every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns Message.createEnterMessage(createTestMember(), createTestChatRoom())
+                every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns createTestMessage(content = Message.enterMessage(MEMBER_NICKNAME), type = MessageType.SYSTEM)
                 every { messageCommandService.setChatRoomOnline(any(), any()) } returns Unit
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방 멤버가 저장된다.") {
@@ -109,6 +115,66 @@ class ChatRoomCommandServiceTest :
                         shouldThrow<ChatRoomNotFoundException> {
                             chatRoomCommandService.enterChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
                             verify(exactly = 0) { messageCommandService.sendMessage(any(), any(), any(), any()) }
+                        }
+                    }
+                }
+            }
+
+            given("leaveChatRoom 테스트") {
+                val member = createTestMember()
+                val chatRoom = createTestChatRoom(manager = member)
+                val chatRoomMember = createTestChatRoomMember(chatRoom, member)
+                every { chatRoomRepository.findByIdWithLock(any()) } returns chatRoom
+                every { memberRepository.findById(any()) } returns Optional.of(member)
+                every { chatRoomMemberRepository.findByChatRoomAndMember(any(), any()) } returns chatRoomMember
+                every { chatRoomMemberRepository.delete(any()) } returns Unit
+                `when`("채팅방 멤버가 아무도 없을 경우") {
+                    every { messageRepository.deleteByChatRoom(any()) } returns Unit
+                    every { chatRoomCategoryRepository.deleteByChatRoom(any()) } returns Unit
+                    every { chatRoomRepository.delete(any()) } returns Unit
+                    every { chatRoomMemberRepository.countByChatRoom(any()) } returns 0
+                    then("채팅방이 삭제된다.") {
+                        chatRoomCommandService.leaveChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
+                        verify(exactly = 1) {
+                            messageRepository.deleteByChatRoom(any())
+                            chatRoomCategoryRepository.deleteByChatRoom(any())
+                            chatRoomRepository.delete(any())
+                        }
+                    }
+                }
+
+                every { chatRoomMemberRepository.countByChatRoom(any()) } returns 1
+                every { messageRepository.save(any()) } returns createTestMessage()
+                every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns createTestMessage()
+                `when`("채팅방에 멤버가 1명 이상 남아있을 경우") {
+                    every { chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(any()) } returns createTestChatRoomMember()
+                    then("채팅방이 삭제되지 않는다.") {
+                        chatRoomCommandService.leaveChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
+                        verify(exactly = 0) {
+                            chatRoomRepository.delete(any())
+                        }
+                    }
+                }
+
+                `when`("채팅방에 멤버가 1명 남았고, 방장이 나갈 경우") {
+                    every { chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(any()) } returns chatRoomMember
+                    then("방장이 변경되고, 새로운 방장에게 메시지가 전송된다.") {
+                        chatRoomCommandService.leaveChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
+                        verify(exactly = 1) {
+                            chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(any())
+                        }
+                        verify(exactly = 2) {
+                            messageRepository.save(any())
+                            messageCommandService.sendMessage(any(), any(), any(), any())
+                        }
+                    }
+                }
+
+                `when`("참여중인 채팅방이 아닌 경우") {
+                    every { chatRoomMemberRepository.findByChatRoomAndMember(any(), any()) } returns null
+                    then("NotChatRoomMemberException이 발생한다.") {
+                        shouldThrow<NotChatRoomMemberException> {
+                            chatRoomCommandService.leaveChatRoom(TEST_CHAT_ROOM_ID, MEMBER_ID)
                         }
                     }
                 }
