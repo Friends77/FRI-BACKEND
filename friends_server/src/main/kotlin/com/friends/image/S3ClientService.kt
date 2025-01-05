@@ -37,7 +37,7 @@ class S3ClientService(
         return "https://$bucketName.s3.$region.amazonaws.com/$filename"
     }
 
-    fun delete(filename: String) {
-        s3Client.deleteObject(bucketName, filename)
+    fun delete(url: String) {
+        s3Client.deleteObject(bucketName, url.substringAfterLast("/"))
     }
 }
