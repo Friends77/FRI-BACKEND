@@ -25,7 +25,6 @@ class AdminService(
                 BaseImageType.CHAT_ROOM -> chatRoomBaseImageUrl
                 BaseImageType.PROFILE -> profileBaseImageUrl
             }
-        println(url)
         s3ClientService.deleteS3Object(url)
         return s3ClientService.upload(file, Date(Long.MAX_VALUE)) // 대략 9,300년
     }
