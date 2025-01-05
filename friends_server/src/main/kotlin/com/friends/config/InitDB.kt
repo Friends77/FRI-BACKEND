@@ -1,8 +1,8 @@
 package com.friends.config
 
-import com.friends.board.repository.CategoryRepository
 import com.friends.category.entity.Category
 import com.friends.category.entity.CategoryType
+import com.friends.category.repository.CategoryRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import org.springframework.boot.ApplicationRunner
@@ -38,23 +38,23 @@ class InitDB(
 
             // 카테고리 생성
             categoryRepository.deleteAll()
-            categoryRepository.save(Category(name = "자유수다", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "팬덤", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "게임", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "음악", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "맛집", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "고민/상담", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "엔터테인먼트", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "스포츠", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "일상", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "운동/건강", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "여행", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "취미", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "친목/모임", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "패션/뷰티", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "직업", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "자기계발", type = CategoryType.SUBJECT))
-            categoryRepository.save(Category(name = "재테크", type = CategoryType.SUBJECT))
+            categoryRepository.save(Category(name = "자유수다", type = CategoryType.SUBJECT, image = "🧑‍🧑‍🧒"))
+            categoryRepository.save(Category(name = "팬덤", type = CategoryType.SUBJECT, image = "🎈"))
+            categoryRepository.save(Category(name = "게임", type = CategoryType.SUBJECT, image = "🎮"))
+            categoryRepository.save(Category(name = "음악", type = CategoryType.SUBJECT, image = "🎵"))
+            categoryRepository.save(Category(name = "맛집", type = CategoryType.SUBJECT, image = "🍽️"))
+            categoryRepository.save(Category(name = "고민/상담", type = CategoryType.SUBJECT, image = "🗣️"))
+            categoryRepository.save(Category(name = "엔터테인먼트", type = CategoryType.SUBJECT, image = "🎈"))
+            categoryRepository.save(Category(name = "스포츠", type = CategoryType.SUBJECT, image = "🏆"))
+            categoryRepository.save(Category(name = "일상", type = CategoryType.SUBJECT, image = "☘️"))
+            categoryRepository.save(Category(name = "운동/건강", type = CategoryType.SUBJECT, image = "👟️"))
+            categoryRepository.save(Category(name = "여행", type = CategoryType.SUBJECT, image = "✈️"))
+            categoryRepository.save(Category(name = "취미", type = CategoryType.SUBJECT, image = "🧸"))
+            categoryRepository.save(Category(name = "친목/모임", type = CategoryType.SUBJECT, image = "👏"))
+            categoryRepository.save(Category(name = "패션/뷰티", type = CategoryType.SUBJECT, image = "🧢"))
+            categoryRepository.save(Category(name = "직업", type = CategoryType.SUBJECT, image = "💼"))
+            categoryRepository.save(Category(name = "자기계발", type = CategoryType.SUBJECT, image = "📚"))
+            categoryRepository.save(Category(name = "재테크", type = CategoryType.SUBJECT, image = "💰"))
             categoryRepository.save(Category(name = "서울", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "부산", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "대구", type = CategoryType.REGION))

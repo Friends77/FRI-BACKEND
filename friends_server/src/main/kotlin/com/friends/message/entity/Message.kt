@@ -37,10 +37,17 @@ class Message(
             type: MessageType,
         ): Message = Message(0L, chatRoom, sender, content, type)
 
-        fun createEnterMessage(
-            sender: Member,
-            chatRoom: ChatRoom,
-        ): Message = of(chatRoom, sender, "${sender.nickname} 님이 입장하셨습니다.", MessageType.SYSTEM)
+        fun enterMessage(
+            nickname: String,
+        ): String = "$nickname 님이 입장하셨습니다."
+
+        fun exitMessage(
+            nickname: String,
+        ): String = "$nickname 님이 퇴장하셨습니다."
+
+        fun changeManagerMessage(
+            nickname: String,
+        ): String = "$nickname 님이 새로운 방장으로 임명되었습니다."
     }
 }
 

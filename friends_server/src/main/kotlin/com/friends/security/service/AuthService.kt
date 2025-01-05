@@ -1,6 +1,6 @@
 package com.friends.security.service
 
-import com.friends.board.repository.CategoryRepository
+import com.friends.category.repository.CategoryRepository
 import com.friends.config.AuthProperties
 import com.friends.jwt.AtRtService
 import com.friends.jwt.JwtService

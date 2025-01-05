@@ -19,6 +19,8 @@ interface ChatRoomMemberRepository :
     ChatRoomMemberCustomRepository {
     fun countByChatRoom(chatRoom: ChatRoom): Int
 
+    fun findAllByMemberId(memberId: Long): List<ChatRoomMember>
+
     fun findByChatRoomAndMember(
         chatRoom: ChatRoom,
         member: Member,
@@ -28,6 +30,10 @@ interface ChatRoomMemberRepository :
         chatRoom: ChatRoom,
         member: Member,
     ): Boolean
+
+    fun findFirstByChatRoomOrderByCreatedAt(
+        chatRoom: ChatRoom,
+    ): ChatRoomMember
 }
 
 interface ChatRoomMemberCustomRepository {

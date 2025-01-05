@@ -7,3 +7,5 @@ abstract class ProfileExceptions(
 ) : RuntimeException(errorCode.errorMessage)
 
 class ProfileNullResponseException : ProfileExceptions(ErrorCode.PROFILE_NOT_FOUND)
+
+class ProfileLocationNullException : ProfileExceptions(ErrorCode.PROFILE_LOCATION_NULL)

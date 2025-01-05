@@ -40,6 +40,7 @@ enum class ErrorCode(
 
     // Profile API error 15000대
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
+    PROFILE_LOCATION_NULL(HttpStatus.NOT_FOUND, -15002, "프로필 위치 정보가 존재하지 않습니다."),
 
     // Board API error 16000대
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
@@ -59,6 +60,7 @@ enum class ErrorCode(
     INVALID_CHAT_ROOM_ID(HttpStatus.BAD_REQUEST, -17008, "채팅방 ID는 양수여야 합니다."),
     CHAT_ROOM_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, -17009, "채팅방에 존재하지 않는 멤버입니다."),
     UNEXPECTED_CHAT_ROOM(HttpStatus.INTERNAL_SERVER_ERROR, -17010, "예상치 못한 채팅방 오류입니다."),
+    NOT_A_MEMBER_OF_CHAT_ROOM(HttpStatus.FORBIDDEN, -17011, "참여중인 채팅방이 아닙니다."),
 
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),

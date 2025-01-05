@@ -1,6 +1,6 @@
 package com.friends.profile.service
 
-import com.friends.board.repository.CategoryRepository
+import com.friends.category.repository.CategoryRepository
 import com.friends.createTestCategory
 import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
