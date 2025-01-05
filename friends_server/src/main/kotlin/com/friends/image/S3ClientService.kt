@@ -18,7 +18,10 @@ class S3ClientService(
     @Value("\${cloud.aws.s3.region.static}")
     private lateinit var region: String
 
-    fun upload(multipartFile: MultipartFile): String {
+    fun upload(
+        multipartFile: MultipartFile,
+        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3), // s3 비용 절감을 위해 3일로 설정
+    ): String {
         val filename =
             java.util.UUID
                 .randomUUID()
@@ -27,7 +30,7 @@ class S3ClientService(
         val objectMetadata = ObjectMetadata()
         objectMetadata.contentType = multipartFile.contentType
         objectMetadata.contentLength = multipartFile.size
-        objectMetadata.expirationTime = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3) // 3일
+        objectMetadata.expirationTime = expirationTime
         try {
             s3Client.putObject(bucketName, filename, multipartFile.inputStream, objectMetadata)
         } catch (e: Exception) {
@@ -35,5 +38,10 @@ class S3ClientService(
         }
 
         return "https://$bucketName.s3.$region.amazonaws.com/$filename"
+    }
+
+    fun deleteS3Object(fileUrl: String) {
+        val fileKey = fileUrl.substringAfterLast("/")
+        s3Client.deleteObject(bucketName, fileKey)
     }
 }
