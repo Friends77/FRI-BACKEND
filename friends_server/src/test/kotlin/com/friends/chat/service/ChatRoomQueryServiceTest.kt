@@ -10,6 +10,8 @@ import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.member.MEMBER_ID
+import com.friends.member.createTestMember
+import com.friends.member.repository.MemberRepository
 import com.friends.message.repository.MessageRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -28,9 +30,11 @@ class ChatRoomQueryServiceTest :
             val messageRepository = mockk<MessageRepository>()
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
+            val memberRepository = mockk<MemberRepository>()
             val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository).apply { ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL) }
 
             given("getChatRooms 메소드 테스트") {
+                every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
                 `when`("정상적인 조회 정보가 들어올 경우") {
                     every { chatRoomMemberRepository.countByChatRoom(any()) } returns 10
                     every { chatRoomMemberRepository.sliceChatRoomIdByMember(any(), any(), any(), any()) } returns createTestMockSliceChatRoom()
@@ -53,6 +57,7 @@ class ChatRoomQueryServiceTest :
             }
 
             given("getChatRoomDetail 메소드 테스트") {
+                every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
                 `when`("정상적인 조회 정보가 들어올 경우") {
                     every { chatRoomMemberRepository.countByChatRoom(any()) } returns 10
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom())
