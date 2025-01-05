@@ -49,7 +49,7 @@ class ProfileController(
     override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart("profileImage") profileImage: MultipartFile,
+        @RequestPart("profileImage") profileImage: MultipartFile?,
     ): ResponseEntity<Void> {
         profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
         return ResponseEntity.noContent().build()
@@ -63,7 +63,7 @@ class ProfileController(
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart("profileImage") profileImage: MultipartFile,
+        @RequestPart("profileImage") profileImage: MultipartFile?,
     ): ResponseEntity<ProfileUpdateDto> {
         profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
         return ResponseEntity.ok(profileUpdateDto)
