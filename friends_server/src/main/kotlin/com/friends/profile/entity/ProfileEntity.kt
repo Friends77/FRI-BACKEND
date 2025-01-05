@@ -43,7 +43,7 @@ class Profile(
     @Column(name = "Category", length = 225)
     var interestTag: MutableSet<ProfileInterestTag> = mutableSetOf(),
     @Column(name = "image_url")
-    var imageUrl: String,
+    var imageUrl: String? = null,
 ) : BaseModifiableEntity() {
     fun update(
         profileUpdateDto: ProfileUpdateDto,

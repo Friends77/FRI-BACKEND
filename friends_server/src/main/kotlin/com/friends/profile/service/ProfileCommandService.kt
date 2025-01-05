@@ -24,22 +24,22 @@ class ProfileCommandService(
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val s3ClientService: S3ClientService,
 ) {
+    //TODO 기본이미지 url 설정
+    private val defaultImageUrl = ""
+
     //프로필 초기 작성
     fun createProfile(
         requestMemberId: Long,
         profileCreateDto: ProfileCreateDto,
-        profileImage: MultipartFile,
+        profileImage: MultipartFile?,
     ) {
         val member =
-            memberRepository
-                .findById(requestMemberId)
+            memberRepository.findById(requestMemberId)
                 .orElseThrow { MemberNotFoundException() }
 
         val profileInterestTag = categoryRepository.findByIdIn(profileCreateDto.interestTag)
         val imageUrl =
-            profileImage.let {
-                s3ClientService.upload(it)
-            }
+            profileImage?.let { s3ClientService.upload(it) } ?: defaultImageUrl
         val profile =
             Profile(
                 birth = profileCreateDto.birth,
@@ -65,14 +65,16 @@ class ProfileCommandService(
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile,
+        profileImage: MultipartFile?,
     ) {
         val profile =
             profileRepository.findByMemberId(requestMemberId)
                 ?: throw ProfileNullResponseException()
-        profileImage.let {
-            val newImageUrl = s3ClientService.upload(it)
+        if(profileImage != null){
+            val newImageUrl = s3ClientService.upload(profileImage)
             profileUpdateDto.imageUrl = newImageUrl
+        } else if(profile.imageUrl == defaultImageUrl){
+            profileUpdateDto.imageUrl = defaultImageUrl
         }
         profileInterestTagRepository.deleteByProfileId(profile.id)
         profileInterestTagRepository.saveAll(

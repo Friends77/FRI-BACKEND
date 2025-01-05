@@ -25,7 +25,7 @@ data class ProfileUpdateDto(
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
-    var imageUrl: String,
+    var imageUrl: String? = null,
 )
 
 //조회용 dto
@@ -34,16 +34,16 @@ data class ProfileResponseDto(
     val email: String,
     var birth: LocalDate,
     var gender: GenderEnum,
-    var location: Location?,
-    var selfDescription: String?,
-    var mbti: MbtiEnum?,
+    var location: Location? = null,
+    var selfDescription: String? = null,
+    var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Category> = mutableSetOf(),
-    var imageUrl: String,
+    var imageUrl: String? = null,
 )
 
 data class ProfileWithDistanceDto(
     val id: Long,
     val nickname: String,
-    val imageUrl: String,
+    val imageUrl: String? = null,
     val distance: Double,
 )
