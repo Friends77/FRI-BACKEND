@@ -12,6 +12,7 @@ import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.entity.Member
 import com.friends.message.repository.MessageRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,6 +23,9 @@ class ChatRoomQueryService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomLikeRepository: ChatRoomLikeRepository,
 ) {
+    @Value("\${image.chat-room-base-url}")
+    lateinit var chatRoomBaseImageUrl: String
+
     @Transactional
     fun getChatRooms(
         memberId: Long,
@@ -43,6 +47,7 @@ class ChatRoomQueryService(
                         it,
                         chatRoomMemberRepository.countByChatRoom(it.chatRoom),
                         messageRepository.countUnreadMessages(it).let { count -> if (count > 999) 999 else count },
+                        it.chatRoom.imageUrl ?: chatRoomBaseImageUrl,
                     )
                 } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
         return toSliceBaseResponse(chatRoomInfoResponse)
@@ -54,6 +59,6 @@ class ChatRoomQueryService(
         memberId: Long,
     ): ChatRoomDetailResponseDto {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
-        return toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId))
+        return toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId), chatRoom.imageUrl ?: chatRoomBaseImageUrl)
     }
 }

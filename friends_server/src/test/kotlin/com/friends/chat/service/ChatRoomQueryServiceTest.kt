@@ -1,6 +1,7 @@
 package com.friends.chat.service
 
 import com.friends.TEST_SIZE
+import com.friends.chat.CHAT_ROOM_BASE_IMAGE_URL
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
@@ -17,6 +18,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.SliceImpl
+import org.springframework.test.util.ReflectionTestUtils
 import java.util.Optional
 
 class ChatRoomQueryServiceTest :
@@ -26,7 +28,7 @@ class ChatRoomQueryServiceTest :
             val messageRepository = mockk<MessageRepository>()
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
-            val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository)
+            val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository).apply { ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL) }
 
             given("getChatRooms 메소드 테스트") {
                 `when`("정상적인 조회 정보가 들어올 경우") {

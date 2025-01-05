@@ -11,8 +11,8 @@ data class ChatRoomInfoResponseDto(
     val id: Long,
     @Schema(description = "채팅방 제목")
     val title: String,
-    @Schema(description = "채팅방 이미지 URL, 없을 경우 null")
-    val imageUrl: String?,
+    @Schema(description = "채팅방 이미지 URL")
+    val imageUrl: String,
     @Schema(description = "채팅방 카테고리 리스트")
     val categoryIdList: List<CategoryInfoResponse>,
     @Schema(description = "채팅방 참여자 수")
@@ -29,7 +29,7 @@ data class ChatRoomDetailResponseDto(
     @Schema(description = "채팅방 제목")
     val title: String,
     @Schema(description = "채팅방 이미지 URL")
-    val imageUrl: String?,
+    val imageUrl: String,
     @Schema(description = "채팅방 카테고리 리스트")
     val categoryIdList: List<CategoryInfoResponse>,
     @Schema(description = "채팅방 참여자 수")
