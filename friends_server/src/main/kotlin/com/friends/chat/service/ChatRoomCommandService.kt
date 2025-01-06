@@ -5,6 +5,7 @@ import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.ChatRoomUpdateException
 import com.friends.chat.NotChatRoomManagerException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
@@ -21,6 +22,7 @@ import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
+import com.friends.message.repository.MessageRepository
 import com.friends.message.service.MessageCommandService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -35,6 +37,7 @@ class ChatRoomCommandService(
     private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
     private val s3ClientService: S3ClientService,
     private val messageCommandService: MessageCommandService,
+    private val messageRepository: MessageRepository,
 ) {
     @Transactional
     fun createChatRoom(
@@ -67,6 +70,37 @@ class ChatRoomCommandService(
             val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
         }
+    }
+
+    @Transactional
+    fun leaveChatRoom(
+        chatRoomId: Long,
+        memberId: Long,
+    ) {
+        // postgreSQL에서는 격리수준 default가 read committed이므로,
+        // 만일 채팅방의 최후 2인이 동시에 나갈 경우, 각 트랜잭션에선 본인이 나가더라도 1명이 남아있을 것으로 잘못 판단하고 방이 사라지지않는 문제가 발생할 수 있습니다.
+        // 따라서, chatRoom에 비관적 베타락을 걸어서 한 요청을 처리하는 동안 다른 트랜잭션이 chatRoom에 접근하지 못하도록 합니다.
+        val chatRoom = chatRoomRepository.findByIdWithLock(chatRoomId) ?: throw ChatRoomNotFoundException()
+        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw NotChatRoomMemberException()
+        chatRoomMemberRepository.delete(chatRoomMember)
+        messageCommandService.setChatRoomOffline(memberId, chatRoomId) // 채팅방에서 나가면 온라인 유저에서도 제거
+        if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
+            deleteChatRoom(chatRoom)
+        } else {
+            messageCommandService.sendMessage(chatRoomId, memberId, Message.exitMessage(member.nickname), MessageType.SYSTEM) // 채팅방에 나갔다는 메세지 전송
+            if (chatRoom.manager == member) {
+                val newManager = chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom).member
+                chatRoom.changeManager(newManager)
+                messageCommandService.sendMessage(chatRoomId, newManager.id, Message.changeManagerMessage(newManager.nickname), MessageType.SYSTEM) // 새로운 매니저에게 매니저 변경 메세지 전송
+            }
+        }
+    }
+
+    private fun deleteChatRoom(chatRoom: ChatRoom) {
+        messageRepository.deleteByChatRoom(chatRoom)
+        chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
+        chatRoomRepository.delete(chatRoom)
     }
 
     @Transactional

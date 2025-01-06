@@ -14,6 +14,7 @@ import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import com.friends.message.repository.MessageRepository
 import com.friends.support.annotation.RepositoryTest
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -49,6 +50,15 @@ class ChatRoomMemberRepositoryTest(
             chatRoomMember3 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member3, message))
             chatRoomMember4 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member3, message))
             chatRoomMember5 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom3, member2, message))
+        }
+        describe("save") {
+            context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
+                it("에러가 난다.") {
+                    shouldThrow<Exception> {
+                        chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1))
+                    }
+                }
+            }
         }
 
         describe("countByChatRoomId 메서드는") {
@@ -95,6 +105,24 @@ class ChatRoomMemberRepositoryTest(
             context("존재하지 않는 ChatRoomId와 MemberId가 들어오는 경우") {
                 it("false를 반환한다.") {
                     chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom3, member1) shouldBe false
+                }
+            }
+
+            describe("findByChatRoomAndMember") {
+                context("참여중인 채팅방을 조회하면") {
+                    it("해당 채팅방을 반환한다") {
+                        chatRoomMemberRepository.findByChatRoomAndMember(chatRoom1, member1)?.id shouldBe chatRoomMember.id
+                    }
+                }
+            }
+
+            describe("findFirstByChatRoomOrderByCreatedAt") {
+                context("채팅방을 조회하면") {
+                    it("먼저 들어온 채팅방멤버 연관 엔티티를 반환한다") {
+                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember.id
+                        chatRoomMemberRepository.delete(chatRoomMember)
+                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember2.id
+                    }
                 }
             }
         }
