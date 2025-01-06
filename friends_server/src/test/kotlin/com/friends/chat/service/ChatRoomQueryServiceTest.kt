@@ -31,7 +31,7 @@ class ChatRoomQueryServiceTest :
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
             val memberRepository = mockk<MemberRepository>()
-            val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository).apply { ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL) }
+            val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository, memberRepository).apply { ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL) }
 
             given("getChatRooms 메소드 테스트") {
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())

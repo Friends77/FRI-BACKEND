@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/api/global/admin")
+@RequestMapping("/api/admin")
 class AdminController(
     private val adminService: AdminService,
 ) : AdminControllerSpec {
