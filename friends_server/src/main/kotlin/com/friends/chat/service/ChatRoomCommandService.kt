@@ -5,9 +5,9 @@ import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.ChatRoomNotFoundException
-import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.ChatRoomUpdateException
 import com.friends.chat.NotChatRoomManagerException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
@@ -130,7 +130,7 @@ class ChatRoomCommandService(
     ): Boolean {
         if (backgroundImage != null) {
             if (chatRoom.imageUrl != null) {
-                s3ClientService.delete(chatRoom.imageUrl!!)
+                s3ClientService.deleteS3Object(chatRoom.imageUrl!!)
             }
             chatRoom.imageUrl = s3ClientService.upload(backgroundImage)
             return true
@@ -139,7 +139,7 @@ class ChatRoomCommandService(
                 if (chatRoom.imageUrl == null) {
                     throw ChatRoomBaseImageCannotDeleteException()
                 }
-                s3ClientService.delete(chatRoom.imageUrl!!)
+                s3ClientService.deleteS3Object(chatRoom.imageUrl!!)
                 chatRoom.imageUrl = null
                 return true
             }
