@@ -2,6 +2,7 @@ package com.friends.security.filter
 
 import com.friends.jwt.AUTHORIZATION_HEADER
 import com.friends.jwt.INVALID_TOKEN
+import com.friends.jwt.JwtService
 import com.friends.jwt.VALID_TOKEN
 import com.friends.security.authentication.AuthenticationCreator
 import io.kotest.core.spec.style.BehaviorSpec
@@ -18,7 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder
 class JwtFilterTest :
     BehaviorSpec({
         val authenticationCreator = mockk<AuthenticationCreator>()
-        val jwtFilter = JwtFilter(authenticationCreator)
+        val jwtService = mockk<JwtService>()
+        val jwtFilter = JwtFilter(authenticationCreator, jwtService)
 
         /**
          * Type이 Test인 테스트(여기서는 then) 이 끝난 뒤 실행됩니다.
@@ -39,6 +41,7 @@ class JwtFilterTest :
             val filterChain = mockk<FilterChain>(relaxed = true)
 
             every { authenticationCreator.createByAccessToken(token) } returns authentication
+            every { jwtService.validate(token) } returns true
 
             `when`("JwtFilter가 실행될 때") {
                 jwtFilter.doFilter(request, response, filterChain)
@@ -82,10 +85,14 @@ class JwtFilterTest :
         given("HTTP 요청에 잘못된 Authorization 헤더가 있는 경우") {
             val request =
                 MockHttpServletRequest().apply {
-                    addHeader(AUTHORIZATION_HEADER, INVALID_TOKEN)
+                    addHeader(AUTHORIZATION_HEADER, "Bearer $INVALID_TOKEN")
                 }
             val response = MockHttpServletResponse()
             val filterChain = mockk<FilterChain>(relaxed = true)
+
+            every {
+                jwtService.validate(INVALID_TOKEN)
+            } returns false
 
             `when`("JwtFilter가 실행될 때") {
                 jwtFilter.doFilter(request, response, filterChain)
