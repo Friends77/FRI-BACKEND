@@ -2,8 +2,10 @@ package com.friends.profile.service
 
 import com.friends.category.repository.CategoryRepository
 import com.friends.createTestCategory
+import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
 import com.friends.member.repository.MemberRepository
+import com.friends.profile.PROFILE_IMAGE
 import com.friends.profile.createTestMember
 import com.friends.profile.createTestProfile
 import com.friends.profile.createTestProfileCreateDto
@@ -25,7 +27,8 @@ class ProfileCommandServiceTest :
         val memberRepository = mockk<MemberRepository>()
         val categoryRepository = mockk<CategoryRepository>()
         val profileInterestTagRepository = mockk<ProfileInterestTagRepository>()
-        val profileCommandService = ProfileCommandService(profileRepository, memberRepository, categoryRepository, profileInterestTagRepository)
+        val s3ClientService = mockk<S3ClientService>()
+        val profileCommandService = ProfileCommandService(profileRepository, memberRepository, categoryRepository, profileInterestTagRepository, s3ClientService)
 
         given("createProfile 메서드를 호출할 때") {
             every { memberRepository.findById(MEMBER_ID) } returns Optional.of(createTestMember())
@@ -34,7 +37,7 @@ class ProfileCommandServiceTest :
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
 
             `when`("유효한 프로필 정보를 전달하면") {
-                profileCommandService.createProfile(MEMBER_ID, createTestProfileCreateDto())
+                profileCommandService.createProfile(MEMBER_ID, createTestProfileCreateDto(), PROFILE_IMAGE)
 
                 then("프로필이 저장되어야 한다.") {
                     verify(exactly = 1) { memberRepository.findById(MEMBER_ID) }
@@ -64,7 +67,7 @@ class ProfileCommandServiceTest :
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
 
             `when`("존재하는 프로필을 수정하면") {
-                profileCommandService.updateProfile(MEMBER_ID, updatedProfile)
+                profileCommandService.updateProfile(MEMBER_ID, updatedProfile, PROFILE_IMAGE)
 
                 then("수정된 프로필이 저장되어야 한다.") {
                     verify(exactly = 1) { profileRepository.findByMemberId(MEMBER_ID) }

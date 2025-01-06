@@ -6,6 +6,7 @@ import com.friends.profile.dto.ProfileUpdateDto
 import com.friends.profile.service.ProfileCommandService
 import com.friends.profile.service.ProfileQueryService
 import jakarta.validation.Valid
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class ProfileController(
@@ -39,22 +42,30 @@ class ProfileController(
     }
 
     //프로필 작성(초기화면)
-    @PostMapping("api/user/profile")
+    @PostMapping(
+        value = ["api/user/profile"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+    )
     override fun createProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart("profileImage") profileImage: MultipartFile?,
     ): ResponseEntity<Void> {
-        profileCommandService.createProfile(memberId, profileCreateDto)
+        profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
         return ResponseEntity.noContent().build()
     }
 
     //프로필 수정
-    @PutMapping("api/user/profile")
+    @PutMapping(
+        value = ["api/user/profile"],
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+    )
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestPart("profileImage") profileImage: MultipartFile?,
     ): ResponseEntity<ProfileUpdateDto> {
-        profileCommandService.updateProfile(memberId, profileUpdateDto)
+        profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
         return ResponseEntity.ok(profileUpdateDto)
     }
 }
