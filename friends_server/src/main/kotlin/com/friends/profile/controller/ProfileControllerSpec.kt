@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Profile", description = "프로필 API")
 interface ProfileControllerSpec {
@@ -51,7 +53,8 @@ interface ProfileControllerSpec {
     )
     fun createProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart @Valid profileCreateDto: ProfileCreateDto,
+        @RequestPart profileImage: MultipartFile?,
     ): ResponseEntity<Void>
 
     @Operation(
@@ -66,5 +69,6 @@ interface ProfileControllerSpec {
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestPart profileImage: MultipartFile?,
     ): ResponseEntity<ProfileUpdateDto>
 }

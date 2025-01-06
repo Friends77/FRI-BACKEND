@@ -24,7 +24,7 @@ class MessageCommandService(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
-    private val executor: ExecutorService,
+    private val virtualThreadExecutor: ExecutorService,
 ) {
     /**
      * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 아이디를 값으로 하는 Map입니다.
@@ -38,6 +38,11 @@ class MessageCommandService(
      * 하나의 유저가 여러개의 세션을 가질 수 있기 때문에 MutableSet을 사용합니다. (ex. 웹, 모바일 에서 동시 접속)
      */
     private val sessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    /**
+     * 채팅방 ID를 키로 하여, 해당 채팅방에서 메시지를 보낼 때 동기화에 사용할 Lock 객체를 관리합니다.
+     */
+    private val chatRoomLocks = ConcurrentHashMap<Long, Any>()
 
     /**
      * 참여하고 있는 모든 채팅방에 온라인 유저로 등록됩니다.
@@ -130,51 +135,54 @@ class MessageCommandService(
         content: String,
         type: MessageType,
     ): Message {
-        /**
-         * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
-         * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
-         * 프록시 객체는 DB 에서 채팅방과 유저 정보를 요청하지 않지만, DB 에 데이터가 있는지 없는지 확인할 수 없습니다.
-         *
-         * val chatRoom = entityManager.getReference(ChatRoom::class.java, chatRoomId)
-         * val sender = entityManager.getReference(Member::class.java, message.senderId)
-         */
-        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
+        val chatRoomLock = chatRoomLocks.computeIfAbsent(chatRoomId) { Any() }
 
-        // 채팅방의 모든 온라인 유저에게 메세지 전송
-        val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
-        onlineUserIdSet.forEach {
-            val sessions = sessions[it] ?: return@forEach // 온라인 유저의 세션이 없으면 메세지를 보낼 필요가 없습니다.
-            // 온라인 유저와 연결된 모든 웹소켓에 메세지 전송
-            sessions.forEach { session ->
-                CompletableFuture // 비동기 처리
-                    .supplyAsync(
-                        {
+        // 채팅방 단위로 동기화 (synchronized block)
+        synchronized(chatRoomLock) {
+            /**
+             * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
+             * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
+             * 프록시 객체는 DB 에서 채팅방과 유저 정보를 요청하지 않지만, DB 에 데이터가 있는지 없는지 확인할 수 없습니다.
+             *
+             * val chatRoom = entityManager.getReference(ChatRoom::class.java, chatRoomId)
+             * val sender = entityManager.getReference(Member::class.java, message.senderId)
+             */
+            val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
+            val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
+            val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
+
+            // 채팅방의 모든 온라인 유저에게 메세지 전송
+            val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
+            val futures = mutableListOf<CompletableFuture<*>>()
+            onlineUserIdSet.forEach { userId ->
+                val userSessions = sessions[userId] ?: return@forEach
+                userSessions.forEach { session ->
+                    // 비동기 전송
+                    val future =
+                        CompletableFuture.supplyAsync({
                             if (session.isOpen) {
                                 try {
-                                    session.sendMessage(
-                                        TextMessage(
-                                            JsonUtil.toJson(
-                                                ChatSendMessageDto(
-                                                    chatRoom.id,
-                                                    sender.id,
-                                                    message.content,
-                                                    message.createdAt,
-                                                    message.type,
-                                                ),
-                                            ),
-                                        ),
-                                    )
+                                    val sendMessageDto =
+                                        ChatSendMessageDto(
+                                            chatRoom.id,
+                                            sender.id,
+                                            message.content,
+                                            message.createdAt,
+                                            message.type,
+                                        )
+                                    session.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
                             }
-                        },
-                        executor,
-                    )
+                        }, virtualThreadExecutor)
+                    futures.add(future)
+                }
             }
+            // 모든 메세지 전송이 완료될 때까지 대기
+            CompletableFuture.allOf(*futures.toTypedArray()).join()
+
+            return message
         }
-        return message
     }
 }

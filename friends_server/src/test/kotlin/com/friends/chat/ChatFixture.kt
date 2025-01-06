@@ -2,15 +2,19 @@ package com.friends.chat
 
 import com.friends.TEST_CATEGORY_ID
 import com.friends.TEST_SIZE
+import com.friends.category.entity.Category
 import com.friends.chat.dto.ChatRoomCreateRequestDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.dto.ToggleLikeResponseDto
 import com.friends.chat.dto.mapper.toChatRoomDetailResponseDto
 import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.entity.ChatRoom
+import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomLike
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.mapper.toSliceBaseResponse
+import com.friends.createTestCategory
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 import com.friends.message.createMockTestMessage
@@ -30,7 +34,8 @@ fun createTestChatRoom(
     manager: Member = createTestMember(),
     imageUrl: String? = null,
     likeCount: Int = 0,
-) = ChatRoom(id = 0L, title = title, manager = manager, imageUrl = imageUrl, likeCount = likeCount)
+    categories: List<ChatRoomCategory> = emptyList(),
+) = ChatRoom(id = 0L, title = title, manager = manager, imageUrl = imageUrl, likeCount = likeCount, categories = categories)
 
 fun createTestChatRoomCreateRequestDto(
     title: String = CHAT_ROOM_TITLE,
@@ -91,3 +96,14 @@ fun createTestChatRoomDetailResponseDto(
 fun createTestCreateChatRoomResponseDto(
     chatRoomId: Long = TEST_CHAT_ROOM_ID,
 ) = CreateChatRoomResponseDto(chatRoomId)
+
+fun createTestChatRoomUpdateRequestDto(
+    title: String? = null,
+    categoryIds: Set<Long> = emptySet(),
+    backgroundImageDelete: Boolean = false,
+) = ChatRoomUpdateRequestDto(title, categoryIds, backgroundImageDelete)
+
+fun createTestChatRoomCategory(
+    chatRoom: ChatRoom = createTestChatRoom(),
+    category: Category = createTestCategory(),
+) = ChatRoomCategory(0L, chatRoom, category)

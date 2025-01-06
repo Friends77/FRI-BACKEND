@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.util.SliceChatRoomInfoResponseDto
 import com.friends.common.dto.SliceBaseResponse
@@ -170,6 +171,42 @@ interface ChatRoomControllerSpec {
         @PathVariable
         @Positive(message = "chatRoomId는 0보다 커야 합니다.")
         chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void>
+
+    @Operation(
+        description = "채팅방 수정 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 수정 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.CHAT_ROOM_TITLE_BLANK,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.CHAT_ROOM_TITLE_INVALID_LENGTH,
+            ErrorCode.CHAT_ROOM_CATEGORY_INVALID_SIZE,
+            ErrorCode.NOT_CHAT_ROOM_MANAGER,
+            ErrorCode.CHAT_ROOM_UPDATE_NOTHING,
+            ErrorCode.CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE,
+        ],
+    )
+    fun updateChatRoom(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @RequestPart(required = false)
+        @Valid
+        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto?,
+        @RequestPart(required = false)
+        backgroundImage: MultipartFile?,
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void>
