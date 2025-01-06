@@ -9,16 +9,22 @@ import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
+import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator
 import org.springframework.web.socket.handler.TextWebSocketHandler
 
 @Component
 class ChatWebSocketHandler(
     private val messageCommandService: MessageCommandService,
 ) : TextWebSocketHandler() {
+    companion object {
+        private const val SEND_TIME_LIMIT = 2000 // 2초
+        private const val BUFFER_SIZE_LIMIT = 1024 * 1024 // 1MB
+    }
+
     override fun afterConnectionEstablished(session: WebSocketSession) {
         try {
             val memberId = getMemberId(session)
-            messageCommandService.setAllChatRoomsOnline(memberId, session)
+            messageCommandService.setAllChatRoomsOnline(memberId, ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, BUFFER_SIZE_LIMIT))
         } catch (e: Exception) {
             session.close(CloseStatus.SERVER_ERROR)// 채팅방 연결 종료 후 에러 처리
             throw UnexpectedChatRoomException(e)
