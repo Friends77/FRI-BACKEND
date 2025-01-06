@@ -10,6 +10,7 @@ fun toChatRoomInfoResponse(
     chatRoomMember: ChatRoomMember,
     memberCount: Int,
     unreadMessageCount: Int,
+    imageUrl: String,
 ): ChatRoomInfoResponseDto {
     val lastChatRoomMessageTime =
         // 마지막 읽은 메세지가 채팅방의 마지막 메세지보다 이전이면 채팅방의 마지막 메세지 시간을 가져옴 그렇지 않으면 자신의 입장 메세지가 보내진 시간을 갖고옴(마지막 읽은 메세지 자신의 입장 메세지로 초기화하기 때문)
@@ -26,7 +27,7 @@ fun toChatRoomInfoResponse(
         chatRoomMemberId = chatRoomMember.id,
         id = chatRoomMember.chatRoom.id,
         title = chatRoomMember.chatRoom.title,
-        imageUrl = chatRoomMember.chatRoom.imageUrl,
+        imageUrl = imageUrl,
         categoryIdList = chatRoomMember.chatRoom.categories.map { toCategoryInfoResponse(it.category) },
         participantCount = memberCount,
         lastMessageTime = lastChatRoomMessageTime,
@@ -38,10 +39,11 @@ fun toChatRoomDetailResponseDto(
     chatRoom: ChatRoom,
     memberCount: Int,
     isLike: Boolean,
+    imageUrl: String,
 ) = ChatRoomDetailResponseDto(
     id = chatRoom.id,
     title = chatRoom.title,
-    imageUrl = chatRoom.imageUrl,
+    imageUrl = imageUrl,
     categoryIdList = chatRoom.categories.map { toCategoryInfoResponse(it.category) },
     participantCount = memberCount,
     likeCount = chatRoom.likeCount,

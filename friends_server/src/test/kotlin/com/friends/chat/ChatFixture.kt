@@ -27,6 +27,7 @@ import org.springframework.data.domain.SliceImpl
 const val TEST_CHAT_ROOM_ID = 1L
 const val CHAT_ROOM_TITLE = "테스트 채팅방"
 const val CREATE_CHAT_ROOM_REQUEST = "chatRoomCreateRequestDto"
+const val CHAT_ROOM_BASE_IMAGE_URL = "chatRoomBaseImageUrl"
 
 fun createTestChatRoom(
     title: String = CHAT_ROOM_TITLE,
@@ -63,7 +64,8 @@ fun createTestChatRoomInfoResponseDto(
     chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
     memberCount: Int = TEST_SIZE,
     unreadMessageCount: Int = 0,
-) = toChatRoomInfoResponse(chatRoomMember, memberCount, unreadMessageCount)
+    imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
+) = toChatRoomInfoResponse(chatRoomMember, memberCount, unreadMessageCount, imageUrl)
 
 fun createTestSliceResponseChatRoom(
     sliceChatRoom: Slice<ChatRoomMember> = createTestSliceChatRoom(),
@@ -88,7 +90,8 @@ fun createTestChatRoomDetailResponseDto(
     chatRoom: ChatRoom = createTestChatRoom(),
     memberCount: Int = TEST_SIZE,
     like: Boolean = false,
-) = toChatRoomDetailResponseDto(chatRoom, memberCount, like)
+    imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
+) = toChatRoomDetailResponseDto(chatRoom, memberCount, like, imageUrl)
 
 fun createTestCreateChatRoomResponseDto(
     chatRoomId: Long = TEST_CHAT_ROOM_ID,
