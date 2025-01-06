@@ -3,8 +3,15 @@ package com.friends.config
 import com.friends.category.entity.Category
 import com.friends.category.entity.CategoryType
 import com.friends.category.repository.CategoryRepository
+import com.friends.chat.entity.ChatRoom
+import com.friends.chat.entity.ChatRoomMember
+import com.friends.chat.repository.ChatRoomMemberRepository
+import com.friends.chat.repository.ChatRoomRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.message.entity.Message
+import com.friends.message.entity.MessageType
+import com.friends.message.repository.MessageRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -15,26 +22,34 @@ class InitDB(
     private val categoryRepository: CategoryRepository,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val messageRepository: MessageRepository,
 ) {
     @Bean
     fun runInitializer(): ApplicationRunner =
 
         ApplicationRunner {
-            // 테스트 유저 생성
-            memberRepository.saveAll(
-                listOf(
-                    Member.createUser(
-                        nickname = "user",
-                        email = "user",
-                        password = passwordEncoder.encode("user"),
+            // 테스트 유저 100명 생성
+            val members = mutableListOf<Member>()
+            for (i in 1..10) {
+                members.add(
+                    memberRepository.save(
+                        Member.createUser(
+                            nickname = "user$i",
+                            email = "user$i",
+                            password = passwordEncoder.encode("user$i"),
+                        ),
                     ),
-                    Member.createUser(
-                        nickname = "user2",
-                        email = "user2",
-                        password = passwordEncoder.encode("user2"),
-                    ),
-                ),
-            )
+                )
+            }
+
+            // 채팅방 생성
+            val chatRoom = chatRoomRepository.save(ChatRoom.of("test", members[0], null))
+
+            // 채팅방에 유저 추가
+            val testMessage = messageRepository.save(Message.of(chatRoom, members[0], "test", MessageType.SYSTEM))
+            chatRoomMemberRepository.saveAll(members.map { ChatRoomMember.of(chatRoom, it, testMessage) })
 
             // 카테고리 생성
             categoryRepository.deleteAll()
