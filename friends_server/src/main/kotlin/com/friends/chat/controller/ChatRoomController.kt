@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -82,6 +84,23 @@ class ChatRoomController(
         memberId: Long,
     ): ResponseEntity<Void> {
         chatRoomCommandService.leaveChatRoom(chatRoomId, memberId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @PatchMapping("/{id}", consumes = [MULTIPART_FORM_DATA_VALUE])
+    override fun updateChatRoom(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @RequestPart(required = false)
+        @Valid
+        chatRoomUpdateRequestDto: ChatRoomUpdateRequestDto?,
+        @RequestPart(required = false)
+        backgroundImage: MultipartFile?,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<Void> {
+        chatRoomCommandService.updateChatRoom(chatRoomId, chatRoomUpdateRequestDto, memberId, backgroundImage)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
