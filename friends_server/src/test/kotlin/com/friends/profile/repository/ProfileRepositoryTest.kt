@@ -18,7 +18,6 @@ class ProfileRepositoryTest
     @Autowired
     constructor(
         private val profileRepository: ProfileRepository,
-        private val profileInterestTagRepository: ProfileInterestTagRepository,
         private val memberRepository: MemberRepository,
         private val entityManager: EntityManager,
     ) {
