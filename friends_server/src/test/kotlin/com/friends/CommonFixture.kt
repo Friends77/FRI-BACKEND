@@ -16,6 +16,4 @@ fun createTestCategory(
 
 fun createTestCategoryInfoResponse(
     id: Long = TEST_CATEGORY_ID,
-    name: String = TEST_CATEGORY_NAME,
-    type: CategoryType = CategoryType.SUBJECT,
 ) = CategoryInfoResponse(id)
