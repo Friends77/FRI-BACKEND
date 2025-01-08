@@ -17,9 +17,9 @@ class GlobalRecommendationController(
     @GetMapping("/category")
     fun getCategoryRecommendation(
         @RequestParam categoryIds: List<Long>,
-        @RequestParam size: Int,
+        @RequestParam(required = false, defaultValue = "20") size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithCategories>> {
-        val result = globalRecommendationService.getCategoryRecommendation(categoryIds, 10)
+        val result = globalRecommendationService.getCategoryRecommendation(categoryIds, size)
         return ResponseEntity.ok(result)
     }
 }
