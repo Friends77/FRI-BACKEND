@@ -5,16 +5,27 @@ import com.friends.category.entity.CategoryType
 import com.friends.category.repository.CategoryRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.profile.entity.GenderEnum
+import com.friends.profile.entity.Location
+import com.friends.profile.entity.MbtiEnum
+import com.friends.profile.entity.Profile
+import com.friends.profile.entity.ProfileInterestTag
+import com.friends.profile.repository.ProfileInterestTagRepository
+import com.friends.profile.repository.ProfileRepository
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import java.time.LocalDate
+import kotlin.random.Random
 
 @Component
 class InitDB(
     private val categoryRepository: CategoryRepository,
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
+    private val profileRepository: ProfileRepository,
+    private val profileInterestTagRepository: ProfileInterestTagRepository,
 ) {
     @Bean
     fun runInitializer(): ApplicationRunner =
@@ -72,5 +83,56 @@ class InitDB(
             categoryRepository.save(Category(name = "경상북도", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "경상남도", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "제주도", type = CategoryType.REGION))
+
+            // 100 명의 테스트 유저 생성
+            val categories = categoryRepository.findAll()
+
+            for (i in 1..100) {
+                val member =
+                    memberRepository.save(
+                        Member.createUser(
+                            nickname = "test$i",
+                            email = "test$i",
+                            password = passwordEncoder.encode("test$i"),
+                        ),
+                    )
+                val randomBirth =
+                    LocalDate.of(
+                        (1990..1999).random(),
+                        (1..12).random(),
+                        (1..28).random(),
+                    )
+                val randomGender = GenderEnum.entries.toTypedArray().random()
+                val randomLatitude = 38 + Random.nextDouble(0.0, 1.0)
+                val randomLongitude = 127 + Random.nextDouble(0.0, 1.0)
+                val randomLocation = Location(randomLatitude, randomLongitude)
+                val randomMbti = MbtiEnum.entries.toTypedArray().random()
+
+                val profile =
+                    profileRepository.save(
+                        Profile(
+                            member = member,
+                            // 생일은 1990년 1월 1일부터 1999년 12월 31일 사이의 랜덤한 날짜로 설정
+                            birth = randomBirth,
+                            gender = randomGender,
+                            imageUrl = "https://friends-bucket.s3.ap-northeast-2.amazonaws.com/2d397027-6448-414a-b155-17b5a41f6c34",
+                            location = randomLocation,
+                            mbti = randomMbti,
+                        ),
+                    )
+
+                // 1~10개의 랜덤한 카테고리를 저장
+                val randomCategoryCount = (1..10).random()
+                val randomCategories = categories.shuffled().take(randomCategoryCount)
+
+                randomCategories.map {
+                    profileInterestTagRepository.save(
+                        ProfileInterestTag(
+                            profile = profile,
+                            category = it,
+                        ),
+                    )
+                }
+            }
         }
 }
