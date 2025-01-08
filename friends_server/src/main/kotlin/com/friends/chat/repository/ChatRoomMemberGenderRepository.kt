@@ -3,6 +3,7 @@ package com.friends.chat.repository
 import com.friends.profile.entity.GenderEnum
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
+import java.util.concurrent.TimeUnit
 
 @Repository
 class ChatRoomMemberGenderRepository(
@@ -13,7 +14,11 @@ class ChatRoomMemberGenderRepository(
     fun save(
         chatRoomId: Long,
         genderRatio: String,
-    ) = redisTemplate.opsForValue().set(getKey(chatRoomId), genderRatio)
+    ) {
+        val expireAt = TimeUnit.DAYS.toMillis(1) + TimeUnit.MINUTES.toMillis(30)
+        redisTemplate.opsForValue().set(getKey(chatRoomId), genderRatio)
+        redisTemplate.expire(getKey(chatRoomId), expireAt, TimeUnit.MILLISECONDS)
+    }
 
     fun getMostGender(chatRoomId: Long): List<GenderEnum> =
         redisTemplate
