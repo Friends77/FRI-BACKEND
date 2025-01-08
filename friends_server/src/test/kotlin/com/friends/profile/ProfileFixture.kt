@@ -13,6 +13,7 @@ import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
 import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
+import com.friends.support.TEST_IMAGE_FILE_URL
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
@@ -36,7 +37,7 @@ fun createTestProfile(
 
 fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(nickname = createTestMember().nickname, email = "test@test.com", birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl", mbti = MbtiEnum.ENFJ)
 
-fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
+fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = TEST_IMAGE_FILE_URL)
 
 fun updateTestProfile(): ProfileUpdateDto = ProfileUpdateDto(birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = "test update imageurl")
 
