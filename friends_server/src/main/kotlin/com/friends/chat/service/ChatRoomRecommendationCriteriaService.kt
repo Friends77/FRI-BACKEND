@@ -18,7 +18,7 @@ class ChatRoomRecommendationCriteriaService(
     private val chatRoomMemberGenderRepository: ChatRoomMemberGenderRepository,
 ) {
     @Scheduled(cron = "0 0 5 * * *")
-    @Transactional
+    @Transactional(readOnly = true)
     fun extractMemberMostAgeRange() {
         val chatRooms = chatRoomRepository.findAll()
         val now = LocalDate.now()
@@ -58,7 +58,7 @@ class ChatRoomRecommendationCriteriaService(
     }
 
     @Scheduled(cron = "0 0 5 * * *")
-    @Transactional
+    @Transactional(readOnly = true)
     fun extractMemberMostGender() {
         val chatRooms = chatRoomRepository.findAll()
         chatRooms.forEach { chatRoom ->
