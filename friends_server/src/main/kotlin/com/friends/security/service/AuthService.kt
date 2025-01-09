@@ -1,5 +1,6 @@
 package com.friends.security.service
 
+import com.friends.category.CategoryNotFoundException
 import com.friends.category.repository.CategoryRepository
 import com.friends.config.AuthProperties
 import com.friends.jwt.AtRtService
@@ -119,7 +120,7 @@ class AuthService(
         // 프로필 관심사 태그 생성
         profileInterestTagRepository.saveAll(
             registerRequestDto.interestTag.map {
-                ProfileInterestTag(profile = profile, category = categoryRepository.findById(it).orElseThrow { IllegalArgumentException() })
+                ProfileInterestTag(profile = profile, category = categoryRepository.findById(it).orElseThrow { CategoryNotFoundException() })
             },
         )
     }
