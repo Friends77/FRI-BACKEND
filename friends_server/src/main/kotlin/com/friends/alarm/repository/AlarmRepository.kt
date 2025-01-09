@@ -1,38 +1,44 @@
 package com.friends.alarm.repository
 
 import com.friends.alarm.entity.Alarm
-import com.friends.common.util.getList
+import com.friends.common.util.getSlice
 import com.friends.member.entity.Member
 import com.linecorp.kotlinjdsl.querymodel.jpql.sort.Sorts.desc
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface AlarmRepository : JpaRepository<Alarm, Long>
+interface AlarmRepository :
+    JpaRepository<Alarm, Long>,
+    AlarmCustomRepository
 
-interface AlarmRepositoryCustom {
+interface AlarmCustomRepository {
     fun findAllByMemberIdBeforeId(
         memberId: Long,
         size: Int,
-        lastAlarmId: Long,
-    ): List<Alarm>
+        lastAlarmId: Long? = null,
+    ): Slice<Alarm>
 }
 
-class AlarmRepositoryCustomImpl(
+class AlarmCustomRepositoryImpl(
     private val kotlinJdslJpqlExecutor: KotlinJdslJpqlExecutor,
-) : AlarmRepositoryCustom {
+) : AlarmCustomRepository {
     override fun findAllByMemberIdBeforeId(
         memberId: Long,
         size: Int,
-        lastAlarmId: Long,
-    ): List<Alarm> =
-        kotlinJdslJpqlExecutor.getList {
+        lastAlarmId: Long?,
+    ): Slice<Alarm> {
+        val pageable = Pageable.ofSize(size)
+        return kotlinJdslJpqlExecutor.getSlice(pageable) {
             select(entity(Alarm::class))
                 .from(entity(Alarm::class))
                 .where(
                     and(
                         path(Alarm::member).path(Member::id).equal(memberId),
-                        path(Alarm::id).lessThan(lastAlarmId),
+                        lastAlarmId?.let { path(Alarm::id).lessThan(it) },
                     ),
                 ).orderBy(desc(path(Alarm::id)))
         }
+    }
 }
