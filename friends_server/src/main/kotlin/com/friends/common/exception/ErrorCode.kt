@@ -68,4 +68,10 @@ enum class ErrorCode(
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
     INVALID_COMMENT_ACCESS(HttpStatus.FORBIDDEN, -18002, "댓글에 대한 유효하지 않은 접근입니다."),
+
+    // Vote API error 19000대
+    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 투표입니다."),
+    VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -19002, "존재하지 않는 선택지입니다."),
+    VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -19003, "투표수는 0 이상이어야 합니다."),
+
 }

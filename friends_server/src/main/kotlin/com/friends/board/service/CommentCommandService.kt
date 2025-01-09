@@ -1,6 +1,6 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.dto.CommentAddDto
 import com.friends.board.dto.CommentUpdateDto
 import com.friends.board.entity.Comment

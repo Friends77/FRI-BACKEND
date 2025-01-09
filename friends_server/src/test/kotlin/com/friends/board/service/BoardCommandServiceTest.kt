@@ -1,8 +1,8 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
-import com.friends.board.InvalidBoardAccessException
+import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.NON_AUTHORIZED_MEMBER_ID
 import com.friends.board.REQUEST_MEMBER_ID
 import com.friends.board.createBoardCategory
