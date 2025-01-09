@@ -2,6 +2,7 @@ package com.friends.chat.websocket
 
 import com.friends.chat.UnexpectedChatRoomException
 import com.friends.chat.dto.ChatReceiveMessageDto
+import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.message.entity.MessageType
 import com.friends.message.service.MessageCommandService
@@ -15,6 +16,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 @Component
 class ChatWebSocketHandler(
     private val messageCommandService: MessageCommandService,
+    private val pingPongRepository: PingPongRepository,
 ) : TextWebSocketHandler() {
     companion object {
         private const val SEND_TIME_LIMIT = 2000 // 2초
@@ -35,6 +37,12 @@ class ChatWebSocketHandler(
         session: WebSocketSession,
         message: TextMessage,
     ) {
+        // ping / pong
+        if (message.payload.equals("pong", ignoreCase = true)) {
+            pingPongRepository.deletePing(session.id)
+            return
+        }
+
         val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
         val memberId = getMemberId(session)
         /**
