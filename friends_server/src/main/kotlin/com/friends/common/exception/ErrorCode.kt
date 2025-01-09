@@ -73,5 +73,6 @@ enum class ErrorCode(
     VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 투표입니다."),
     VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -19002, "존재하지 않는 선택지입니다."),
     VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -19003, "투표수는 0 이상이어야 합니다."),
+    VOTE_NOT_FOUND_IN_BOARD(HttpStatus.NOT_FOUND, -19004, "해당 게시글에 투표가 존재하지 않습니다.")
 
 }
