@@ -1,11 +1,11 @@
 package com.friends.board.service
 
 import com.friends.board.BOARD_ID
-import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
 import com.friends.board.PAGEABLE
 import com.friends.board.createBoardCategory
 import com.friends.board.createTestBoard
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import io.kotest.assertions.throwables.shouldThrow

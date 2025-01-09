@@ -1,10 +1,10 @@
 package com.friends.board.service
 
+import com.friends.board.dto.LikeRequestDto
+import com.friends.board.entity.Like
 import com.friends.board.exception.BoardLikeAlreadyExists
 import com.friends.board.exception.BoardLikeNotFoundException
 import com.friends.board.exception.BoardNotFoundException
-import com.friends.board.dto.LikeRequestDto
-import com.friends.board.entity.Like
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.LikeRepository
 import com.friends.member.MemberNotFoundException

@@ -5,9 +5,9 @@ import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.ChatRoomNotFoundException
-import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.ChatRoomUpdateException
 import com.friends.chat.NotChatRoomManagerException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCategory

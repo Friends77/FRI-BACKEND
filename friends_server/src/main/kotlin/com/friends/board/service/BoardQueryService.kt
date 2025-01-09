@@ -1,8 +1,8 @@
 package com.friends.board.service
 
-import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.dto.BoardResponseDto
 import com.friends.board.dto.CommentResponseDto
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.common.mapper.toCategoryInfoResponse
