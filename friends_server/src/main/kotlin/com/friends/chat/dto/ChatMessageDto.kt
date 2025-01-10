@@ -1,5 +1,6 @@
 package com.friends.chat.dto
 
+import com.friends.common.util.LocalDateTimeUtil
 import com.friends.message.entity.MessageType
 import java.time.LocalDateTime
 
@@ -14,7 +15,24 @@ data class ChatReceiveMessageDto(
 data class ChatSendMessageDto(
     val chatRoomId: Long,
     val senderId: Long,
-    val message: String,
-    val sendTime: LocalDateTime,
+    val content: String,
+    val createdAt: Long,
     val type: MessageType,
+) {
+    constructor(
+        chatRoomId: Long,
+        senderId: Long,
+        content: String,
+        createdAt: LocalDateTime,
+        type: MessageType,
+    ) : this(chatRoomId, senderId, content, LocalDateTimeUtil.toTimeStamp(createdAt), type)
+}
+
+enum class PingPongType {
+    PING,
+    PONG,
+}
+
+data class PingPongDto(
+    val type: String,
 )
