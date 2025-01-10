@@ -5,9 +5,9 @@ import com.friends.chat.ChatRoomBaseImageCannotDeleteException
 import com.friends.chat.ChatRoomCategoryNotFoundException
 import com.friends.chat.ChatRoomMustHaveCategoryException
 import com.friends.chat.ChatRoomNotFoundException
-import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.ChatRoomUpdateException
 import com.friends.chat.NotChatRoomManagerException
+import com.friends.chat.NotChatRoomMemberException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomCategory
@@ -134,6 +134,7 @@ class ChatRoomCommandServiceTest :
                 every { memberRepository.findById(any()) } returns Optional.of(member)
                 every { chatRoomMemberRepository.findByChatRoomAndMember(any(), any()) } returns chatRoomMember
                 every { chatRoomMemberRepository.delete(any()) } returns Unit
+                every { messageCommandService.setChatRoomOffline(any(), any()) } returns Unit
                 `when`("채팅방 멤버가 아무도 없을 경우") {
                     every { messageRepository.deleteByChatRoom(any()) } returns Unit
                     every { chatRoomCategoryRepository.deleteByChatRoom(any()) } returns Unit
@@ -170,7 +171,6 @@ class ChatRoomCommandServiceTest :
                             chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(any())
                         }
                         verify(exactly = 2) {
-                            messageRepository.save(any())
                             messageCommandService.sendMessage(any(), any(), any(), any())
                         }
                     }
