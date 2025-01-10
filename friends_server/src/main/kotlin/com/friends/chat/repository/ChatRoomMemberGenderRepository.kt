@@ -1,6 +1,6 @@
 package com.friends.chat.repository
 
-import com.friends.profile.entity.GenderEnum
+import com.friends.chat.entity.GenderRatioEnum
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import java.util.concurrent.TimeUnit
@@ -16,14 +16,8 @@ class ChatRoomMemberGenderRepository(
         genderRatio: String,
     ) {
         val expireAt = TimeUnit.DAYS.toMillis(1) + TimeUnit.MINUTES.toMillis(30)
-        redisTemplate.opsForValue().set(getKey(chatRoomId), genderRatio)
-        redisTemplate.expire(getKey(chatRoomId), expireAt, TimeUnit.MILLISECONDS)
+        redisTemplate.opsForValue().set(getKey(chatRoomId), genderRatio, expireAt, TimeUnit.MILLISECONDS)
     }
 
-    fun getMostGender(chatRoomId: Long): List<GenderEnum> =
-        redisTemplate
-            .opsForValue()
-            .get(getKey(chatRoomId))
-            ?.split(",")
-            ?.map { GenderEnum.valueOf(it) } ?: emptyList()
+    fun getMostGender(chatRoomId: Long): GenderRatioEnum = redisTemplate.opsForValue().get(getKey(chatRoomId))?.let { GenderRatioEnum.valueOf(it) } ?: GenderRatioEnum.UNKNOWN
 }
