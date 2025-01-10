@@ -50,11 +50,6 @@ class ChatWebSocketHandler(
             // ignore
         }
 
-        if (message.payload.equals("pong", ignoreCase = true)) {
-            pingPongRepository.deletePing(session.id)
-            return
-        }
-
         val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
         val memberId = getMemberId(session)
         /**
