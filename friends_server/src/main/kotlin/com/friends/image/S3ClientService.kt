@@ -11,6 +11,7 @@ import java.util.Date
 @Service
 class S3ClientService(
     private val s3Client: AmazonS3,
+    private val imageUtil: ImageUtil
 ) {
     @Value("\${cloud.aws.s3.bucket}")
     lateinit var bucketName: String
@@ -22,10 +23,7 @@ class S3ClientService(
         multipartFile: MultipartFile,
         expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3), // s3 비용 절감을 위해 3일로 설정
     ): String {
-        val filename =
-            java.util.UUID
-                .randomUUID()
-                .toString()
+        val filename = getFileName()
 
         val objectMetadata = ObjectMetadata()
         objectMetadata.contentType = multipartFile.contentType
@@ -40,9 +38,36 @@ class S3ClientService(
         return "https://$bucketName.s3.$region.amazonaws.com/$filename"
     }
 
+    fun upload(
+        file: ByteArray,
+        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3), // s3 비용 절감을 위해 3일로 설정
+    ): String {
+        val filename =
+            java.util.UUID
+                .randomUUID()
+                .toString()
+
+        val objectMetadata = ObjectMetadata()
+        objectMetadata.contentType = imageUtil.getContentType(file)
+        objectMetadata.contentLength = file.size.toLong()
+        objectMetadata.expirationTime = expirationTime
+        try {
+            s3Client.putObject(bucketName, filename, file.inputStream(), objectMetadata)
+        } catch (e: Exception) {
+            throw FileUploadException("S3 파일 업로드에 실패했습니다. ==> ${e.message}")
+        }
+
+        return "https://$bucketName.s3.$region.amazonaws.com/$filename"
+    }
+
     //프로필 수정 시, 이전 이미지 s3 버킷에서 삭제 로직
     fun deleteS3Object(fileUrl: String) {
         val fileKey = fileUrl.substringAfterLast("/")
         s3Client.deleteObject(bucketName, fileKey)
     }
+
+    private fun getFileName(): String =
+        java.util.UUID
+            .randomUUID()
+            .toString()
 }

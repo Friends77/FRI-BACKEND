@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 data class ChatReceiveMessageDto(
     val chatRoomId: Long,
     val message: String,
+    val imageBase64:  String?,
 )
 
 data class ChatSendMessageDto(
