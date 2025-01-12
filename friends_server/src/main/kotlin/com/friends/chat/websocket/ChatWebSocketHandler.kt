@@ -53,19 +53,25 @@ class ChatWebSocketHandler(
          * 채팅 웹소켓을 통해 보내는 메세지는 TEXT 타입만 있다고 가정합니다.
          * 이미지의 경우 웹소켓이 아닌 REST API 를 통해 이미지를 업로드하고 이미지 URL 을 채팅방에 보내는 방식으로 구현합니다. // TODO : 채팅방 내에서 이미지 전송하는 API 구현
          */
-        if (chatMessage.imageBase64!=null) {
+        if (chatMessage.imageBase64 != null) {
             try {
-            val imageBase64 = chatMessage.imageBase64.replace("\n", "\\n").replace("\r", "\\r")
-            val imageBytes = Base64.getDecoder().decode(imageBase64)
-            val imageFileName = s3ClientService.upload(imageBytes)
-            messageCommandService.sendMessage(
-                chatMessage.chatRoomId,
-                memberId,
-                imageFileName,
-                MessageType.IMAGE,
-            )
-            } catch (e:Exception){
+                val imageBase64 = chatMessage.imageBase64.replace("\n", "\\n").replace("\r", "\\r")
+                val imageBytes = Base64.getDecoder().decode(imageBase64)
+                val imageFileName = s3ClientService.upload(imageBytes)
+                messageCommandService.sendMessage(
+                    chatMessage.chatRoomId,
+                    memberId,
+                    imageFileName,
+                    MessageType.IMAGE,
+                )
+            } catch (e: Exception) {
                 e.printStackTrace()
+                messageCommandService.sendMessage(
+                    chatMessage.chatRoomId,
+                    memberId,
+                    "이미지 전송에 실패했습니다.",
+                    MessageType.IMAGE_UPLOAD_FAILED,
+                )
             }
         } else {
             messageCommandService.sendMessage(
