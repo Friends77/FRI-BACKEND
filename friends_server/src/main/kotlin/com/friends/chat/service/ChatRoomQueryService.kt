@@ -29,6 +29,9 @@ class ChatRoomQueryService(
     @Value("\${image.chat-room-base-url}")
     lateinit var chatRoomBaseImageUrl: String
 
+    @Value("\${image.profile-base-url}")
+    lateinit var profileBaseImageUrl: String
+
     @Transactional
     fun getChatRooms(
         memberId: Long,
@@ -50,6 +53,7 @@ class ChatRoomQueryService(
                     toChatRoomInfoResponse(
                         it,
                         chatRoomMemberRepository.countByChatRoom(it.chatRoom),
+                        chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(it.chatRoom.id).map { member -> member.profile?.imageUrl ?: profileBaseImageUrl },
                         messageRepository.countUnreadMessages(it).let { count -> if (count > 999) 999 else count },
                         it.chatRoom.imageUrl ?: chatRoomBaseImageUrl,
                     )
