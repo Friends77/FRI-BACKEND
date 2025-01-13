@@ -2,6 +2,8 @@ package com.friends.chat.websocket
 
 import com.friends.chat.UnexpectedChatRoomException
 import com.friends.chat.dto.ChatReceiveMessageDto
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.message.entity.MessageType
@@ -38,9 +40,14 @@ class ChatWebSocketHandler(
         message: TextMessage,
     ) {
         // ping / pong
-        if (message.payload.equals("pong", ignoreCase = true)) {
-            pingPongRepository.deletePing(session.id)
-            return
+        try {
+            val pingPongDto = JsonUtil.fromJson<PingPongDto>(message.payload)
+            if (pingPongDto.type.equals(PingPongType.PONG.name, ignoreCase = true)) {
+                pingPongRepository.deletePing(session.id)
+                return
+            }
+        } catch (e: Exception) {
+            // ignore
         }
 
         val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
