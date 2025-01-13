@@ -103,4 +103,17 @@ class ChatRoomController(
         chatRoomCommandService.updateChatRoom(chatRoomId, chatRoomUpdateRequestDto, memberId, backgroundImage)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @DeleteMapping("/{id}/user")
+    override fun forcedToLeave(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+        forceLeaveMemberId: Long,
+    ): ResponseEntity<Void> {
+        chatRoomCommandService.forcedToLeave(chatRoomId, memberId, forceLeaveMemberId)
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
 }

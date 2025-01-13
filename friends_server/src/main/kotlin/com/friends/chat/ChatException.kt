@@ -28,3 +28,5 @@ class ChatRoomMustHaveCategoryException : ChatException(ErrorCode.CHAT_ROOM_CATE
 class ChatRoomUpdateException : ChatException(ErrorCode.CHAT_ROOM_UPDATE_NOTHING)
 
 class ChatRoomBaseImageCannotDeleteException : ChatException(ErrorCode.CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE)
+
+class NotForceLeaveYourselfException : ChatException(ErrorCode.NOT_FORCE_LEAVE_YOURSELF)
