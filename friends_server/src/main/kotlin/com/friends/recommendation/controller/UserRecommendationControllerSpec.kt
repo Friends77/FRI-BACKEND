@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
 
-@Tag(name = "Recommendation")
+@Tag(name = "Recommendation - user")
 interface UserRecommendationControllerSpec {
     @Operation(
         description = "거리 기반 추천 API",
