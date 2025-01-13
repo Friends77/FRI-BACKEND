@@ -31,7 +31,17 @@ class ChatRoomQueryServiceTest :
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
             val memberRepository = mockk<MemberRepository>()
-            val chatRoomQueryService = ChatRoomQueryService(chatRoomMemberRepository, messageRepository, chatRoomRepository, chatRoomLikeRepository, memberRepository).apply { ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL) }
+            val chatRoomQueryService =
+                ChatRoomQueryService(
+                    chatRoomMemberRepository,
+                    messageRepository,
+                    chatRoomRepository,
+                    chatRoomLikeRepository,
+                    memberRepository,
+                ).apply {
+                    ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL)
+                    ReflectionTestUtils.setField(this, "profileBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL)
+                }
 
             given("getChatRooms 메소드 테스트") {
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
@@ -39,6 +49,7 @@ class ChatRoomQueryServiceTest :
                     every { chatRoomMemberRepository.countByChatRoom(any()) } returns 10
                     every { chatRoomMemberRepository.sliceChatRoomIdByMember(any(), any(), any(), any()) } returns createTestMockSliceChatRoom()
                     every { messageRepository.countUnreadMessages(any()) } returns 0
+                    every { chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(any()) } returns listOf(createTestMember())
                     then("채팅방이 조회된다.") {
                         chatRoomQueryService.getChatRooms(MEMBER_ID, TEST_SIZE, null, null)
                     }
