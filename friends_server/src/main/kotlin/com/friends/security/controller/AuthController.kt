@@ -31,9 +31,9 @@ const val COOKIE_HEARER = "Set-Cookie"
 class AuthController(
     private val authService: AuthService,
     private val atRtService: AtRtService,
-) {
+) : AuthControllerSpec {
     @PostMapping("/register")
-    fun register(
+    override fun register(
         @RequestBody registerRequestDto: RegisterRequestDto,
     ): ResponseEntity<String> {
         authService.register(registerRequestDto)
@@ -41,7 +41,7 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(
+    override fun login(
         @RequestBody loginRequestDto: LoginRequestDto,
     ): ResponseEntity<LoginResponseDto> {
         val atRtDto =
@@ -59,7 +59,7 @@ class AuthController(
     }
 
     @PostMapping("/oauth2")
-    fun oauth2Login(
+    override fun oauth2Login(
         @RequestBody oauth2LoginRequestDto: OAuth2LoginRequestDto,
     ): ResponseEntity<OAuth2LoginResponseDto> {
         val oauth2LoginDto = authService.loginByOAuth2(oauth2LoginRequestDto.code, oauth2LoginRequestDto.provider)
@@ -93,7 +93,7 @@ class AuthController(
     }
 
     @PostMapping("/refresh")
-    fun refresh(
+    override fun refresh(
         @CookieValue refreshToken: String,
     ): ResponseEntity<RefreshResponseDto> {
         val atRtDto = authService.refresh(refreshToken)
@@ -106,7 +106,7 @@ class AuthController(
     }
 
     @PostMapping("/logout")
-    fun logout(
+    override fun logout(
         @RequestBody logoutRequestDto: LogoutRequestDto,
         @CookieValue(required = false) refreshToken: String?,
     ): ResponseEntity<String> {
@@ -119,7 +119,7 @@ class AuthController(
     }
 
     @PostMapping("/reset-password")
-    fun resetPassword(
+    override fun resetPassword(
         @RequestBody passwordResetRequestDto: PasswordResetRequestDto,
     ): ResponseEntity<String> {
         authService.resetPassword(passwordResetRequestDto.emailAuthToken, passwordResetRequestDto.newPassword)
@@ -127,12 +127,12 @@ class AuthController(
     }
 
     @GetMapping("/check-nickname")
-    fun checkNickname(
+    override fun checkNickname(
         @RequestParam nickname: String,
     ): ResponseEntity<CheckNicknameResponseDto> = ResponseEntity.ok(authService.validateNickname(nickname))
 
     @GetMapping("/check-email")
-    fun checkEmail(
+    override fun checkEmail(
         @RequestParam email: String,
     ): ResponseEntity<CheckEmailResponseDto> = ResponseEntity.ok(authService.validateEmail(email))
 

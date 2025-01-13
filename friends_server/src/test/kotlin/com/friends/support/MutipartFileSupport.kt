@@ -8,6 +8,7 @@ import java.io.InputStream
 import javax.imageio.ImageIO
 
 const val TEST_IMAGE_FILE_NAME = "testImage"
+const val TEST_IMAGE_FILE_URL = "https://test.com/testImage"
 
 enum class ImageFormat(
     val values: List<String>,

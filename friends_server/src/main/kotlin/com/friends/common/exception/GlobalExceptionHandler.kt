@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.friends.board.exception.BoardException
 import com.friends.board.exception.CommentException
+import com.friends.category.CategoryException
 import com.friends.board.exception.VoteException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
@@ -174,6 +175,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(CommentException::class)
     fun handleCommentException(ex: CommentException): ResponseEntity<Any> {
         logger.error("Comment Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(CategoryException::class)
+    fun handleCategoryException(ex: CategoryException): ResponseEntity<Any> {
+        logger.error("Category Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))

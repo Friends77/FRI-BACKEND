@@ -13,6 +13,7 @@ import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.category.repository.CategoryRepository
+import com.friends.createTestCategory
 import com.friends.member.repository.MemberRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
@@ -42,7 +43,7 @@ class BoardCommandServiceTest :
             every { categoryRepository.findByName(any()) } answers { null } //모든 해시태그는 새로 생성됩니다.
             every { categoryRepository.save(any()) } answers { firstArg() } //저장된 해시태그 반환
             every { boardCategoryRepository.saveAll(any<List<BoardCategory>>()) } answers { firstArg() }
-//            every { categoryRepository.findByIdIn(any()) } answers { listOf(createBoardCategory()) }
+            every { categoryRepository.findByIdIn(any()) } answers { listOf(createTestCategory()) }
 
             val testMember = createTestMember()
 
@@ -96,7 +97,8 @@ class BoardCommandServiceTest :
             every { boardRepository.findById(createTestBoard().id) } returns Optional.of(createTestBoard())
             every { boardRepository.deleteById(createTestBoard().id) } returns Unit
             every { boardCategoryRepository.deleteByBoardId(any()) } returns Unit
-//            every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
+            every { categoryRepository.findByIdIn(any()) } answers { listOf(createTestCategory()) }
+
             every { boardCategoryRepository.saveAll(any<List<BoardCategory>>()) } returns createBoardCategory()
 
             `when`("수정하려는 회원이 해당 게시글의 작성자라면") {

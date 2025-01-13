@@ -2,14 +2,18 @@ package com.friends.message.service
 
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatSendMessageDto
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.socket.TextMessage
@@ -25,6 +29,7 @@ class MessageCommandService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val virtualThreadExecutor: ExecutorService,
+    private val pingPongRepository: PingPongRepository,
 ) {
     /**
      * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 아이디를 값으로 하는 Map입니다.
@@ -38,6 +43,31 @@ class MessageCommandService(
      * 하나의 유저가 여러개의 세션을 가질 수 있기 때문에 MutableSet을 사용합니다. (ex. 웹, 모바일 에서 동시 접속)
      */
     private val sessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    /**
+     * ping message 를 보내어 pong message 를 받지 못할 경우 세션을 제거합니다.
+     */
+    @Scheduled(fixedRate = 30000) // 30초 마다 실행
+    fun ping() {
+        for (entry in sessions) {
+            val userSessions = entry.value
+            userSessions.forEach { session ->
+                try {
+                    if (pingPongRepository.existPing(session.id)) {
+                        // pong 메세지를 받지 못할 경우 세션을 제거합니다.
+                        session.close()
+                        userSessions.remove(session)
+                    }
+                    session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
+                    pingPongRepository.savePing(session.id)
+                } catch (e: Exception) {
+                    // 에러가 발생할 경우 세션을 제거합니다.
+                    session.close()
+                    userSessions.remove(session)
+                }
+            }
+        }
+    }
 
     /**
      * 채팅방 ID를 키로 하여, 해당 채팅방에서 메시지를 보낼 때 동기화에 사용할 Lock 객체를 관리합니다.

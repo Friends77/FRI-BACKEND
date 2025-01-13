@@ -64,14 +64,17 @@ enum class ErrorCode(
     NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17012, "채팅방 관리자가 아닙니다."),
     CHAT_ROOM_UPDATE_NOTHING(HttpStatus.BAD_REQUEST, -17013, "이전과 동일하여 수정할 내용이 없습니다."),
     CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE(HttpStatus.BAD_REQUEST, -17014, "기본 이미지는 삭제할 수 없습니다."),
-
+    NOT_FORCE_LEAVE_YOURSELF(HttpStatus.FORBIDDEN, -17015, "자신을 강제로 퇴장시킬 수 없습니다."),
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
     INVALID_COMMENT_ACCESS(HttpStatus.FORBIDDEN, -18002, "댓글에 대한 유효하지 않은 접근입니다."),
 
-    // Vote API error 19000대
-    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 투표입니다."),
-    VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -19002, "존재하지 않는 선택지입니다."),
-    VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -19003, "투표수는 0 이상이어야 합니다."),
-    VOTE_NOT_FOUND_IN_BOARD(HttpStatus.NOT_FOUND, -19004, "해당 게시글에 투표가 존재하지 않습니다."),
+    // category API error 19000대
+    NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 카테고리입니다."),
+
+    // Vote API error 20000대
+    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 투표입니다."),
+    VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -20002, "존재하지 않는 선택지입니다."),
+    VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -20003, "투표수는 0 이상이어야 합니다."),
+    VOTE_NOT_FOUND_IN_BOARD(HttpStatus.NOT_FOUND, -20004, "해당 게시글에 투표가 존재하지 않습니다."),
 }
