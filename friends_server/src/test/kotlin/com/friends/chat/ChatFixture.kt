@@ -66,8 +66,9 @@ fun createTestChatRoomInfoResponseDto(
     memberCount: Int = TEST_SIZE,
     representativeProfile: List<String> = listOf(TEST_PROFILE_IMAGE_URL),
     unreadMessageCount: Int = 0,
+    lastReadMessage: Message = createTestMessage(),
     imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
-) = toChatRoomInfoResponse(chatRoomMember, memberCount, representativeProfile, unreadMessageCount, imageUrl)
+) = toChatRoomInfoResponse(chatRoomMember, memberCount, representativeProfile, unreadMessageCount, lastReadMessage, imageUrl)
 
 fun createTestSliceResponseChatRoom(
     sliceChatRoom: Slice<ChatRoomMember> = createTestSliceChatRoom(),
