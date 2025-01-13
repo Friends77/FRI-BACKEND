@@ -1,5 +1,6 @@
 package com.friends.board.entity
 
+import com.friends.common.entity.BaseModifiableEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -22,7 +23,9 @@ class Vote(
     var board: Board,
     @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL])
     var options: MutableList<VoteOption> = mutableListOf(),
-)
+):BaseModifiableEntity(){
+
+}
 
 /*
 * 투표 선택지 테이블

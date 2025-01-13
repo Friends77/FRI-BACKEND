@@ -7,6 +7,7 @@ import com.friends.board.exception.VoteNotFoundException
 import com.friends.board.exception.VoteOptionNotFoundException
 import com.friends.board.exception.VoteOptionPositiveCountException
 import com.friends.board.repository.BoardRepository
+import com.friends.board.repository.VoteOptionRepository
 import com.friends.board.repository.VoteRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,20 +17,21 @@ import org.springframework.transaction.annotation.Transactional
 class VoteCommandService(
     private val voteRepository: VoteRepository,
     private val boardRepository: BoardRepository,
+    private val voteOptionRepository: VoteOptionRepository,
 ) {
     /**
      * 게시글에 투표 추가하기
      */
     fun addVoteToBoard(
         boardId: Long,
-        voteOptions: List<String>,
+        voteOptionContent: List<String>,
     ): Vote {
         val board =
             boardRepository.findById(boardId)
                 .orElseThrow { BoardNotFoundException() }
         val vote = Vote(board = board)
         vote.options.addAll(
-            voteOptions.map { content ->
+            voteOptionContent.map { content ->
                 VoteOption(vote = vote, content = content)
             },
         )
@@ -84,10 +86,10 @@ class VoteCommandService(
      */
     fun incrementVoteCount(optionId: Long) {
         val option =
-            voteRepository.findOptionById(optionId)
+            voteOptionRepository.findOptionById(optionId)
                 ?: throw VoteOptionNotFoundException()
         option.voteCount += 1
-        voteRepository.saveOption(option)
+        voteOptionRepository.saveOption(option)
     }
 
     /**
@@ -95,11 +97,11 @@ class VoteCommandService(
      */
     fun decrementVoteCount(optionId: Long) {
         val option =
-            voteRepository.findOptionById(optionId)
+            voteOptionRepository.findOptionById(optionId)
                 ?: throw VoteOptionNotFoundException()
         if (option.voteCount > 0) {
             option.voteCount -= 1
-            voteRepository.saveOption(option)
+            voteOptionRepository.saveOption(option)
         } else {
             throw VoteOptionPositiveCountException()
         }
