@@ -15,8 +15,8 @@ import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
 import com.friends.profile.repository.ProfileInterestTagRepository
 import com.friends.profile.repository.ProfileRepository
-import org.springframework.boot.ApplicationRunner
-import org.springframework.context.annotation.Bean
+import jakarta.annotation.PostConstruct
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -24,18 +24,30 @@ import kotlin.random.Random
 
 @Component
 class InitDB(
-    private val categoryRepository: CategoryRepository,
-    private val memberRepository: MemberRepository,
-    private val passwordEncoder: PasswordEncoder,
-    private val profileRepository: ProfileRepository,
-    private val profileInterestTagRepository: ProfileInterestTagRepository,
-    private val chatRoomCommandService: ChatRoomCommandService,
-    private val chatRoomRepository: ChatRoomRepository,
+    private val initTestMember: InitTestMember,
+    private val initCategory: InitCategory,
+    private val initTestUser: InitTestUser,
 ) {
-    @Bean
-    fun runInitializer(): ApplicationRunner =
+    @Value("\${spring.jpa.hibernate.ddl-auto}")
+    lateinit var ddlAuto: String
 
-        ApplicationRunner {
+    @PostConstruct
+    fun init() {
+        println(ddlAuto)
+        if (ddlAuto != "create") {
+            return
+        }
+        initTestMember.init()
+        initCategory.init()
+        initTestUser.init()
+    }
+
+    @Component
+    class InitTestMember(
+        private val memberRepository: MemberRepository,
+        private val passwordEncoder: PasswordEncoder,
+    ) {
+        fun init() {
             // 테스트 유저 생성
             memberRepository.saveAll(
                 listOf(
@@ -56,8 +68,14 @@ class InitDB(
                     ),
                 ),
             )
+        }
+    }
 
-            // 카테고리 생성
+    @Component
+    class InitCategory(
+        private val categoryRepository: CategoryRepository,
+    ) {
+        fun init() {
             categoryRepository.deleteAll()
             categoryRepository.save(Category(name = "자유수다", type = CategoryType.SUBJECT, image = "🧑‍🧑‍🧒"))
             categoryRepository.save(Category(name = "팬덤", type = CategoryType.SUBJECT, image = "🎈"))
@@ -93,7 +111,20 @@ class InitDB(
             categoryRepository.save(Category(name = "경상북도", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "경상남도", type = CategoryType.REGION))
             categoryRepository.save(Category(name = "제주도", type = CategoryType.REGION))
+        }
+    }
 
+    @Component
+    class InitTestUser(
+        private val categoryRepository: CategoryRepository,
+        private val memberRepository: MemberRepository,
+        private val passwordEncoder: PasswordEncoder,
+        private val profileRepository: ProfileRepository,
+        private val profileInterestTagRepository: ProfileInterestTagRepository,
+        private val chatRoomCommandService: ChatRoomCommandService,
+        private val chatRoomRepository: ChatRoomRepository,
+    ) {
+        fun init() {
             // 100 명의 테스트 유저 생성
             val categories = categoryRepository.findAll()
             val members = mutableListOf<Member>()
@@ -192,4 +223,5 @@ class InitDB(
                 }
             }
         }
+    }
 }
