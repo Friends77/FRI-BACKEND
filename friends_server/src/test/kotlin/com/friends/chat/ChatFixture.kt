@@ -20,6 +20,7 @@ import com.friends.member.entity.Member
 import com.friends.message.createMockTestMessage
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
+import com.friends.profile.TEST_PROFILE_IMAGE_URL
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
 import org.springframework.data.domain.SliceImpl
@@ -63,9 +64,11 @@ fun createTestMockSliceChatRoom(
 fun createTestChatRoomInfoResponseDto(
     chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
     memberCount: Int = TEST_SIZE,
+    representativeProfile: List<String> = listOf(TEST_PROFILE_IMAGE_URL),
     unreadMessageCount: Int = 0,
+    lastReadMessage: Message = createTestMessage(),
     imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
-) = toChatRoomInfoResponse(chatRoomMember, memberCount, unreadMessageCount, imageUrl)
+) = toChatRoomInfoResponse(chatRoomMember, memberCount, representativeProfile, unreadMessageCount, lastReadMessage, imageUrl)
 
 fun createTestSliceResponseChatRoom(
     sliceChatRoom: Slice<ChatRoomMember> = createTestSliceChatRoom(),

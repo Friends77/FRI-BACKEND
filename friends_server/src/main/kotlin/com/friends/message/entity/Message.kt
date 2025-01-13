@@ -48,6 +48,10 @@ class Message(
         fun changeManagerMessage(
             nickname: String,
         ): String = "$nickname 님이 새로운 방장으로 임명되었습니다."
+
+        fun forceExitMessage(
+            nickname: String,
+        ): String = "$nickname 님이 강제 퇴장되었습니다."
     }
 }
 

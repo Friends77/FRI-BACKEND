@@ -70,10 +70,10 @@ class ProfileCommandService(
         val profile =
             profileRepository.findByMemberId(requestMemberId)
                 ?: throw ProfileNullResponseException()
-        if(profileImage != null){
+        if (profileImage != null) {
             val newImageUrl = s3ClientService.upload(profileImage)
             profileUpdateDto.imageUrl = newImageUrl
-        } else if(profile.imageUrl == defaultImageUrl){
+        } else if (profile.imageUrl == defaultImageUrl) {
             profileUpdateDto.imageUrl = defaultImageUrl
         }
         profileInterestTagRepository.deleteByProfileId(profile.id)

@@ -2,6 +2,7 @@ package com.friends.chat.repository
 
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
+import com.friends.common.util.getLimitList
 import com.friends.common.util.getList
 import com.friends.common.util.getSlice
 import com.friends.member.entity.Member
@@ -34,6 +35,8 @@ interface ChatRoomMemberRepository :
     fun findFirstByChatRoomOrderByCreatedAt(
         chatRoom: ChatRoom,
     ): ChatRoomMember
+
+    fun findByChatRoom(chatRoom: ChatRoom): List<ChatRoomMember>
 }
 
 interface ChatRoomMemberCustomRepository {
@@ -43,6 +46,8 @@ interface ChatRoomMemberCustomRepository {
         size: Int,
         lastChatRoomMemberId: Long?,
     ): Slice<ChatRoomMember>
+
+    fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member>
 }
 
 class ChatRoomMemberCustomRepositoryImpl(
@@ -67,6 +72,14 @@ class ChatRoomMemberCustomRepositoryImpl(
                 ).orderBy(path(ChatRoomMember::id).desc())
         }
     }
+
+    override fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member> =
+        kotlinJdslJpqlExecutor.getLimitList(0, 4) {
+            select(path(ChatRoomMember::member))
+                .from(entity(ChatRoomMember::class), join(ChatRoomMember::member))
+                .where(path(ChatRoomMember::chatRoom).path(ChatRoom::id).eq(chatRoomId))
+                .orderBy(path(ChatRoomMember::id).asc())
+        }
 
     private fun Jpql.dynamicLastChatRoomId(
         lastChatRoomMemberId: Long?,

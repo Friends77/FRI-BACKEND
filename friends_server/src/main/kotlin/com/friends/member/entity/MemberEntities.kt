@@ -36,7 +36,7 @@ class Member(
     @OneToMany(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
     val authorities: MutableList<Authority> = ArrayList(),
     @OneToOne(mappedBy = "member", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val profile: Profile? = null,
+    var profile: Profile? = null,
 ) : BaseModifiableEntity() {
     companion object {
         /**

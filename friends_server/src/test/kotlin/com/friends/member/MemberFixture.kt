@@ -2,8 +2,10 @@ package com.friends.member
 
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
+import com.friends.profile.entity.Profile
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.test.util.ReflectionTestUtils
 
 const val MEMBER_NICKNAME = "test"
 const val MEMBER_OTHER_NICKNAME = "test2"
@@ -29,6 +31,7 @@ fun createTestMember(
     email: String = MEMBER_EMAIL,
     password: String = MEMBER_PASSWORD,
     oauth2Provider: OAuth2Provider? = null,
-) = Member.createUser(nickname, email, password, oauth2Provider)
+    profile: Profile? = null,
+) = Member.createUser(nickname, email, password, oauth2Provider).apply { ReflectionTestUtils.setField(this, "profile", profile) }
 
 fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password = "12345", oauth2Provider = OAuth2Provider.NAVER)

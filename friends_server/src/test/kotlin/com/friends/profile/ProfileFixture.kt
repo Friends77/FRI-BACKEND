@@ -26,10 +26,15 @@ val PROFILE_IMAGE: MultipartFile =
         "image/jpeg", // 콘텐츠 타입
         byteArrayOf(1, 2, 3, 4), // 파일 내용 (예제 데이터)
     )
+const val TEST_PROFILE_IMAGE_URL = "test profile image url"
 
 fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE)
 
-fun createTestProfile(member: Member = createTestMember()): Profile = Profile(member = member, birth = LocalDate.now(), gender = GenderEnum.MAN, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
+fun createTestProfile(
+    member: Member = createTestMember(),
+    birth: LocalDate = LocalDate.now(),
+    gender: GenderEnum = GenderEnum.MAN,
+): Profile = Profile(member = member, birth = birth, gender = gender, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
 
 fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(nickname = createTestMember().nickname, email = "test@test.com", birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl", mbti = MbtiEnum.ENFJ)
 
