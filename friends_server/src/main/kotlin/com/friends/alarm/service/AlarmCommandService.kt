@@ -3,6 +3,8 @@ package com.friends.alarm.service
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
+import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.repository.ChatRoomRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
@@ -13,20 +15,50 @@ import org.springframework.transaction.annotation.Transactional
 class AlarmCommandService(
     private val memberRepository: MemberRepository,
     private val alarmRepository: AlarmRepository,
+    private val chatRoomRepository: ChatRoomRepository,
 ) {
-    fun sendAlarm(
-        memberId: Long,
-        alarmType: AlarmType,
-        alarmMessage: String,
+    fun sendFriendRequestAlarm(
+        requesterId: Long,
+        receiverId: Long,
     ) {
-        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        alarmRepository.save(
+        val requester = memberRepository.findById(requesterId).orElseThrow { MemberNotFoundException() }
+        val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
+        val alarm =
             Alarm(
-                member = member,
-                type = alarmType,
-                message = alarmMessage,
-            ),
-        )
+                member = receiver,
+                type = AlarmType.FRIEND_REQUEST,
+                message = "${requester.nickname}님이 친구 요청을 보냈습니다.",
+                friendRequesterId = requesterId,
+            )
+
+        sendAlarm(alarm)
+        // TODO 웹소켓을 이용하여 알람 전송
+    }
+
+    fun sendChatInvitationAlarm(
+        senderId: Long,
+        receiverId: Long,
+        chatRoomId: Long,
+    ) {
+        val sender = memberRepository.findById(senderId).orElseThrow { MemberNotFoundException() }
+        val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
+        val alarm =
+            Alarm(
+                member = receiver,
+                type = AlarmType.CHAT_ROOM_INVITATION,
+                message = "${sender.nickname}님이 채팅방[${chatRoom.title}]에 초대를 보냈습니다.",
+                chatInvitationId = chatRoomId,
+            )
+
+        sendAlarm(alarm)
+        // TODO 웹소켓을 이용하여 알람 전송
+    }
+
+    private fun sendAlarm(
+        alarm: Alarm,
+    ) {
+        alarmRepository.save(alarm)
         // TODO 웹소켓을 이용하여 알람 전송
     }
 }

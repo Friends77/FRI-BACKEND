@@ -22,4 +22,6 @@ class Alarm(
     @Enumerated(EnumType.STRING)
     val type: AlarmType,
     val message: String,
+    val friendRequesterId: Long? = null,
+    val chatInvitationId: Long? = null,
 ) : BaseModifiableEntity()
