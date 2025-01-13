@@ -33,6 +33,11 @@ class InitDB(
                         email = "user2",
                         password = passwordEncoder.encode("user2"),
                     ),
+                    Member.createAdmin(
+                        nickname = "admin",
+                        email = "admin",
+                        password = passwordEncoder.encode("admin"),
+                    ),
                 ),
             )
 

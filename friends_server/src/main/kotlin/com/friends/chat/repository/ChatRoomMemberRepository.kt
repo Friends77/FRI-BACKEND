@@ -34,6 +34,8 @@ interface ChatRoomMemberRepository :
     fun findFirstByChatRoomOrderByCreatedAt(
         chatRoom: ChatRoom,
     ): ChatRoomMember
+
+    fun findByChatRoom(chatRoom: ChatRoom): List<ChatRoomMember>
 }
 
 interface ChatRoomMemberCustomRepository {

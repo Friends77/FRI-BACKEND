@@ -29,7 +29,11 @@ val PROFILE_IMAGE: MultipartFile =
 
 fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE)
 
-fun createTestProfile(member: Member = createTestMember()): Profile = Profile(member = member, birth = LocalDate.now(), gender = GenderEnum.MAN, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
+fun createTestProfile(
+    member: Member = createTestMember(),
+    birth: LocalDate = LocalDate.now(),
+    gender: GenderEnum = GenderEnum.MAN,
+): Profile = Profile(member = member, birth = birth, gender = gender, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
 
 fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(nickname = createTestMember().nickname, email = "test@test.com", birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl", mbti = MbtiEnum.ENFJ)
 
