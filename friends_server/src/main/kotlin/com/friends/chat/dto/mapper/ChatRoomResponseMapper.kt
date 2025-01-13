@@ -9,6 +9,7 @@ import com.friends.common.mapper.toCategoryInfoResponse
 fun toChatRoomInfoResponse(
     chatRoomMember: ChatRoomMember,
     memberCount: Int,
+    representativeProfile: List<String>,
     unreadMessageCount: Int,
     imageUrl: String,
 ): ChatRoomInfoResponseDto {
@@ -30,8 +31,10 @@ fun toChatRoomInfoResponse(
         imageUrl = imageUrl,
         categoryIdList = chatRoomMember.chatRoom.categories.map { toCategoryInfoResponse(it.category) },
         participantCount = memberCount,
+        participantProfileList = representativeProfile,
         lastMessageTime = lastChatRoomMessageTime,
         unreadMessageCount = unreadMessageCount,
+        lastMessage = chatRoomMember.chatRoom.lastMessage?.content,
     )
 }
 

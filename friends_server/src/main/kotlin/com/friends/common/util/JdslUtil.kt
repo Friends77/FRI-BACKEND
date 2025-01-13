@@ -14,8 +14,14 @@ fun <T : Any> KotlinJdslJpqlExecutor.getSlice(
 
 fun <T : Any> KotlinJdslJpqlExecutor.getList(
     init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
-): List<T> = this.findAll(init) as List<T>
+): List<T> = this.findAll(init = init) as List<T>
 
 fun <T : Any> KotlinJdslJpqlExecutor.getSingle(
     init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
-): T = this.findAll(init).first() as T
+): T = this.findAll(init = init).first() as T
+
+fun <T : Any> KotlinJdslJpqlExecutor.getLimitList(
+    offset: Int,
+    limit: Int,
+    init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
+): List<T> = this.findAll(offset = offset, limit = limit, init = init) as List<T>
