@@ -111,6 +111,7 @@ class ChatRoomController(
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
+        @RequestParam
         forceLeaveMemberId: Long,
     ): ResponseEntity<Void> {
         chatRoomCommandService.forcedToLeave(chatRoomId, memberId, forceLeaveMemberId)
