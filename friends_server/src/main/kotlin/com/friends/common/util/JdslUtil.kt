@@ -20,6 +20,10 @@ fun <T : Any> KotlinJdslJpqlExecutor.getSingle(
     init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
 ): T = this.findAll(init = init).first() as T
 
+fun <T : Any> KotlinJdslJpqlExecutor.find(
+    init: Jpql.() -> JpqlQueryable<SelectQuery<T>>,
+): T? = this.findAll(init = init).firstOrNull()
+
 fun <T : Any> KotlinJdslJpqlExecutor.getLimitList(
     offset: Int,
     limit: Int,

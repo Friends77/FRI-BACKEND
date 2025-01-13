@@ -107,10 +107,11 @@ class ChatRoomController(
     @DeleteMapping("/{id}/user")
     override fun forcedToLeave(
         @PathVariable("id")
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
+        @RequestParam
         forceLeaveMemberId: Long,
     ): ResponseEntity<Void> {
         chatRoomCommandService.forcedToLeave(chatRoomId, memberId, forceLeaveMemberId)

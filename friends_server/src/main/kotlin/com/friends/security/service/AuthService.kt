@@ -108,7 +108,7 @@ class AuthService(
         val profile =
             Profile(
                 member = user,
-                imageUrl = registerRequestDto.imageUrl ?: "default image url",
+                imageUrl = registerRequestDto.imageUrl,
                 gender = registerRequestDto.gender,
                 birth = LocalDate.of(registerRequestDto.birth, 1, 1),
                 location = registerRequestDto.location?.let { Location(it.latitude, it.longitude) },
