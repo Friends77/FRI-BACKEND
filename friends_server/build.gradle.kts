@@ -74,9 +74,6 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
     testImplementation("io.kotest:kotest-assertions-core:5.9.0")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
-
-    // utils
-    implementation("org.apache.tika:tika-core:3.0.0")
 }
 
 kotlin {

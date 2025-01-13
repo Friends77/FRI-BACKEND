@@ -21,7 +21,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.Optional
-import org.springframework.web.multipart.MultipartFile
 
 class ProfileCommandServiceTest :
     BehaviorSpec({
@@ -37,7 +36,7 @@ class ProfileCommandServiceTest :
             every { profileRepository.save(any()) } returns createTestProfile()
             every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
-            every { s3ClientService.upload(any<MultipartFile>(), any()) } returns TEST_IMAGE_FILE_URL
+            every { s3ClientService.upload(any(), any()) } returns TEST_IMAGE_FILE_URL
             `when`("유효한 프로필 정보를 전달하면") {
                 profileCommandService.createProfile(MEMBER_ID, createTestProfileCreateDto(), PROFILE_IMAGE)
 
@@ -67,7 +66,7 @@ class ProfileCommandServiceTest :
             every { profileInterestTagRepository.deleteByProfileId(any()) } returns Unit
             every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
-            every { s3ClientService.upload(any<MultipartFile>(), any()) } returns TEST_IMAGE_FILE_URL
+            every { s3ClientService.upload(any(), any()) } returns TEST_IMAGE_FILE_URL
             `when`("존재하는 프로필을 수정하면") {
                 profileCommandService.updateProfile(MEMBER_ID, updatedProfile, PROFILE_IMAGE)
 

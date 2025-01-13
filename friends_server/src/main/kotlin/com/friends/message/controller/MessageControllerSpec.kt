@@ -8,7 +8,12 @@ import com.friends.message.dto.MessageResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Message")
 interface MessageControllerSpec {
@@ -59,4 +64,32 @@ interface MessageControllerSpec {
         size: Int,
         lastMessageId: Long?,
     ): ResponseEntity<SliceBaseResponse<MessageResponseDto>>
+
+    @Operation(
+        description =
+            "이미지 업로드 API <br>" +
+                "로그인 된 사용자만 사용 가능합니다",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "이미지 업로드 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+        ],
+    )
+    fun uploadImage(
+        @AuthenticationPrincipal
+        memberId: Long,
+        @PathVariable("chatRoomId")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @RequestPart
+        image: MultipartFile,
+    ): ResponseEntity<Void>
 }

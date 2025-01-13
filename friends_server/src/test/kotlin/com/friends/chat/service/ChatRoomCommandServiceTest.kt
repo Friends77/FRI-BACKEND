@@ -36,7 +36,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.Optional
-import org.springframework.web.multipart.MultipartFile
 
 class ChatRoomCommandServiceTest :
     BehaviorSpec(
@@ -60,7 +59,7 @@ class ChatRoomCommandServiceTest :
                 every { chatRoomCategoryRepository.saveAll(any<List<ChatRoomCategory>>()) } returns listOf(ChatRoomCategory.of(createTestChatRoom(), createTestCategory()))
                 every { messageCommandService.sendMessage(any(), any(), any(), any()) } returns createTestMessage(content = Message.enterMessage(MEMBER_NICKNAME), type = MessageType.SYSTEM)
                 every { messageCommandService.setChatRoomOnline(any(), any()) } returns Unit
-                every { s3ClientService.upload(any<MultipartFile>(), any()) } returns "test"
+                every { s3ClientService.upload(any(), any()) } returns "test"
                 `when`("정상적인 데이터가 들어올 경우") {
                     then("채팅방이 저장된다.") {
                         chatRoomCommandService.createChatRoom(request, MEMBER_ID, null)
