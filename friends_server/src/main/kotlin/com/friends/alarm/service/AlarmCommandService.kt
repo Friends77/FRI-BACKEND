@@ -3,12 +3,15 @@ package com.friends.alarm.service
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
+import com.friends.alarm.toAlarmResponseDto
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,7 +55,6 @@ class AlarmCommandService(
             )
 
         sendAlarm(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
     }
 
     fun sendChatInvitationAlarm(
@@ -73,13 +75,15 @@ class AlarmCommandService(
             )
 
         sendAlarm(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
     }
 
     private fun sendAlarm(
         alarm: Alarm,
     ) {
         alarmRepository.save(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
+        val alarmResponseDto = toAlarmResponseDto(alarm)
+        onlineUserSessions[alarm.receiver.id]?.forEach {
+            it.sendMessage(TextMessage(JsonUtil.toJson(alarmResponseDto)))
+        }
     }
 }
