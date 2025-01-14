@@ -224,10 +224,9 @@ class MessageCommandService(
         memberId: Long,
         chatRoomId: Long,
         image: MultipartFile,
-    ) {
+    ): String {
         memberRepository.existsById(memberId).also { if (!it) throw MemberNotFoundException() }
         chatRoomRepository.existsById(chatRoomId).also { if (!it) throw ChatRoomNotFoundException() }
-        val imageUrl = s3ClientService.upload(image)
-        sendMessage(chatRoomId, memberId, imageUrl, MessageType.IMAGE)
+        return s3ClientService.upload(image)
     }
 }

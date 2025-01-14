@@ -52,8 +52,5 @@ class MessageController(
         chatRoomId: Long,
         @RequestPart
         image: MultipartFile,
-    ): ResponseEntity<Void> {
-        messageCommandService.uploadImage(memberId, chatRoomId, image)
-        return ResponseEntity.noContent().build()
-    }
+    ): ResponseEntity<String> = ResponseEntity.ok(messageCommandService.uploadImage(memberId, chatRoomId, image))
 }

@@ -91,5 +91,5 @@ interface MessageControllerSpec {
         chatRoomId: Long,
         @RequestPart
         image: MultipartFile,
-    ): ResponseEntity<Void>
+    ): ResponseEntity<String>
 }
