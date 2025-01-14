@@ -50,7 +50,6 @@ class MessageCommandService(
     @Scheduled(fixedRate = 30000) // 30초 마다 실행
     fun ping() {
         for (entry in sessions) {
-            val userId = entry.key
             val userSessions = entry.value
             userSessions.forEach { session ->
                 try {

@@ -48,7 +48,6 @@ class AlarmCommandService(
     @Scheduled(fixedRate = 30000) // 30초 마다 실행
     fun ping() {
         for (entry in onlineUserSessions) {
-            val userId = entry.key
             val userSessions = entry.value
             userSessions.forEach { session ->
                 try {
