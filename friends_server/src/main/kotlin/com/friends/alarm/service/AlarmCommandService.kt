@@ -1,197 +1,121 @@
-package com.friends.chat.service
+package com.friends.alarm.service
 
-import com.friends.category.repository.CategoryRepository
-import com.friends.chat.ChatRoomBaseImageCannotDeleteException
-import com.friends.chat.ChatRoomCategoryNotFoundException
-import com.friends.chat.ChatRoomMustHaveCategoryException
+import com.friends.alarm.entity.Alarm
+import com.friends.alarm.entity.AlarmType
+import com.friends.alarm.repository.AlarmRepository
+import com.friends.alarm.toAlarmResponseDto
 import com.friends.chat.ChatRoomNotFoundException
-import com.friends.chat.ChatRoomUpdateException
-import com.friends.chat.NotChatRoomManagerException
-import com.friends.chat.NotChatRoomMemberException
-import com.friends.chat.NotForceLeaveYourselfException
-import com.friends.chat.dto.ChatRoomCreateRequestDto
-import com.friends.chat.dto.ChatRoomUpdateRequestDto
-import com.friends.chat.dto.CreateChatRoomResponseDto
-import com.friends.chat.entity.ChatRoom
-import com.friends.chat.entity.ChatRoomCategory
-import com.friends.chat.entity.ChatRoomMember
-import com.friends.chat.repository.ChatRoomCategoryRepository
-import com.friends.chat.repository.ChatRoomMemberRepository
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.image.S3ClientService
+import com.friends.chat.repository.PingPongRepository
+import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
-import com.friends.message.entity.Message
-import com.friends.message.entity.MessageType
-import com.friends.message.repository.MessageRepository
-import com.friends.message.service.MessageCommandService
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.socket.TextMessage
+import org.springframework.web.socket.WebSocketSession
+import java.util.concurrent.ConcurrentHashMap
 
 @Service
-class ChatRoomCommandService(
-    private val chatRoomRepository: ChatRoomRepository,
-    private val chatRoomMemberRepository: ChatRoomMemberRepository,
+@Transactional
+class AlarmCommandService(
     private val memberRepository: MemberRepository,
-    private val categoryRepository: CategoryRepository,
-    private val chatRoomCategoryRepository: ChatRoomCategoryRepository,
-    private val s3ClientService: S3ClientService,
-    private val messageCommandService: MessageCommandService,
-    private val messageRepository: MessageRepository,
+    private val alarmRepository: AlarmRepository,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val pingPongRepository: PingPongRepository,
 ) {
-    @Transactional
-    fun createChatRoom(
-        request: ChatRoomCreateRequestDto,
+    private val onlineUserSessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    fun addOnlineUserSession(
         memberId: Long,
-        backgroundImage: MultipartFile?,
-    ): CreateChatRoomResponseDto {
-        val imageUrl =
-            backgroundImage?.let {
-                s3ClientService.upload(it)
-            }
-        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
-        chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
-        messageCommandService.setChatRoomOnline(chatRoom.id, memberId)
-        val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
-        chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
-        return CreateChatRoomResponseDto(chatRoom.id)
+        session: WebSocketSession,
+    ) {
+        onlineUserSessions.computeIfAbsent(memberId) { ConcurrentHashMap.newKeySet() }.add(session)
     }
 
-    @Transactional
-    fun enterChatRoom(
-        chatRoomId: Long,
+    fun removeOnlineUserSession(
         memberId: Long,
+        session: WebSocketSession,
     ) {
-        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
-        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
-            messageCommandService.setChatRoomOnline(chatRoomId, memberId)
-            val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
-            chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
+        onlineUserSessions[memberId]?.removeIf {
+            it.id == session.id
         }
     }
 
-    @Transactional
-    fun leaveChatRoom(
-        chatRoomId: Long,
-        memberId: Long,
-    ) {
-        // postgreSQL에서는 격리수준 default가 read committed이므로,
-        // 만일 채팅방의 최후 2인이 동시에 나갈 경우, 각 트랜잭션에선 본인이 나가더라도 1명이 남아있을 것으로 잘못 판단하고 방이 사라지지않는 문제가 발생할 수 있습니다.
-        // 따라서, chatRoom에 비관적 베타락을 걸어서 한 요청을 처리하는 동안 다른 트랜잭션이 chatRoom에 접근하지 못하도록 합니다.
-        val chatRoom = chatRoomRepository.findByIdWithLock(chatRoomId) ?: throw ChatRoomNotFoundException()
-        val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw NotChatRoomMemberException()
-        chatRoomMemberRepository.delete(chatRoomMember)
-        messageCommandService.setChatRoomOffline(memberId, chatRoomId) // 채팅방에서 나가면 온라인 유저에서도 제거
-        if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
-            deleteChatRoom(chatRoom)
-        } else {
-            messageCommandService.sendMessage(chatRoomId, memberId, Message.exitMessage(member.nickname), MessageType.SYSTEM) // 채팅방에 나갔다는 메세지 전송
-            if (chatRoom.manager == member) {
-                val newManager = chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom).member
-                chatRoom.changeManager(newManager)
-                messageCommandService.sendMessage(chatRoomId, newManager.id, Message.changeManagerMessage(newManager.nickname), MessageType.SYSTEM) // 새로운 매니저에게 매니저 변경 메세지 전송
-            }
-        }
-    }
-
-    private fun deleteChatRoom(chatRoom: ChatRoom) {
-        messageRepository.deleteByChatRoom(chatRoom)
-        chatRoomCategoryRepository.deleteByChatRoom(chatRoom)
-        chatRoomRepository.delete(chatRoom)
-    }
-
-    @Transactional
-    fun updateChatRoom(
-        chatRoomId: Long,
-        request: ChatRoomUpdateRequestDto?,
-        memberId: Long,
-        backgroundImage: MultipartFile?,
-    ) {
-        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
-        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        if (chatRoom.manager.id != memberId) throw NotChatRoomManagerException()
-        val changeImageUpdate = updateChatRoomImageUrl(chatRoom, request, backgroundImage)
-        val changeChatRoomInfo =
-            if (request != null) {
-                updateChatRoomInfo(chatRoom, request)
-            } else {
-                false
-            }
-        if (!changeImageUpdate && !changeChatRoomInfo) throw ChatRoomUpdateException()
-    }
-
-    @Transactional
-    fun forcedToLeave(
-        chatRoomId: Long,
-        memberId: Long,
-        forceLeaveMemberId: Long,
-    ) {
-        if (memberId == forceLeaveMemberId) throw NotForceLeaveYourselfException()
-        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
-        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        val forceLeaveMember = memberRepository.findById(forceLeaveMemberId).orElseThrow { throw MemberNotFoundException() }
-        if (chatRoom.manager.id != memberId) throw NotChatRoomManagerException()
-        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, forceLeaveMember) ?: throw NotChatRoomMemberException()
-        chatRoomMemberRepository.delete(chatRoomMember)
-        messageCommandService.setChatRoomOffline(forceLeaveMemberId, chatRoomId)
-        messageCommandService.sendMessage(chatRoomId, memberId, Message.forceExitMessage(forceLeaveMember.nickname), MessageType.SYSTEM)
-    }
-
-    private fun updateChatRoomImageUrl(
-        chatRoom: ChatRoom,
-        request: ChatRoomUpdateRequestDto?,
-        backgroundImage: MultipartFile?,
-    ): Boolean {
-        if (backgroundImage != null) {
-            if (chatRoom.imageUrl != null) {
-                s3ClientService.deleteS3Object(chatRoom.imageUrl!!)
-            }
-            chatRoom.imageUrl = s3ClientService.upload(backgroundImage)
-            return true
-        } else {
-            if (request != null && request.backgroundImageDelete) {
-                if (chatRoom.imageUrl == null) {
-                    throw ChatRoomBaseImageCannotDeleteException()
+    @Scheduled(fixedRate = 30000) // 30초 마다 실행
+    fun ping() {
+        for (entry in onlineUserSessions) {
+            val userId = entry.key
+            val userSessions = entry.value
+            userSessions.forEach { session ->
+                try {
+                    /**
+                     * ping 이 존재한다는 것은 pong 을 받지 못했다는 것을 의미합니다.
+                     * 이 경우에는 세션을 제거합니다.
+                     */
+                    if (pingPongRepository.existPing(session.id)) {
+                        session.close()
+                        removeOnlineUserSession(userId, session)
+                    } else {
+                        pingPongRepository.savePing(session.id)
+                        session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
+                    }
+                } catch (e: Exception) {
+                    // 에러가 발생할 경우 세션을 제거합니다.
+                    session.close()
+                    removeOnlineUserSession(userId, session)
                 }
-                s3ClientService.deleteS3Object(chatRoom.imageUrl!!)
-                chatRoom.imageUrl = null
-                return true
             }
         }
-        return false
     }
 
-    private fun updateChatRoomInfo(
-        chatRoom: ChatRoom,
-        request: ChatRoomUpdateRequestDto,
-    ): Boolean {
-        var changeChatRoomInfo = false
-        if (request.title != null && chatRoom.title != request.title) {
-            chatRoom.title = request.title
-            changeChatRoomInfo = true
-        }
-        if (request.categoryIdList != null) {
-            val categoryList = categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomMustHaveCategoryException() }
-            // 채팅방의 카테고리 중 없는 카테고리 ID 리스트에 포함되지 않은 ID를 필터링해서 가져오기
-            val addCategoryList = categoryList.filter { it !in chatRoom.categories.map { chatRoomCategory -> chatRoomCategory.category } }
-            if (addCategoryList.isNotEmpty()) {
-                chatRoomCategoryRepository.saveAll(
-                    addCategoryList
-                        .map { ChatRoomCategory.of(chatRoom, it) },
-                )
-                changeChatRoomInfo = true
-            }
-            val categoriesToRemove = chatRoom.categories.filter { it.category !in categoryList }
-            if (categoriesToRemove.isNotEmpty()) {
-                chatRoomCategoryRepository.deleteAllInBatch(categoriesToRemove)
-                changeChatRoomInfo = true
-            }
-        }
+    fun sendFriendRequestAlarm(
+        requesterId: Long,
+        receiverId: Long,
+    ) {
+        val requester = memberRepository.findById(requesterId).orElseThrow { MemberNotFoundException() }
+        val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
+        val alarm =
+            Alarm(
+                sender = requester,
+                receiver = receiver,
+                type = AlarmType.FRIEND_REQUEST,
+                message = "${requester.nickname}님이 친구 요청을 보냈습니다.",
+            )
 
-        return changeChatRoomInfo
+        sendAlarm(alarm)
+    }
+
+    fun sendChatInvitationAlarm(
+        senderId: Long,
+        receiverId: Long,
+        chatRoomId: Long,
+    ) {
+        val sender = memberRepository.findById(senderId).orElseThrow { MemberNotFoundException() }
+        val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
+        val alarm =
+            Alarm(
+                sender = sender,
+                receiver = receiver,
+                type = AlarmType.CHAT_ROOM_INVITATION,
+                message = "${sender.nickname}님이 채팅방[${chatRoom.title}]에 초대를 보냈습니다.",
+                invitedChatRoom = chatRoom,
+            )
+
+        sendAlarm(alarm)
+    }
+
+    private fun sendAlarm(
+        alarm: Alarm,
+    ) {
+        alarmRepository.save(alarm)
+        val alarmResponseDto = toAlarmResponseDto(alarm)
+        onlineUserSessions[alarm.receiver.id]?.forEach {
+            it.sendMessage(TextMessage(JsonUtil.toJson(alarmResponseDto)))
+        }
     }
 }
