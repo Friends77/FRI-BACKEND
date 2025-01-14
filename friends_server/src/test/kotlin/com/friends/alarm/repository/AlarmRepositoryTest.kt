@@ -18,19 +18,21 @@ class AlarmRepositoryTest(
     private val entityManager: EntityManager,
 ) : DescribeSpec({
 
-        lateinit var member: Member
+        lateinit var sender: Member
+        lateinit var receiver: Member
         lateinit var alarm1: Alarm
         lateinit var alarm2: Alarm
         lateinit var alarm3: Alarm
 
         beforeEach {
             // 테스트용 Member 생성
-            member = memberRepository.save(createTestMember())
+            sender = memberRepository.save(createTestMember())
+            receiver = memberRepository.save(createTestMember(email = "test2"))
 
             // 테스트용 Alarm 생성
-            alarm1 = alarmRepository.save(Alarm(member = member, message = "알람1", type = AlarmType.FRIEND_REQUEST))
-            alarm2 = alarmRepository.save(Alarm(member = member, message = "알람2", type = AlarmType.FRIEND_REQUEST))
-            alarm3 = alarmRepository.save(Alarm(member = member, message = "알람3", type = AlarmType.CHAT_ROOM_INVITATION))
+            alarm1 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람1", type = AlarmType.FRIEND_REQUEST))
+            alarm2 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람2", type = AlarmType.FRIEND_REQUEST))
+            alarm3 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람3", type = AlarmType.FRIEND_REQUEST))
 
             entityManager.flush()
             entityManager.clear()
@@ -42,7 +44,7 @@ class AlarmRepositoryTest(
                 it("지정된 ID가 주어지지 않으면 가장 최근 알람부터 조회한다.") {
                     val result =
                         alarmRepository.findAllByMemberIdBeforeId(
-                            memberId = member.id,
+                            memberId = receiver.id,
                             size = 3,
                         )
 
@@ -57,7 +59,7 @@ class AlarmRepositoryTest(
                 it("해당 ID보다 작은 알람이 없으면 빈 리스트를 반환한다.") {
                     val result =
                         alarmRepository.findAllByMemberIdBeforeId(
-                            memberId = member.id,
+                            memberId = receiver.id,
                             size = 3,
                             lastAlarmId = alarm1.id,
                         )
@@ -68,7 +70,7 @@ class AlarmRepositoryTest(
                 it("해당 ID 보다 작은 알람은 모두 반환한다.") {
                     val result =
                         alarmRepository.findAllByMemberIdBeforeId(
-                            memberId = member.id,
+                            memberId = receiver.id,
                             size = 5,
                             lastAlarmId = alarm3.id,
                         )

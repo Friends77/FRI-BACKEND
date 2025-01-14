@@ -35,7 +35,7 @@ class AlarmCustomRepositoryImpl(
                 .from(entity(Alarm::class))
                 .where(
                     and(
-                        path(Alarm::sender).path(Member::id).equal(memberId),
+                        path(Alarm::receiver).path(Member::id).equal(memberId),
                         lastAlarmId?.let { path(Alarm::id).lessThan(it) },
                     ),
                 ).orderBy(desc(path(Alarm::id)))
