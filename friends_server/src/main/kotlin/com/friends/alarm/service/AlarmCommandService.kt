@@ -9,6 +9,8 @@ import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.socket.WebSocketSession
+import java.util.concurrent.ConcurrentHashMap
 
 @Service
 @Transactional
@@ -17,6 +19,24 @@ class AlarmCommandService(
     private val alarmRepository: AlarmRepository,
     private val chatRoomRepository: ChatRoomRepository,
 ) {
+    private val onlineUserSessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    fun addOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        onlineUserSessions.computeIfAbsent(memberId) { ConcurrentHashMap.newKeySet() }.add(session)
+    }
+
+    fun removeOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        onlineUserSessions[memberId]?.removeIf {
+            it.id == session.id
+        }
+    }
+
     fun sendFriendRequestAlarm(
         requesterId: Long,
         receiverId: Long,
