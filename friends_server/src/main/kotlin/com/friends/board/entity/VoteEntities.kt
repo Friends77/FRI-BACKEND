@@ -43,4 +43,11 @@ class VoteOption(
     @Column(length = 255, nullable = false)
     var content: String,
     var voteCount: Int = 0,
-)
+){
+    fun increaseVoteCount(){
+        voteCount++;
+    }
+    fun decreaseVoteCount(){
+        voteCount--;
+    }
+}

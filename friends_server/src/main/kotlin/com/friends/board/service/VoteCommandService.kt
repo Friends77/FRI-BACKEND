@@ -62,10 +62,13 @@ class VoteCommandService(
         val vote =
             voteRepository.findById(voteId)
                 .orElseThrow { VoteNotFoundException() }
-        val optionToDelete =
-            vote.options.find { it.id == optionId }
-                ?: throw VoteOptionNotFoundException()
+        val optionToDelete = voteOptionRepository.findById(optionId)
+            .orElseThrow { VoteOptionNotFoundException() }
+        if(!vote.options.contains(optionToDelete)) {
+            throw VoteOptionNotFoundException()
+        }
         vote.options.remove(optionToDelete)
+        voteOptionRepository.delete(optionToDelete)
         voteRepository.save(vote)
     }
 
@@ -84,9 +87,9 @@ class VoteCommandService(
      */
     fun incrementVoteCount(optionId: Long) {
         val option =
-            voteOptionRepository.findOptionById(optionId)
-                ?: throw VoteOptionNotFoundException()
-        option.voteCount += 1
+            voteOptionRepository.findById(optionId)
+                .orElseThrow{throw VoteOptionNotFoundException()}
+        option.increaseVoteCount()
         voteOptionRepository.save(option)
     }
 
@@ -95,10 +98,10 @@ class VoteCommandService(
      */
     fun decrementVoteCount(optionId: Long) {
         val option =
-            voteOptionRepository.findOptionById(optionId)
-                ?: throw VoteOptionNotFoundException()
+            voteOptionRepository.findById(optionId)
+                .orElseThrow{throw VoteOptionNotFoundException()}
         if (option.voteCount > 0) {
-            option.voteCount -= 1
+            option.decreaseVoteCount()
             voteOptionRepository.save(option)
         } else {
             throw VoteOptionPositiveCountException()
