@@ -13,6 +13,9 @@ import com.friends.member.repository.MemberRepository
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import com.friends.message.repository.MessageRepository
+import com.friends.profile.createTestProfile
+import com.friends.profile.entity.Profile
+import com.friends.profile.repository.ProfileRepository
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
@@ -24,7 +27,9 @@ class ChatRoomMemberRepositoryTest(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val messageRepository: MessageRepository,
+    private var profileRepository: ProfileRepository,
 ) : DescribeSpec({
+        lateinit var profile: Profile
         lateinit var member1: Member
         lateinit var member2: Member
         lateinit var member3: Member
@@ -40,6 +45,8 @@ class ChatRoomMemberRepositoryTest(
         beforeEach {
             member1 = memberRepository.save(createTestMember())
             member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL, nickname = MEMBER_OTHER_NICKNAME))
+            profile = profileRepository.save(createTestProfile(member2))
+            member2.profile = profile
             member3 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL + 2, nickname = MEMBER_OTHER_NICKNAME + 2))
             chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member1))
             chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
@@ -122,6 +129,14 @@ class ChatRoomMemberRepositoryTest(
                         chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember.id
                         chatRoomMemberRepository.delete(chatRoomMember)
                         chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember2.id
+                    }
+                }
+            }
+
+            describe("findRepresentativeProfileByChatRoomId") {
+                context("채팅방 ID를 받으면") {
+                    it("프로필 이미지를 반환한다") {
+                        chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(chatRoom1.id).map { member -> member.profile?.imageUrl ?: "profileBaseImageUrl" } shouldBe listOf("profileBaseImageUrl", profile.imageUrl, "profileBaseImageUrl")
                     }
                 }
             }

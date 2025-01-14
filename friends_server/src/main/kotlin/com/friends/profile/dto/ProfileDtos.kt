@@ -47,3 +47,10 @@ data class ProfileWithDistanceDto(
     val imageUrl: String? = null,
     val distance: Double,
 )
+
+data class ProfileWithCategories(
+    val id: Long,
+    val nickname: String,
+    val imageUrl: String,
+    val categoryIds: List<Long>,
+)

@@ -19,7 +19,7 @@ class UserRecommendationController(
     override fun getDistanceRecommendation(
         @AuthenticationPrincipal memberId: Long,
         @RequestParam distance: Double,
-        @RequestParam size: Int,
+        @RequestParam(required = false, defaultValue = "20") size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithDistanceDto>> {
         val result = userRecommendationService.getDistanceRecommendation(memberId, distance, size)
         return ResponseEntity.ok(result)

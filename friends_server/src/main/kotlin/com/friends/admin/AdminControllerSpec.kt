@@ -26,4 +26,10 @@ interface AdminControllerSpec {
         @Schema(description = "이미지 URL", example = "https://friends-image.s3.ap-northeast-2.amazonaws.com/12343-1234")
         url: String,
     ): ResponseEntity<Void>
+
+    @Operation(
+        summary = "채팅방 추천 기준 집계",
+        description = "채팅방 추천 기준(가장 많은 연령대, 성별)을 즉시 집계합니다.",
+    )
+    fun aggregateChatRoomRecommendationCriteria(): ResponseEntity<Void>
 }
