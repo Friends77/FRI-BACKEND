@@ -172,7 +172,6 @@ class MessageCommandService(
 
         // 채팅방 단위로 동기화 (synchronized block)
         synchronized(chatRoomLock) {
-            //
             /**
              * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
              * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
