@@ -50,20 +50,21 @@ class MessageCommandService(
     @Scheduled(fixedRate = 30000) // 30초 마다 실행
     fun ping() {
         for (entry in sessions) {
+            val userId = entry.key
             val userSessions = entry.value
             userSessions.forEach { session ->
                 try {
                     if (pingPongRepository.existPing(session.id)) {
                         // pong 메세지를 받지 못할 경우 세션을 제거합니다.
                         session.close()
-                        userSessions.remove(session)
+                        removeOnlineUserSession(userId, session)
                     }
                     session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
                     pingPongRepository.savePing(session.id)
                 } catch (e: Exception) {
                     // 에러가 발생할 경우 세션을 제거합니다.
                     session.close()
-                    userSessions.remove(session)
+                    removeOnlineUserSession(userId, session)
                 }
             }
         }
@@ -103,9 +104,7 @@ class MessageCommandService(
         memberId: Long,
         session: WebSocketSession,
     ) {
-        sessions[memberId]?.removeIf {
-            it.id == session.id
-        }
+        removeOnlineUserSession(memberId, session)
 
         chatRoomMemberRepository
             .findAllByMemberId(memberId)
@@ -135,6 +134,15 @@ class MessageCommandService(
         chatRoomId: Long,
     ) {
         onlineUsers[chatRoomId]?.remove(memberId)
+    }
+
+    private fun removeOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        sessions[memberId]?.removeIf {
+            it.id == session.id
+        }
     }
 
     /**
