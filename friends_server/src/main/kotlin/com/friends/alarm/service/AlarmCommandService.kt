@@ -25,10 +25,10 @@ class AlarmCommandService(
         val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
         val alarm =
             Alarm(
-                member = receiver,
+                sender = requester,
+                receiver = receiver,
                 type = AlarmType.FRIEND_REQUEST,
                 message = "${requester.nickname}님이 친구 요청을 보냈습니다.",
-                friendRequesterId = requesterId,
             )
 
         sendAlarm(alarm)
@@ -45,10 +45,11 @@ class AlarmCommandService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val alarm =
             Alarm(
-                member = receiver,
+                sender = sender,
+                receiver = receiver,
                 type = AlarmType.CHAT_ROOM_INVITATION,
                 message = "${sender.nickname}님이 채팅방[${chatRoom.title}]에 초대를 보냈습니다.",
-                chatInvitationId = chatRoomId,
+                invitedChatRoom = chatRoom,
             )
 
         sendAlarm(alarm)

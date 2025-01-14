@@ -1,5 +1,6 @@
 package com.friends.alarm.entity
 
+import com.friends.chat.entity.ChatRoom
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.Entity
@@ -17,11 +18,15 @@ class Alarm(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    val member: Member,
+    @JoinColumn(name = "sender_id")
+    val sender: Member,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id")
+    val receiver: Member,
     @Enumerated(EnumType.STRING)
     val type: AlarmType,
     val message: String,
-    val friendRequesterId: Long? = null,
-    val chatInvitationId: Long? = null,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_room_id")
+    val invitedChatRoom: ChatRoom? = null,
 ) : BaseModifiableEntity()

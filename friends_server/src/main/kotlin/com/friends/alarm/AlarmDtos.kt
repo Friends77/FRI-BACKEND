@@ -8,8 +8,9 @@ data class AlarmResponseDto(
     val id: Long,
     val type: AlarmType,
     val message: String,
-    val friendRequesterId: Long? = null,
-    val chatInvitationId: Long? = null,
+    val senderId: Long,
+    val receiverId: Long,
+    val invitedChatRoomId: Long? = null,
     val createdAt: LocalDateTime,
 )
 
@@ -18,7 +19,8 @@ fun toAlarmResponseDto(alarm: Alarm) =
         id = alarm.id,
         type = alarm.type,
         message = alarm.message,
-        friendRequesterId = alarm.friendRequesterId,
-        chatInvitationId = alarm.chatInvitationId,
+        senderId = alarm.sender.id,
+        receiverId = alarm.receiver.id,
+        invitedChatRoomId = alarm.invitedChatRoom?.id,
         createdAt = alarm.createdAt,
     )
