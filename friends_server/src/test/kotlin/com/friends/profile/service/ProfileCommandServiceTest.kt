@@ -14,6 +14,7 @@ import com.friends.profile.entity.ProfileInterestTag
 import com.friends.profile.repository.ProfileInterestTagRepository
 import com.friends.profile.repository.ProfileRepository
 import com.friends.profile.updateTestProfile
+import com.friends.support.TEST_IMAGE_FILE_URL
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.every
@@ -35,7 +36,7 @@ class ProfileCommandServiceTest :
             every { profileRepository.save(any()) } returns createTestProfile()
             every { categoryRepository.findByIdIn(any()) } returns listOf(createTestCategory())
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
-
+            every { s3ClientService.upload(any(), any()) } returns TEST_IMAGE_FILE_URL
             `when`("유효한 프로필 정보를 전달하면") {
                 profileCommandService.createProfile(MEMBER_ID, createTestProfileCreateDto(), PROFILE_IMAGE)
 
@@ -65,7 +66,7 @@ class ProfileCommandServiceTest :
             every { profileInterestTagRepository.deleteByProfileId(any()) } returns Unit
             every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
-
+            every { s3ClientService.upload(any(), any()) } returns TEST_IMAGE_FILE_URL
             `when`("존재하는 프로필을 수정하면") {
                 profileCommandService.updateProfile(MEMBER_ID, updatedProfile, PROFILE_IMAGE)
 

@@ -2,6 +2,8 @@ package com.friends.message.service
 
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatSendMessageDto
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.repository.PingPongRepository
@@ -56,7 +58,7 @@ class MessageCommandService(
                         session.close()
                         userSessions.remove(session)
                     }
-                    session.sendMessage(TextMessage("ping"))
+                    session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
                     pingPongRepository.savePing(session.id)
                 } catch (e: Exception) {
                     // 에러가 발생할 경우 세션을 제거합니다.

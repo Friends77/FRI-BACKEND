@@ -8,6 +8,7 @@ import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.ChatRoomUpdateException
 import com.friends.chat.NotChatRoomManagerException
 import com.friends.chat.NotChatRoomMemberException
+import com.friends.chat.NotForceLeaveYourselfException
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
@@ -121,6 +122,23 @@ class ChatRoomCommandService(
                 false
             }
         if (!changeImageUpdate && !changeChatRoomInfo) throw ChatRoomUpdateException()
+    }
+
+    @Transactional
+    fun forcedToLeave(
+        chatRoomId: Long,
+        memberId: Long,
+        forceLeaveMemberId: Long,
+    ) {
+        if (memberId == forceLeaveMemberId) throw NotForceLeaveYourselfException()
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        val forceLeaveMember = memberRepository.findById(forceLeaveMemberId).orElseThrow { throw MemberNotFoundException() }
+        if (chatRoom.manager.id != memberId) throw NotChatRoomManagerException()
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, forceLeaveMember) ?: throw NotChatRoomMemberException()
+        chatRoomMemberRepository.delete(chatRoomMember)
+        messageCommandService.setChatRoomOffline(forceLeaveMemberId, chatRoomId)
+        messageCommandService.sendMessage(chatRoomId, memberId, Message.forceExitMessage(forceLeaveMember.nickname), MessageType.SYSTEM)
     }
 
     private fun updateChatRoomImageUrl(

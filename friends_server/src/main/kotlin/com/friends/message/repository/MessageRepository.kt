@@ -2,6 +2,7 @@ package com.friends.message.repository
 
 import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
+import com.friends.common.util.find
 import com.friends.common.util.getList
 import com.friends.common.util.getSingle
 import com.friends.common.util.getSlice
@@ -37,6 +38,8 @@ interface MessageCustomRepository {
         messageId: Long? = null,
         size: Int,
     ): Slice<Message>
+
+    fun findRecentMessageInChatRoom(chatRoom: ChatRoom): Message?
 }
 
 class MessageCustomRepositoryImpl(
@@ -100,4 +103,16 @@ class MessageCustomRepositoryImpl(
         val sortedContent = slice.content.reversed()
         return SliceImpl(sortedContent, pageable, slice.hasNext())
     }
+
+    override fun findRecentMessageInChatRoom(chatRoom: ChatRoom): Message? =
+        kotlinJdslJpqlExecutor.find {
+            select(entity(Message::class))
+                .from(entity(Message::class))
+                .where(
+                    and(
+                        path(Message::chatRoom).equal(chatRoom),
+                        path(Message::type).notEqual(MessageType.SYSTEM),
+                    ),
+                ).orderBy(path(Message::id).desc())
+        }
 }

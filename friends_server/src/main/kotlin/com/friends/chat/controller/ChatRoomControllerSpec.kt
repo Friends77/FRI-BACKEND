@@ -210,4 +210,33 @@ interface ChatRoomControllerSpec {
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<Void>
+
+    @Operation(
+        description = "채팅방 강제 퇴장 API",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 강제 퇴장 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.NOT_FORCE_LEAVE_YOURSELF,
+            ErrorCode.NOT_CHAT_ROOM_MANAGER,
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
+        ],
+    )
+    fun forcedToLeave(
+        @PathVariable
+        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+        @RequestParam
+        forceLeaveMemberId: Long,
+    ): ResponseEntity<Void>
 }

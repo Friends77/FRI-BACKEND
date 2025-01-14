@@ -15,10 +15,14 @@ data class ChatRoomInfoResponseDto(
     val imageUrl: String,
     @Schema(description = "채팅방 카테고리 리스트")
     val categoryIdList: List<CategoryInfoResponse>,
-    @Schema(description = "채팅방 참여자 수")
+    @Schema(description = "채팅방 전체 참여자 수")
     val participantCount: Int,
+    @Schema(description = "채팅방 참여자 프로필 리스트(최대 4명)")
+    val participantProfileList: List<String>,
     @Schema(description = "채팅방 마지막 메세지 시간")
-    val lastMessageTime: LocalDateTime,
+    val lastMessageTime: LocalDateTime?,
+    @Schema(description = "채팅방 마지막 메세지")
+    val lastMessage: String?,
     @Schema(description = "안 읽은 메세지 수")
     val unreadMessageCount: Int,
 )

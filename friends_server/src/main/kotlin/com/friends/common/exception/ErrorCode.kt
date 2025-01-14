@@ -64,8 +64,11 @@ enum class ErrorCode(
     NOT_CHAT_ROOM_MANAGER(HttpStatus.FORBIDDEN, -17012, "채팅방 관리자가 아닙니다."),
     CHAT_ROOM_UPDATE_NOTHING(HttpStatus.BAD_REQUEST, -17013, "이전과 동일하여 수정할 내용이 없습니다."),
     CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE(HttpStatus.BAD_REQUEST, -17014, "기본 이미지는 삭제할 수 없습니다."),
-
+    NOT_FORCE_LEAVE_YOURSELF(HttpStatus.FORBIDDEN, -17015, "자신을 강제로 퇴장시킬 수 없습니다."),
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
     INVALID_COMMENT_ACCESS(HttpStatus.FORBIDDEN, -18002, "댓글에 대한 유효하지 않은 접근입니다."),
+
+    // category API error 19000대
+    NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 카테고리입니다."),
 }
