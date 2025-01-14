@@ -58,7 +58,7 @@ class AlarmCommandService(
                      */
                     if (pingPongRepository.existPing(session.id)) {
                         session.close()
-                        removeOnlineUserSession(userId, session)
+                        userSessions.remove(session)
                     } else {
                         pingPongRepository.savePing(session.id)
                         session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
@@ -66,7 +66,7 @@ class AlarmCommandService(
                 } catch (e: Exception) {
                     // 에러가 발생할 경우 세션을 제거합니다.
                     session.close()
-                    removeOnlineUserSession(userId, session)
+                    userSessions.remove(session)
                 }
             }
         }

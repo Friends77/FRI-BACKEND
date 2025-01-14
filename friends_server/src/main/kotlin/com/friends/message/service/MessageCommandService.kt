@@ -57,14 +57,14 @@ class MessageCommandService(
                     if (pingPongRepository.existPing(session.id)) {
                         // pong 메세지를 받지 못할 경우 세션을 제거합니다.
                         session.close()
-                        removeOnlineUserSession(userId, session)
+                        userSessions.remove(session)
                     }
                     session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
                     pingPongRepository.savePing(session.id)
                 } catch (e: Exception) {
                     // 에러가 발생할 경우 세션을 제거합니다.
                     session.close()
-                    removeOnlineUserSession(userId, session)
+                    userSessions.remove(session)
                 }
             }
         }
