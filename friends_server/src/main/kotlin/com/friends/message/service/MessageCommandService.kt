@@ -101,7 +101,9 @@ class MessageCommandService(
         memberId: Long,
         session: WebSocketSession,
     ) {
-        sessions[memberId]?.remove(session)
+        sessions[memberId]?.removeIf {
+            it.id == session.id
+        }
 
         chatRoomMemberRepository
             .findAllByMemberId(memberId)
