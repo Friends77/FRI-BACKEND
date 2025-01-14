@@ -21,10 +21,12 @@ class Vote(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     var board: Board,
-    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL], orphanRemoval = true)
     var options: MutableList<VoteOption> = mutableListOf(),
 ):BaseModifiableEntity(){
-
+    fun addOption(content: String){
+        options.add(VoteOption(vote = this, content = content))
+    }
 }
 
 /*

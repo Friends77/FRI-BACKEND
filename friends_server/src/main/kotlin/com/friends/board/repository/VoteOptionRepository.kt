@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface VoteOptionRepository : JpaRepository<VoteOption, Long> {
     fun findOptionById(optionId: Long): VoteOption?
-    fun saveOption(option: VoteOption): VoteOption
 }
