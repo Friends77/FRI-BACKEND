@@ -10,6 +10,8 @@ import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
+import com.friends.message.MessageNotFoundException
+import com.friends.message.NotMessageSenderException
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
@@ -164,11 +166,13 @@ class MessageCommandService(
         memberId: Long,
         content: String,
         type: MessageType,
+        message: Message? = null,
     ): Message {
         val chatRoomLock = chatRoomLocks.computeIfAbsent(chatRoomId) { Any() }
 
         // 채팅방 단위로 동기화 (synchronized block)
         synchronized(chatRoomLock) {
+            //
             /**
              * 메세지를 보낼 때마다 보낸 유저와 채팅방이 있는지 DB 에 확인합니다.
              * 이 과정이 비효율적일 경우 아래 프록시 객체를 생성하여 메세지를 보내는 로직을 고려합니다.
@@ -179,10 +183,10 @@ class MessageCommandService(
              */
             val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
             val sender = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-            val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
+            val sendMessage = message ?: messageRepository.save(Message.of(chatRoom, sender, content, type))
 
             // 채팅방의 모든 온라인 유저에게 메세지 전송
-            val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
+            val onlineUserIdSet = onlineUsers[chatRoomId] ?: return sendMessage// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
             val futures = mutableListOf<CompletableFuture<*>>()
             onlineUserIdSet.forEach { userId ->
                 val userSessions = sessions[userId] ?: return@forEach
@@ -194,11 +198,12 @@ class MessageCommandService(
                                 try {
                                     val sendMessageDto =
                                         ChatSendMessageDto(
-                                            chatRoom.id,
-                                            sender.id,
-                                            message.content,
-                                            message.createdAt,
-                                            message.type,
+                                            sendMessage.id,
+                                            chatRoomId,
+                                            sendMessage.sender.id,
+                                            sendMessage.content,
+                                            sendMessage.createdAt,
+                                            sendMessage.type,
                                         )
                                     session.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
                                 } catch (e: Exception) {
@@ -211,8 +216,23 @@ class MessageCommandService(
             }
             // 모든 메세지 전송이 완료될 때까지 대기
             CompletableFuture.allOf(*futures.toTypedArray()).join()
-
-            return message
+            return sendMessage
         }
+    }
+
+    @Transactional
+    fun deleteMessage(
+        memberId: Long,
+        messageId: Long,
+    ) {
+        val message = messageRepository.findById(messageId).orElseThrow { throw MessageNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        if (message.sender != member) throw NotMessageSenderException()
+        message.content = "삭제된 메세지입니다."
+        if (message.type == MessageType.IMAGE) {
+            message.type = MessageType.TEXT
+        }
+        // 채팅방의 모든 온라인 유저에게 메세지 전송(동기화하지 않음)
+        sendMessage(message.chatRoom.id, memberId, message.content, MessageType.DELETE_MESSAGE, message)
     }
 }
