@@ -52,21 +52,35 @@ class FriendShipQueryServiceTest(
                 receiver2Profile = profileRepository.save(createTestProfile(receiver2))
                 receiver3Profile = profileRepository.save(createTestProfile(receiver3))
 
-                friendship1 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver1, friendshipStatus = FriendshipStatusEnums.WAITING))
-                friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
-                friendship3 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver3, friendshipStatus = FriendshipStatusEnums.BLOCK))
-
                 println("beforeEach")
             }
             describe("FriendShipQueryService 는") {
                 context("친구 요청이 수락된 경우") {
                     it("요청이 수락된 친구만 조회한다.") {
+                        friendship1 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver1, friendshipStatus = FriendshipStatusEnums.WAITING))
+                        friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+                        friendship3 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver3, friendshipStatus = FriendshipStatusEnums.BLOCK))
+
                         val result = friendShipQueryService.getFriendshipList(requester.id)
-                        print(result)
 
                         result.map { it.memberId } shouldContainExactly
                             listOf(
                                 receiver2Profile.member.id,
+                            )
+                    }
+
+                    it("요청이 여러명인 경우 이름 순으로 정렬된다.") {
+                        friendship3 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver3, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+                        friendship1 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver1, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+                        friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+
+                        val result = friendShipQueryService.getFriendshipList(requester.id)
+
+                        result.map { it.nickname } shouldContainExactly
+                            listOf(
+                                receiver1Profile.member.nickname, // test1
+                                receiver2Profile.member.nickname, // test2
+                                receiver3Profile.member.nickname, // test3
                             )
                     }
                 }
