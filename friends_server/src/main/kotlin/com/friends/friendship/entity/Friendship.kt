@@ -26,6 +26,8 @@ class Friendship(
     val receiver: Member,
     private var friendshipStatus: FriendshipStatusEnums,
 ) : BaseModifiableEntity() {
+    fun getFriendshipStatus(): FriendshipStatusEnums = friendshipStatus
+
     fun acceptFriendshipRequest() {
         friendshipStatus = FriendshipStatusEnums.ACCEPT
     }

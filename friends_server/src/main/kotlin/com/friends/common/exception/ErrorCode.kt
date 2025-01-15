@@ -75,4 +75,5 @@ enum class ErrorCode(
     // Friendship API error 20000대
     FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, -20001, "이미 친구이거나, 친구 요청을 보낸 상태입니다."),
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -20002, "친구 관계나 요청 상태가 존재하지 않습니다."),
+    FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -20003, "친구 요청 대기 상태가 아닙니다."),
 }

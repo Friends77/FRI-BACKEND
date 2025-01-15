@@ -4,6 +4,8 @@ import com.friends.alarm.service.AlarmCommandService
 import com.friends.friendship.entity.Friendship
 import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.exception.FriendShipAlreadyExistException
+import com.friends.friendship.exception.FriendShipNotFoundException
+import com.friends.friendship.exception.FriendShipNotWaitingException
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
@@ -48,24 +50,32 @@ class FriendShipCommandService(
     ) {
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
-                ?: throw FriendShipAlreadyExistException()
+                ?: throw FriendShipNotFoundException()
 
-        friendship.acceptFriendshipRequest()
+        if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
+            friendship.acceptFriendshipRequest()
+        } else {
+            throw FriendShipNotWaitingException()
+        }
     }
 
     /**
      * 친구 요청을 거절합니다.
      * 다시 요청할 수 있습니다.
      */
-    fun deleteFriendship(
+    fun rejectFriendship(
         requesterId: Long,
         receiverId: Long,
     ) {
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
-                ?: throw FriendShipAlreadyExistException()
+                ?: throw FriendShipNotFoundException()
 
-        friendShipRepository.delete(friendship)
+        if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
+            friendShipRepository.delete(friendship)
+        } else {
+            throw FriendShipNotWaitingException()
+        }
     }
 
     /**
@@ -78,8 +88,12 @@ class FriendShipCommandService(
     ) {
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
-                ?: throw FriendShipAlreadyExistException()
+                ?: throw FriendShipNotFoundException()
 
-        friendship.blockFriendRequest()
+        if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
+            friendship.blockFriendRequest()
+        } else {
+            throw FriendShipNotWaitingException()
+        }
     }
 }

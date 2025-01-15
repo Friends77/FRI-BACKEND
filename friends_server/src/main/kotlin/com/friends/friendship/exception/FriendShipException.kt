@@ -9,3 +9,5 @@ abstract class FriendShipException(
 class FriendShipAlreadyExistException : FriendShipException(ErrorCode.FRIENDSHIP_ALREADY_EXIST)
 
 class FriendShipNotFoundException : FriendShipException(ErrorCode.FRIENDSHIP_NOT_FOUND)
+
+class FriendShipNotWaitingException : FriendShipException(ErrorCode.FRIENDSHIP_NOT_WAITING)
