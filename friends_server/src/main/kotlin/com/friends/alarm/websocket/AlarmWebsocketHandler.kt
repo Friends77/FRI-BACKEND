@@ -27,7 +27,7 @@ class AlarmWebsocketHandler(
                 session = ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, BUFFER_SIZE_LIMIT),
             )
         } catch (e: Exception) {
-            session.close(CloseStatus.SERVER_ERROR)// 채팅방 연결 종료 후 에러 처리
+            session.close(CloseStatus.SERVER_ERROR)
             throw UnexpectedChatRoomException(e)
         }
     }
@@ -42,7 +42,7 @@ class AlarmWebsocketHandler(
             return
         }
 
-        // 알람 요청의 경우 웹소켓이 아닌 REST API 를 통해 진행하고 알람 수신만 웹소켓을 활용합니다.
+        // 알람 전송의 경우 REST API 에서 웹소켓 세션을 활용합니다.
     }
 
     override fun afterConnectionClosed(
