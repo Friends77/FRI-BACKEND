@@ -46,10 +46,9 @@ class VoteCommandService(
         val vote =
             voteRepository.findById(voteId)
                 .orElseThrow { VoteNotFoundException() }
-        vote.addOption(optionContent)
+        val addedOption = vote.addOption(optionContent)
         voteRepository.save(vote)
-        //마지막에 추가된 옵션 반환
-        return vote.options.last()
+        return addedOption
     }
 
     /**
@@ -100,11 +99,7 @@ class VoteCommandService(
         val option =
             voteOptionRepository.findById(optionId)
                 .orElseThrow{throw VoteOptionNotFoundException()}
-        if (option.voteCount > 0) {
-            option.decreaseVoteCount()
-            voteOptionRepository.save(option)
-        } else {
-            throw VoteOptionPositiveCountException()
-        }
+        option.decreaseVoteCount()
+        voteOptionRepository.save(option)
     }
 }
