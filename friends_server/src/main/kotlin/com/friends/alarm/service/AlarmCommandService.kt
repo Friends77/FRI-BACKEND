@@ -3,12 +3,21 @@ package com.friends.alarm.service
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
+import com.friends.alarm.toAlarmResponseDto
 import com.friends.chat.ChatRoomNotFoundException
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.chat.repository.PingPongRepository
+import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.socket.TextMessage
+import org.springframework.web.socket.WebSocketSession
+import java.util.concurrent.ConcurrentHashMap
 
 @Service
 @Transactional
@@ -16,7 +25,52 @@ class AlarmCommandService(
     private val memberRepository: MemberRepository,
     private val alarmRepository: AlarmRepository,
     private val chatRoomRepository: ChatRoomRepository,
+    private val pingPongRepository: PingPongRepository,
 ) {
+    private val onlineUserSessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
+
+    fun addOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        onlineUserSessions.computeIfAbsent(memberId) { ConcurrentHashMap.newKeySet() }.add(session)
+    }
+
+    fun removeOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        onlineUserSessions[memberId]?.removeIf {
+            it.id == session.id
+        }
+    }
+
+    @Scheduled(fixedRate = 30000) // 30초 마다 실행
+    fun ping() {
+        for (entry in onlineUserSessions) {
+            val userSessions = entry.value
+            userSessions.forEach { session ->
+                try {
+                    /**
+                     * ping 이 존재한다는 것은 pong 을 받지 못했다는 것을 의미합니다.
+                     * 이 경우에는 세션을 제거합니다.
+                     */
+                    if (pingPongRepository.existPing(session.id)) {
+                        session.close()
+                        userSessions.remove(session)
+                    } else {
+                        pingPongRepository.savePing(session.id)
+                        session.sendMessage(TextMessage(JsonUtil.toJson(PingPongDto(PingPongType.PING.name.lowercase()))))
+                    }
+                } catch (e: Exception) {
+                    // 에러가 발생할 경우 세션을 제거합니다.
+                    session.close()
+                    userSessions.remove(session)
+                }
+            }
+        }
+    }
+
     fun sendFriendRequestAlarm(
         requesterId: Long,
         receiverId: Long,
@@ -32,7 +86,6 @@ class AlarmCommandService(
             )
 
         sendAlarm(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
     }
 
     fun sendChatInvitationAlarm(
@@ -53,13 +106,15 @@ class AlarmCommandService(
             )
 
         sendAlarm(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
     }
 
     private fun sendAlarm(
         alarm: Alarm,
     ) {
         alarmRepository.save(alarm)
-        // TODO 웹소켓을 이용하여 알람 전송
+        val alarmResponseDto = toAlarmResponseDto(alarm)
+        onlineUserSessions[alarm.receiver.id]?.forEach {
+            it.sendMessage(TextMessage(JsonUtil.toJson(alarmResponseDto)))
+        }
     }
 }

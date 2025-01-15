@@ -10,7 +10,7 @@ import org.springframework.web.socket.server.HandshakeInterceptor
 import java.lang.Exception
 
 @Component
-class ChatWebsocketInterceptor(
+class AuthWebsocketInterceptor(
     private val secondaryTokenService: SecondaryTokenService,
 ) : HandshakeInterceptor {
     override fun beforeHandshake(
