@@ -54,7 +54,7 @@ class FriendShipCommandService(
     }
 
     /**
-     * 친구를 취소하거나, 친구 요청을 거절합니다.
+     * 친구 요청을 거절합니다.
      * 다시 요청할 수 있습니다.
      */
     fun deleteFriendship(
@@ -69,7 +69,7 @@ class FriendShipCommandService(
     }
 
     /**
-     * 친구를 차단하거나, 친구 요청을 차단합니다.
+     * 친구 요청을 차단합니다.
      * 차단된 친구는 친구 리스트에서 조회되지 않고 다시 요청할 수 없습니다.
      */
     fun blockFriendship(
