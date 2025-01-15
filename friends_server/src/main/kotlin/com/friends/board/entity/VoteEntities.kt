@@ -24,8 +24,8 @@ class Vote(
     var board: Board,
     @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL], orphanRemoval = true)
     var options: MutableList<VoteOption> = mutableListOf(),
-):BaseModifiableEntity(){
-    fun addOption(content: String): VoteOption{
+) : BaseModifiableEntity() {
+    fun addOption(content: String): VoteOption {
         val option = VoteOption(vote = this, content = content)
         options.add(option)
         return option
@@ -46,14 +46,15 @@ class VoteOption(
     @Column(length = 255, nullable = false)
     var content: String,
     var voteCount: Int = 0,
-){
-    fun increaseVoteCount(){
-        voteCount++;
+) {
+    fun increaseVoteCount() {
+        voteCount++
     }
-    fun decreaseVoteCount(){
-        if(voteCount > 0){
-            voteCount--;
-        }else{
+
+    fun decreaseVoteCount() {
+        if (voteCount > 0) {
+            voteCount--
+        } else {
             throw VoteOptionPositiveCountException()
         }
     }

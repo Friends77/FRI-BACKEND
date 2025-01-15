@@ -5,7 +5,6 @@ import com.friends.board.entity.VoteOption
 import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.exception.VoteNotFoundException
 import com.friends.board.exception.VoteOptionNotFoundException
-import com.friends.board.exception.VoteOptionPositiveCountException
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.VoteOptionRepository
 import com.friends.board.repository.VoteRepository
@@ -30,7 +29,7 @@ class VoteCommandService(
             boardRepository.findById(boardId)
                 .orElseThrow { BoardNotFoundException() }
         val vote = Vote(board = board)
-        voteOptionContent.forEach {content ->
+        voteOptionContent.forEach { content ->
             vote.addOption(content)
         }
         return voteRepository.save(vote)
@@ -61,9 +60,10 @@ class VoteCommandService(
         val vote =
             voteRepository.findById(voteId)
                 .orElseThrow { VoteNotFoundException() }
-        val optionToDelete = voteOptionRepository.findById(optionId)
-            .orElseThrow { VoteOptionNotFoundException() }
-        if(!vote.options.contains(optionToDelete)) {
+        val optionToDelete =
+            voteOptionRepository.findById(optionId)
+                .orElseThrow { VoteOptionNotFoundException() }
+        if (!vote.options.contains(optionToDelete)) {
             throw VoteOptionNotFoundException()
         }
         vote.options.remove(optionToDelete)
@@ -87,7 +87,7 @@ class VoteCommandService(
     fun incrementVoteCount(optionId: Long) {
         val option =
             voteOptionRepository.findById(optionId)
-                .orElseThrow{throw VoteOptionNotFoundException()}
+                .orElseThrow { throw VoteOptionNotFoundException() }
         option.increaseVoteCount()
         voteOptionRepository.save(option)
     }
@@ -98,7 +98,7 @@ class VoteCommandService(
     fun decrementVoteCount(optionId: Long) {
         val option =
             voteOptionRepository.findById(optionId)
-                .orElseThrow{throw VoteOptionNotFoundException()}
+                .orElseThrow { throw VoteOptionNotFoundException() }
         option.decreaseVoteCount()
         voteOptionRepository.save(option)
     }

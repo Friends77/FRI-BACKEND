@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.friends.board.exception.BoardException
 import com.friends.board.exception.CommentException
-import com.friends.category.CategoryException
 import com.friends.board.exception.VoteException
+import com.friends.category.CategoryException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
 import com.friends.member.MemberExceptions
