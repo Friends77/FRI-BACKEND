@@ -1,7 +1,7 @@
 package com.friends.recommendation.controller
 
 import com.friends.common.dto.ListBaseResponse
-import com.friends.profile.dto.ProfileWithDistanceQueryDto
+import com.friends.profile.dto.ProfileWithDistanceResponseDto
 import com.friends.recommendation.service.UserRecommendationService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -20,7 +20,7 @@ class UserRecommendationController(
         @AuthenticationPrincipal memberId: Long,
         @RequestParam distance: Double,
         @RequestParam(required = false, defaultValue = "20") size: Int,
-    ): ResponseEntity<ListBaseResponse<ProfileWithDistanceQueryDto>> {
+    ): ResponseEntity<ListBaseResponse<ProfileWithDistanceResponseDto>> {
         val result = userRecommendationService.getDistanceRecommendation(memberId, distance, size)
         return ResponseEntity.ok(result)
     }

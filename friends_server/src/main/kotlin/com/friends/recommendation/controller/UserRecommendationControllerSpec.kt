@@ -3,7 +3,7 @@ package com.friends.recommendation.controller
 import com.friends.common.dto.ListBaseResponse
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
-import com.friends.profile.dto.ProfileWithDistanceQueryDto
+import com.friends.profile.dto.ProfileWithDistanceResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -30,5 +30,5 @@ interface UserRecommendationControllerSpec {
         memberId: Long,
         distance: Double,
         size: Int,
-    ): ResponseEntity<ListBaseResponse<ProfileWithDistanceQueryDto>>
+    ): ResponseEntity<ListBaseResponse<ProfileWithDistanceResponseDto>>
 }
