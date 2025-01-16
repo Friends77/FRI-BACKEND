@@ -30,6 +30,7 @@ data class ProfileUpdateDto(
 
 //조회용 dto
 data class ProfileResponseDto(
+    val memberId: Long,
     val nickname: String,
     val email: String,
     var birth: LocalDate,
