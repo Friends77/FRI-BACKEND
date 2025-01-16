@@ -2,7 +2,7 @@ package com.friends.profile.repository
 
 import com.friends.category.entity.Category
 import com.friends.common.util.getSlice
-import com.friends.profile.dto.ProfileWithDistanceDto
+import com.friends.profile.dto.ProfileWithDistanceQueryDto
 import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
@@ -20,7 +20,7 @@ interface ProfileRepository :
     // Haversine 공식을 사용해서 주어진 좌표에서 주어진 거리 이내에 있는 프로필을 찾는다.
     @Query(
         """
-        SELECT new com.friends.profile.dto.ProfileWithDistanceDto(
+        SELECT new com.friends.profile.dto.ProfileWithDistanceQueryDto(
             p.id, m.nickname, p.imageUrl,
             (6371000 * ACOS(COS(RADIANS(:latitude)) * COS(RADIANS(p.location.latitude)) * 
             COS(RADIANS(p.location.longitude) - RADIANS(:longitude)) + 
@@ -38,7 +38,7 @@ interface ProfileRepository :
         @Param("longitude") longitude: Double,
         @Param("distance") distance: Double,
         pageable: Pageable? = null,
-    ): List<ProfileWithDistanceDto>
+    ): List<ProfileWithDistanceQueryDto>
 }
 
 interface ProfileCustomRepository {
