@@ -8,7 +8,6 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
-import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.entity.Message
@@ -17,7 +16,6 @@ import com.friends.message.repository.MessageRepository
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import java.util.concurrent.CompletableFuture
@@ -32,7 +30,6 @@ class MessageCommandService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     private val virtualThreadExecutor: ExecutorService,
     private val pingPongRepository: PingPongRepository,
-    private val s3ClientService: S3ClientService,
 ) {
     /**
      * 채팅방 ID를 키로 하고, 참여하고 있는 온라인 유저의 아이디를 값으로 하는 Map입니다.
@@ -226,16 +223,5 @@ class MessageCommandService(
 
             return message
         }
-    }
-
-    @Transactional
-    fun uploadImage(
-        memberId: Long,
-        chatRoomId: Long,
-        image: MultipartFile,
-    ): String {
-        memberRepository.existsById(memberId).also { if (!it) throw MemberNotFoundException() }
-        chatRoomRepository.existsById(chatRoomId).also { if (!it) throw ChatRoomNotFoundException() }
-        return s3ClientService.upload(image)
     }
 }
