@@ -14,7 +14,7 @@ data class ProfileCreateDto(
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
-    var imageUrl: String,
+    var imageUrl: String? = null,
 )
 
 //수정가능한 필드 dto
