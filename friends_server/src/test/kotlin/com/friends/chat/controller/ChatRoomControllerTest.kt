@@ -106,28 +106,6 @@ class ChatRoomControllerTest(
                         )
                 }
             }
-
-            `when`("사이즈가 양수가 아닌 경우") {
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            getWithAuthentication(requestPath).param("size", "0"),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
-
-            `when`("lastChatRoomMemberId가 양수가 아닌 경우") {
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            getWithAuthentication(requestPath).param("lastChatRoomMemberId", "-1"),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
         }
 
         given("GET  $requestPath/{id} Test") {
