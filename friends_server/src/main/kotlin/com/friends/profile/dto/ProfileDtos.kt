@@ -38,7 +38,7 @@ data class ProfileResponseDto(
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: List<Category>,
+    var interestTag: List<Category> = listOf(),
     var imageUrl: String,
 )
 
