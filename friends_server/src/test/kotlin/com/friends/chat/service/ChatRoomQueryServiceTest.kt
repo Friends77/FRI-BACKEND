@@ -12,6 +12,7 @@ import com.friends.friendship.repository.FriendshipRepository
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
+import com.friends.message.createMockTestMessage
 import com.friends.message.repository.MessageRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
@@ -50,6 +51,7 @@ class ChatRoomQueryServiceTest :
                     every { chatRoomMemberRepository.findAllByMemberAndFriends(any(), any()) } returns createTestChatRoomList()
                     every { messageRepository.countUnreadMessages(any()) } returns 0
                     every { chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(any()) } returns listOf(createTestMember())
+                    every { messageRepository.findRecentMessageInChatRoom(any()) } returns createMockTestMessage()
                     then("채팅방이 조회된다.") {
                         chatRoomQueryService.getChatRooms(MEMBER_ID, null)
                     }

@@ -38,8 +38,8 @@ class ProfileCategoryRepositoryTest(
                 profile1 = profileRepository.save(createTestProfile(member = member1))
                 profile2 = profileRepository.save(createTestProfile(member = member2))
 
-                category1 = categoryRepository.save(Category(name = "자유수다", type = CategoryType.SUBJECT, image = "🧑‍🧑‍🧒"))
-                category2 = categoryRepository.save(Category(name = "팬덤", type = CategoryType.SUBJECT, image = "🎈"))
+                category1 = categoryRepository.save(Category(name = "카테고리1", type = CategoryType.SUBJECT, image = "🎵"))
+                category2 = categoryRepository.save(Category(name = "카테고리2", type = CategoryType.SUBJECT, image = "🎈"))
 
                 profileInterestTagRepository.save(createTestProfileInterestTag(profile1, category = category1))
                 profileInterestTagRepository.save(createTestProfileInterestTag(profile1, category = category2))

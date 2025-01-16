@@ -25,9 +25,9 @@ class Message(
     @JoinColumn(name = "sender_id", nullable = false, updatable = false)
     val sender: Member,
     @Column(nullable = false)
-    val content: String,
+    var content: String,
     @Column(nullable = false)
-    val type: MessageType,
+    var type: MessageType,
 ) : BaseTimeEntity() {
     companion object {
         fun of(
@@ -59,4 +59,5 @@ enum class MessageType {
     TEXT, // 일반 텍스트 메시지 및 이모지
     IMAGE,
     SYSTEM,
+    DELETE_MESSAGE,
 }
