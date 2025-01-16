@@ -6,7 +6,6 @@ import com.friends.chat.dto.PingPongDto
 import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
-import com.friends.message.entity.MessageType
 import com.friends.message.service.MessageCommandService
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
@@ -60,7 +59,7 @@ class ChatWebSocketHandler(
             chatMessage.chatRoomId,
             memberId,
             chatMessage.message,
-            MessageType.TEXT,
+            chatMessage.messageType,
         )
         // TODO : 아래 내용 리뷰 받고 수정
     }
