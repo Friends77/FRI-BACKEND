@@ -63,13 +63,13 @@ interface MessageControllerSpec {
     @Operation(
         description =
             "메세지 삭제 API <br>" +
-                "IMAGE 타입이 삭제되는 경우도 TEXT 타입과 같이 해당 message의 type은 TEXT 바뀌며, 내용도 삭제된 메세지입니다.라고 바뀝니다. <br> 메세지 삭제시, 웹소켓으로 \n {\n" +
+                "IMAGE 타입이 삭제되는 경우도 TEXT 타입과 같이 해당 message의 type은 DELETE_MESSAGE 바뀌며, 내용도 삭제된 메세지입니다.라고 바뀝니다. <br> 메세지 삭제시, 웹소켓으로 \n {\n" +
                 "    \"messageId\": 574,\n" +
                 "    \"chatRoomId\": 1,\n" +
                 "    \"senderId\": 4,\n" +
                 "    \"content\": \"삭제된 메세지입니다.\",\n" +
                 "    \"createdAt\": 1736842876516,\n" +
-                "    \"type\": \"TEXT\"\n" +
+                "    \"type\": \"DELETE_MESSAGE\"\n" +
                 "} 형태의 메세지를 전송합니다. <br> DB 상에서 내용이 바뀌지만 이미 화면상에 랜더링된 데이터는 변경되지 않으니, 클라이언트는 해당 메세지를 화면상에서 삭제되었다고 처리해야 합니다.",
         responses = [
             ApiResponse(
