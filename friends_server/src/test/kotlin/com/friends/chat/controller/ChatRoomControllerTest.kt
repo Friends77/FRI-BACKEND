@@ -5,8 +5,8 @@ import com.friends.chat.CREATE_CHAT_ROOM_REQUEST
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoomCreateRequestDto
 import com.friends.chat.createTestChatRoomDetailResponseDto
+import com.friends.chat.createTestChatRoomMemberList
 import com.friends.chat.createTestCreateChatRoomResponseDto
-import com.friends.chat.createTestMockSliceResponseChatRoom
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
 import com.friends.support.annotation.ControllerTest
@@ -96,7 +96,7 @@ class ChatRoomControllerTest(
 
         given("GET $requestPath Test") {
             `when`("정상적인 요청이 들어올 경우") {
-                every { chatRoomQueryService.getChatRooms(any(), any(), any(), any()) } returns createTestMockSliceResponseChatRoom()
+                every { chatRoomQueryService.getChatRooms(any(), any()) } returns createTestChatRoomMemberList()
                 then("채팅방을 조회한다.") {
                     mockMvc
                         .perform(

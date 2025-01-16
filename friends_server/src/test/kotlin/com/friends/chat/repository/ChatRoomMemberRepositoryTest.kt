@@ -1,6 +1,5 @@
 package com.friends.chat.repository
 
-import com.friends.TEST_SIZE
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomMember
 import com.friends.chat.entity.ChatRoom
@@ -76,28 +75,16 @@ class ChatRoomMemberRepositoryTest(
             }
         }
 
-        describe("sliceChatRoomIdByMember 메서드는") {
+        describe("findAllByMemberAndFriends 메서드는") {
             context("memberId만 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(), TEST_SIZE, null).content shouldBe listOf(chatRoomMember5, chatRoomMember2)
+                    chatRoomMemberRepository.findAllByMemberAndFriends(member2.id, null) shouldBe listOf(chatRoomMember5, chatRoomMember2)
                 }
             }
 
             context("회원 ID 리스트를 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member2.id, listOf(member1, member3), TEST_SIZE, null).content shouldBe listOf(chatRoomMember2)
-                }
-            }
-
-            context("사이즈를 받으면") {
-                it("chatRoomMember를 사이즈만큼 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member3.id, listOf(), 1, null).size shouldBe 1
-                }
-            }
-
-            context("회원 ID와 마지막 채팅방 ID를 받으면") {
-                it("chatRoomMember를 반환한다") {
-                    chatRoomMemberRepository.sliceChatRoomIdByMember(member3.id, listOf(), TEST_SIZE, chatRoomMember4.id).content shouldBe listOf(chatRoomMember3)
+                    chatRoomMemberRepository.findAllByMemberAndFriends(member2.id, listOf(member1, member3)) shouldBe listOf(chatRoomMember2)
                 }
             }
         }

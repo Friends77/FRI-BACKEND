@@ -6,6 +6,9 @@ import com.friends.category.repository.CategoryRepository
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.service.ChatRoomCommandService
+import com.friends.friendship.entity.Friendship
+import com.friends.friendship.entity.FriendshipStatusEnums
+import com.friends.friendship.repository.FriendshipRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.entity.GenderEnum
@@ -123,6 +126,7 @@ class InitDB(
         private val profileInterestTagRepository: ProfileInterestTagRepository,
         private val chatRoomCommandService: ChatRoomCommandService,
         private val chatRoomRepository: ChatRoomRepository,
+        private val friendshipRepository: FriendshipRepository,
     ) {
         fun init() {
             // 100 명의 테스트 유저 생성
@@ -220,6 +224,18 @@ class InitDB(
                 val randomMembers = members.shuffled().take(randomInt)
                 for (member in randomMembers) {
                     chatRoomCommandService.enterChatRoom(chatRoom.id, member.id)
+                }
+            }
+
+            // 랜덤으로 친구 추가
+            for (member in members) {
+                val randomInt = (1..5).random()
+                val randomFriends = members.shuffled().take(randomInt)
+                for (friend in randomFriends) {
+                    if (member.id == friend.id) {
+                        continue
+                    }
+                    friendshipRepository.save(Friendship(id = 0L, receiveMember = member, requestMember = friend, friendshipStatus = FriendshipStatusEnums.ACCEPT))
                 }
             }
         }

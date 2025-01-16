@@ -8,8 +8,6 @@ import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.common.dto.SliceBaseResponse
-import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.friendship.repository.FriendshipRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.entity.Member
@@ -35,20 +33,18 @@ class ChatRoomQueryService(
     @Transactional
     fun getChatRooms(
         memberId: Long,
-        size: Int,
-        lastChatRoomMemberId: Long?,
         nickname: String?,
-    ): SliceBaseResponse<ChatRoomInfoResponseDto> {
+    ): List<ChatRoomInfoResponseDto> {
         memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        val friends: List<Member> =
+        val friends: List<Member>? =
             if (nickname != null) {
-                friendshipRepository.findFriendshipByMemberIdAndNickname(memberId, nickname)
+                friendshipRepository.findFriendshipByMemberIdAndNickname(memberId, nickname).also { if (it.isEmpty()) return emptyList() }
             } else {
-                listOf()
+                null
             }
         val chatRoomInfoResponse =
             chatRoomMemberRepository
-                .sliceChatRoomIdByMember(memberId, friends, size, lastChatRoomMemberId)
+                .findAllByMemberAndFriends(memberId, friends)
                 .map {
                     val lastMessage = messageRepository.findRecentMessageInChatRoom(it.chatRoom)
                     toChatRoomInfoResponse(
@@ -60,7 +56,7 @@ class ChatRoomQueryService(
                         it.chatRoom.imageUrl ?: chatRoomBaseImageUrl,
                     )
                 } //해당 채팅방 멤버 수와 읽지 않은 메세지 수를 가져옴
-        return toSliceBaseResponse(chatRoomInfoResponse)
+        return chatRoomInfoResponse
     }
 
     @Transactional(readOnly = true)
