@@ -38,8 +38,8 @@ data class ProfileResponseDto(
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<Category> = mutableSetOf(),
-    var imageUrl: String? = null,
+    var interestTag: List<Category>,
+    var imageUrl: String,
 )
 
 data class ProfileWithDistanceDto(
