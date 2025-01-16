@@ -4,6 +4,7 @@ import com.friends.alarm.service.AlarmCommandService
 import com.friends.friendship.entity.Friendship
 import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.exception.FriendShipAlreadyExistException
+import com.friends.friendship.exception.FriendShipBlockedException
 import com.friends.friendship.exception.FriendShipNotFoundException
 import com.friends.friendship.exception.FriendShipNotWaitingException
 import com.friends.friendship.repository.FriendShipRepository
@@ -30,9 +31,17 @@ class FriendShipCommandService(
         val requester = memberRepository.findById(requesterId).orElseThrow { MemberNotFoundException() }
         val receiver = memberRepository.findById(receiverId).orElseThrow { MemberNotFoundException() }
 
-        if (friendShipRepository.existsByRequesterAndReceiver(requester, receiver) ||
-            friendShipRepository.existsByRequesterAndReceiver(receiver, requester)
-        ) {
+        // 이미 요청한 친구인지, 차단된 친구인지 확인합니다.
+        friendShipRepository.findByRequesterAndReceiver(requester, receiver)?.let {
+            if (it.getFriendshipStatus() == FriendshipStatusEnums.BLOCK) {
+                throw FriendShipBlockedException()
+            }
+            throw FriendShipAlreadyExistException()
+        }
+        friendShipRepository.findByRequesterAndReceiver(receiver, requester)?.let {
+            if (it.getFriendshipStatus() == FriendshipStatusEnums.BLOCK) {
+                throw FriendShipBlockedException()
+            }
             throw FriendShipAlreadyExistException()
         }
 

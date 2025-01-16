@@ -11,3 +11,5 @@ class FriendShipAlreadyExistException : FriendShipException(ErrorCode.FRIENDSHIP
 class FriendShipNotFoundException : FriendShipException(ErrorCode.FRIENDSHIP_NOT_FOUND)
 
 class FriendShipNotWaitingException : FriendShipException(ErrorCode.FRIENDSHIP_NOT_WAITING)
+
+class FriendShipBlockedException : FriendShipException(ErrorCode.FRIENDSHIP_BLOCKED)
