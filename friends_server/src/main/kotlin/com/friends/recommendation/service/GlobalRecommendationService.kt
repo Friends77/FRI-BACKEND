@@ -12,10 +12,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class GlobalRecommendationService(
     private val profileRepository: ProfileRepository,
-) {
     @Value("\${image.profile-base-url}")
-    lateinit var profileBaseImageUrl: String
-
+    private val profileBaseImageUrl: String,
+) {
     fun getCategoryRecommendation(
         categoryIds: List<Long>,
         size: Int,
