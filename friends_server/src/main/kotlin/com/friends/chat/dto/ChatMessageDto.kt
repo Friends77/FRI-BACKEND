@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 data class ChatReceiveMessageDto(
     val chatRoomId: Long,
     val message: String,
+    val messageType: MessageType,
 )
 
 data class ChatSendMessageDto(
