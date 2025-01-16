@@ -71,4 +71,8 @@ enum class ErrorCode(
 
     // category API error 19000대
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 카테고리입니다."),
+
+    // Message API error 20000대
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 메시지입니다."),
+    NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -20002, "메세지 발신자가 아닙니다."),
 }
