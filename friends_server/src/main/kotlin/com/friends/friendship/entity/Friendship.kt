@@ -24,7 +24,7 @@ class Friendship(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receive_member_id")
     val receiveMember: Member,
-    private var friendshipStatus: FriendshipStatusEnums,
+    var friendshipStatus: FriendshipStatusEnums,
 ) : BaseModifiableEntity() {
     fun acceptFriendshipRequest() {
         friendshipStatus = FriendshipStatusEnums.ACCEPT
