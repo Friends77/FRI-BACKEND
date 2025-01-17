@@ -67,7 +67,6 @@ class VoteCommandService(
             throw VoteOptionNotFoundException()
         }
         vote.options.remove(optionToDelete)
-        voteOptionRepository.delete(optionToDelete)
         voteRepository.save(vote)
     }
 
