@@ -43,6 +43,12 @@ data class ChatSendMessageDto(
     )
 }
 
+data class ChatErrorMessageDto(
+    val clientMessageId: String?,
+    val code: Int,
+    val message: String,
+)
+
 enum class PingPongType {
     PING,
     PONG,

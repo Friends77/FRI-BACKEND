@@ -1,6 +1,7 @@
 package com.friends.chat.websocket
 
 import com.friends.chat.UnexpectedChatRoomException
+import com.friends.chat.dto.ChatErrorMessageDto
 import com.friends.chat.dto.ChatReceiveMessageDto
 import com.friends.chat.dto.PingPongDto
 import com.friends.chat.dto.PingPongType
@@ -49,16 +50,39 @@ class ChatWebSocketHandler(
             // ignore
         }
 
-        val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
-        val memberId = getMemberId(session)
+        val chatMessage =
+            try {
+                JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
+            } catch (e: Exception) {
+                val chatErrorMessageDto =
+                    ChatErrorMessageDto(
+                        clientMessageId = null,
+                        code = 400,
+                        message = "메세지 전송 양식이 부적절합니다.",
+                    )
+                session.sendMessage(TextMessage(JsonUtil.toJson(chatErrorMessageDto)))
+                return
+            }
 
-        messageCommandService.sendMessage(
-            chatMessage.chatRoomId,
-            memberId,
-            chatMessage.content,
-            chatMessage.type,
-            chatMessage.clientMessageId,
-        )
+        try {
+            val memberId = getMemberId(session)
+
+            messageCommandService.sendMessage(
+                chatMessage.chatRoomId,
+                memberId,
+                chatMessage.content,
+                chatMessage.type,
+                chatMessage.clientMessageId,
+            )
+        } catch (e: Exception) {
+            val chatErrorMessageDto =
+                ChatErrorMessageDto(
+                    clientMessageId = chatMessage.clientMessageId,
+                    code = 500,
+                    message = e.message ?: "알 수 없는 오류가 발생했습니다.",
+                )
+            session.sendMessage(TextMessage(JsonUtil.toJson(chatErrorMessageDto)))
+        }
     }
 
     override fun afterConnectionClosed(
