@@ -51,17 +51,14 @@ class ChatWebSocketHandler(
 
         val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
         val memberId = getMemberId(session)
-        /**
-         * 채팅 웹소켓을 통해 보내는 메세지는 TEXT 타입만 있다고 가정합니다.
-         * 이미지의 경우 웹소켓이 아닌 REST API 를 통해 이미지를 업로드하고 이미지 URL 을 채팅방에 보내는 방식으로 구현합니다. // TODO : 채팅방 내에서 이미지 전송하는 API 구현
-         */
+
         messageCommandService.sendMessage(
             chatMessage.chatRoomId,
             memberId,
             chatMessage.content,
             chatMessage.type,
+            chatMessage.clientMessageId,
         )
-        // TODO : 아래 내용 리뷰 받고 수정
     }
 
     override fun afterConnectionClosed(

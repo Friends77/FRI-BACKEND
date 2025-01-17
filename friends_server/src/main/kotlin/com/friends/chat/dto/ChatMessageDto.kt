@@ -25,6 +25,7 @@ data class ChatSendMessageDto(
     val type: MessageType,
 ) {
     constructor(
+        clientMessageId: String? = null,
         messageId: Long,
         chatRoomId: Long,
         senderId: Long,
@@ -32,6 +33,7 @@ data class ChatSendMessageDto(
         createdAt: LocalDateTime,
         type: MessageType,
     ) : this(
+        clientMessageId = clientMessageId,
         messageId = messageId,
         chatRoomId = chatRoomId,
         senderId = senderId,
