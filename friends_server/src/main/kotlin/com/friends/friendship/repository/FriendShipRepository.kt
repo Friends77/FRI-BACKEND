@@ -10,6 +10,11 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface FriendShipRepository :
     JpaRepository<Friendship, Long>,
     FriendShipCustomRepository {
+    fun findByRequesterAndReceiver(
+        requester: Member,
+        receiver: Member,
+    ): Friendship?
+
     fun existsByRequesterAndReceiver(
         requester: Member,
         receiver: Member,
