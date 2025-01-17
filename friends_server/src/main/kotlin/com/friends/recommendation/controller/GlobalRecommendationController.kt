@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 class GlobalRecommendationController(
     private val globalRecommendationService: GlobalRecommendationService,
 ) : GlobalRecommendationControllerSpec {
-    @GetMapping("/category")
-    override fun getCategoryRecommendation(
+    @GetMapping("/user/category")
+    override fun getRecommendationByUserCategory(
         @RequestParam categoryIds: List<Long>,
         @RequestParam(required = false, defaultValue = "20") size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithCategories>> {

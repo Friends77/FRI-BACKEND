@@ -18,7 +18,7 @@ interface GlobalRecommendationControllerSpec {
             ),
         ],
     )
-    fun getCategoryRecommendation(
+    fun getRecommendationByUserCategory(
         categoryIds: List<Long>,
         size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithCategories>>
