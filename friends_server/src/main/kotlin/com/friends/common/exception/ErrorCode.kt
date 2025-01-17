@@ -72,9 +72,19 @@ enum class ErrorCode(
     // category API error 19000대
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 카테고리입니다."),
 
-    // Friendship API error 20000대
-    FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, -20001, "이미 친구이거나, 친구 요청을 보낸 상태입니다."),
-    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -20002, "친구 관계나 요청 상태가 존재하지 않습니다."),
-    FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -20003, "친구 요청 대기 상태가 아닙니다."),
-    FRIENDSHIP_BLOCKED(HttpStatus.FORBIDDEN, -20004, "친구 요청이 차단되었습니다."),
+    // Vote API error 20000대
+    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 투표입니다."),
+    VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -20002, "존재하지 않는 선택지입니다."),
+    VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -20003, "투표수는 0 이상이어야 합니다."),
+    VOTE_NOT_FOUND_IN_BOARD(HttpStatus.NOT_FOUND, -20004, "해당 게시글에 투표가 존재하지 않습니다."),
+
+    // Message API error 21000대
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -21001, "존재하지 않는 메시지입니다."),
+    NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -21002, "메세지 발신자가 아닙니다."),
+
+    // Friendship API error 22000대
+    FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, -22001, "이미 친구이거나, 친구 요청을 보낸 상태입니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -22002, "친구 관계나 요청 상태가 존재하지 않습니다."),
+    FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -22003, "친구 요청 대기 상태가 아닙니다."),
+    FRIENDSHIP_BLOCKED(HttpStatus.FORBIDDEN, -22004, "친구 요청이 차단되었습니다."),
 }

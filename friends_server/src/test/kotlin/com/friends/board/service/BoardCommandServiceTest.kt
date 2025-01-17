@@ -1,8 +1,6 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
 import com.friends.board.INVALID_BOARD_ID
-import com.friends.board.InvalidBoardAccessException
 import com.friends.board.NON_AUTHORIZED_MEMBER_ID
 import com.friends.board.REQUEST_MEMBER_ID
 import com.friends.board.createBoardCategory
@@ -10,6 +8,8 @@ import com.friends.board.createBoardRequestDto
 import com.friends.board.createTestBoard
 import com.friends.board.createTestMember
 import com.friends.board.entity.BoardCategory
+import com.friends.board.exception.BoardNotFoundException
+import com.friends.board.exception.InvalidBoardAccessException
 import com.friends.board.repository.BoardCategoryRepository
 import com.friends.board.repository.BoardRepository
 import com.friends.category.repository.CategoryRepository
