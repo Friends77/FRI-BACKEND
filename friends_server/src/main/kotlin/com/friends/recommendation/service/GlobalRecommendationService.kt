@@ -1,5 +1,9 @@
 package com.friends.recommendation.service
 
+import com.friends.category.dto.CategoryInfoResponse
+import com.friends.chat.dto.ChatRoomRecommendationResponseDto
+import com.friends.chat.repository.ChatRoomMemberRepository
+import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.ListBaseResponse
 import com.friends.profile.dto.ProfileWithCategories
 import com.friends.profile.repository.ProfileRepository
@@ -12,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class GlobalRecommendationService(
     private val profileRepository: ProfileRepository,
+    private val chatRoomRepository: ChatRoomRepository,
+    private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    @Value("\${image.chat-room-base-url}")
+    private val chatBaseImageUrl: String,
 ) {
     @Value("\${image.profile-base-url}")
     lateinit var profileBaseImageUrl: String
@@ -33,5 +41,24 @@ class GlobalRecommendationService(
                 )
             },
         )
+    }
+
+    fun getRecommendationByChatCategory(
+        categoryIds: List<Long>,
+        size: Int,
+    ): ListBaseResponse<ChatRoomRecommendationResponseDto> {
+        val pageable = Pageable.ofSize(size)
+        val chatRooms = chatRoomRepository.findChatRoomWithCategoryIds(categoryIds, pageable)
+        val result =
+            chatRooms.content.map {
+                ChatRoomRecommendationResponseDto(
+                    it.id,
+                    it.title,
+                    it.imageUrl ?: chatBaseImageUrl,
+                    it.categories.map { chatRoomCategory -> CategoryInfoResponse(chatRoomCategory.category.id) },
+                    chatRoomMemberRepository.countByChatRoom(it),
+                )
+            }
+        return ListBaseResponse(result)
     }
 }
