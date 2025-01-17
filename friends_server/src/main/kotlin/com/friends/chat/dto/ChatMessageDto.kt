@@ -15,6 +15,8 @@ data class ChatReceiveMessageDto(
 )
 
 data class ChatSendMessageDto(
+    val clientMessageId: String? = null,
+    val code: Int = 200,
     val messageId: Long,
     val chatRoomId: Long,
     val senderId: Long,
@@ -29,7 +31,14 @@ data class ChatSendMessageDto(
         content: String,
         createdAt: LocalDateTime,
         type: MessageType,
-    ) : this(messageId, chatRoomId, senderId, content, LocalDateTimeUtil.toTimeStamp(createdAt), type)
+    ) : this(
+        messageId = messageId,
+        chatRoomId = chatRoomId,
+        senderId = senderId,
+        content = content,
+        createdAt = LocalDateTimeUtil.toTimeStamp(createdAt),
+        type = type,
+    )
 }
 
 enum class PingPongType {
