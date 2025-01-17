@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user/alarm")
 class AlarmController(
     private val alarmQueryService: AlarmQueryService,
-) {
+) : AlarmControllerSpec {
     @GetMapping
-    fun getAlarmList(
+    override fun getAlarmList(
         memberId: Long,
         size: Int,
         lastAlarmId: Long,
