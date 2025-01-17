@@ -18,6 +18,8 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.common.annotation.DistributedLock
+import com.friends.common.key.CHAT_ROOM_LIKE_LOCK
 import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
@@ -105,6 +107,7 @@ class ChatRoomCommandService(
     }
 
     @Transactional
+    @DistributedLock(lockName = CHAT_ROOM_LIKE_LOCK, identifier = "chatRoomId")
     fun updateChatRoom(
         chatRoomId: Long,
         request: ChatRoomUpdateRequestDto?,

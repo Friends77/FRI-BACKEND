@@ -75,4 +75,8 @@ enum class ErrorCode(
     // Message API error 20000대
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 메시지입니다."),
     NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -20002, "메세지 발신자가 아닙니다."),
+
+    // Redis API error 22000대
+    REDISSON_LOCK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -22001, "레디스 락을 사용할 수 없습니다."),
+    INVALID_REDISSON_IDENTIFIER(HttpStatus.INTERNAL_SERVER_ERROR, -22002, "레디스 락 식별자가 잘못되었습니다."),
 }
