@@ -16,7 +16,7 @@ class GlobalRecommendationService(
     @Value("\${image.profile-base-url}")
     lateinit var profileBaseImageUrl: String
 
-    fun getCategoryRecommendation(
+    fun getRecommendationByUserCategory(
         categoryIds: List<Long>,
         size: Int,
     ): ListBaseResponse<ProfileWithCategories> {

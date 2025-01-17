@@ -19,7 +19,7 @@ class GlobalRecommendationController(
         @RequestParam categoryIds: List<Long>,
         @RequestParam(required = false, defaultValue = "20") size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithCategories>> {
-        val result = globalRecommendationService.getCategoryRecommendation(categoryIds, size)
+        val result = globalRecommendationService.getRecommendationByUserCategory(categoryIds, size)
         return ResponseEntity.ok(result)
     }
 }
