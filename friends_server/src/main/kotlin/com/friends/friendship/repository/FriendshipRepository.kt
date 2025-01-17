@@ -33,7 +33,7 @@ class FriendshipCustomRepositoryImpl(
                         and(
                             path(Friendship::receiveMember).path(Member::id).equal(memberId),
                             path(Friendship::requestMember).path(Member::nickname).like("%$nickname%"),
-                            path(Friendship::friendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
+                            path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
                         ),
                     )
             }
@@ -45,7 +45,7 @@ class FriendshipCustomRepositoryImpl(
                         and(
                             path(Friendship::requestMember).path(Member::id).equal(memberId),
                             path(Friendship::receiveMember).path(Member::nickname).like("%$nickname%"),
-                            path(Friendship::friendshipStatus).equal(
+                            path(Friendship::getFriendshipStatus).equal(
                                 FriendshipStatusEnums.ACCEPT,
                             ),
                         ),
