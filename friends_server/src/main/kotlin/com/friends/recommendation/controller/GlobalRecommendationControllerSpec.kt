@@ -1,5 +1,6 @@
 package com.friends.recommendation.controller
 
+import com.friends.chat.dto.ChatRoomRecommendationResponseDto
 import com.friends.common.dto.ListBaseResponse
 import com.friends.profile.dto.ProfileWithCategories
 import io.swagger.v3.oas.annotations.Operation
@@ -22,4 +23,18 @@ interface GlobalRecommendationControllerSpec {
         categoryIds: List<Long>,
         size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithCategories>>
+
+    @Operation(
+        description = "카테고리 기반 추천 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "카테고리 기반 추천 성공",
+            ),
+        ],
+    )
+    fun getRecommendationByChatCategory(
+        categoryIds: List<Long>,
+        size: Int,
+    ): ResponseEntity<ListBaseResponse<ChatRoomRecommendationResponseDto>>
 }
