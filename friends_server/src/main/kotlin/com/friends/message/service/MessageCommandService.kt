@@ -10,6 +10,8 @@ import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
+import com.friends.message.MessageNotFoundException
+import com.friends.message.NotMessageSenderException
 import com.friends.message.entity.Message
 import com.friends.message.entity.MessageType
 import com.friends.message.repository.MessageRepository
@@ -103,7 +105,7 @@ class MessageCommandService(
         memberId: Long,
         session: WebSocketSession,
     ) {
-        sessions[memberId]?.remove(session)
+        removeOnlineUserSession(memberId, session)
 
         chatRoomMemberRepository
             .findAllByMemberId(memberId)
@@ -133,6 +135,15 @@ class MessageCommandService(
         chatRoomId: Long,
     ) {
         onlineUsers[chatRoomId]?.remove(memberId)
+    }
+
+    private fun removeOnlineUserSession(
+        memberId: Long,
+        session: WebSocketSession,
+    ) {
+        sessions[memberId]?.removeIf {
+            it.id == session.id
+        }
     }
 
     /**
@@ -182,37 +193,67 @@ class MessageCommandService(
             val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
 
             // 채팅방의 모든 온라인 유저에게 메세지 전송
-            val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message// 온라인 유저가 없으면 메세지를 보낼 필요가 없습니다.
-            val futures = mutableListOf<CompletableFuture<*>>()
-            onlineUserIdSet.forEach { userId ->
-                val userSessions = sessions[userId] ?: return@forEach
-                userSessions.forEach { session ->
-                    // 비동기 전송
-                    val future =
-                        CompletableFuture.supplyAsync({
-                            if (session.isOpen) {
-                                try {
-                                    val sendMessageDto =
-                                        ChatSendMessageDto(
-                                            chatRoom.id,
-                                            sender.id,
-                                            message.content,
-                                            message.createdAt,
-                                            message.type,
-                                        )
-                                    session.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        }, virtualThreadExecutor)
-                    futures.add(future)
-                }
-            }
-            // 모든 메세지 전송이 완료될 때까지 대기
-            CompletableFuture.allOf(*futures.toTypedArray()).join()
-
-            return message
+            return sendAsynchronousMessage(message)
         }
+    }
+
+    @Transactional
+    fun sendMessage(
+        message: Message,
+    ): Message {
+        val chatRoomId = message.chatRoom.id
+        val chatRoomLock = chatRoomLocks.computeIfAbsent(chatRoomId) { Any() }
+
+        synchronized(chatRoomLock) {
+            return sendAsynchronousMessage(message)
+        }
+    }
+
+    fun sendAsynchronousMessage(
+        message: Message,
+    ): Message {
+        val chatRoomId = message.chatRoom.id
+        val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message
+        val futures = mutableListOf<CompletableFuture<*>>()
+        onlineUserIdSet.forEach { userId ->
+            val userSessions = sessions[userId] ?: return@forEach
+            userSessions.forEach { session ->
+                val future =
+                    CompletableFuture.supplyAsync({
+                        if (session.isOpen) {
+                            try {
+                                val sendMessageDto =
+                                    ChatSendMessageDto(
+                                        message.id,
+                                        chatRoomId,
+                                        message.sender.id,
+                                        message.content,
+                                        message.createdAt,
+                                        message.type,
+                                    )
+                                session.sendMessage(TextMessage(JsonUtil.toJson(sendMessageDto)))
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }, virtualThreadExecutor)
+                futures.add(future)
+            }
+        }
+        CompletableFuture.allOf(*futures.toTypedArray()).join()
+        return message
+    }
+
+    @Transactional
+    fun deleteMessage(
+        memberId: Long,
+        messageId: Long,
+    ) {
+        val message = messageRepository.findById(messageId).orElseThrow { throw MessageNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        if (message.sender != member) throw NotMessageSenderException()
+        message.content = "삭제된 메세지입니다."
+        message.type = MessageType.DELETE_MESSAGE
+        sendMessage(message)
     }
 }
