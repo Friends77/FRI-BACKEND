@@ -58,8 +58,8 @@ class ChatWebSocketHandler(
         messageCommandService.sendMessage(
             chatMessage.chatRoomId,
             memberId,
-            chatMessage.message,
-            chatMessage.messageType,
+            chatMessage.content,
+            chatMessage.type,
         )
         // TODO : 아래 내용 리뷰 받고 수정
     }
