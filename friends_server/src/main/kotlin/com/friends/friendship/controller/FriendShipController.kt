@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController
 class FriendShipController(
     private val friendShipCommandService: FriendShipCommandService,
     private val friendShipQueryService: FriendShipQueryService,
-) {
+) : FriendShipControllerSpec {
     @GetMapping
-    fun getFriendShip(
+    override fun getFriendShip(
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>> {
         val result = friendShipQueryService.getFriendshipList(memberId)
@@ -29,7 +29,7 @@ class FriendShipController(
     }
 
     @PostMapping("/request")
-    fun getFriendRequest(
+    override fun requestFriend(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipRequestDto: FriendShipRequestDto,
     ): ResponseEntity<Void> {
@@ -38,7 +38,7 @@ class FriendShipController(
     }
 
     @PostMapping("/accept")
-    fun acceptFriendRequest(
+    override fun acceptFriendRequest(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
@@ -47,7 +47,7 @@ class FriendShipController(
     }
 
     @PostMapping("/reject")
-    fun rejectFriendRequest(
+    override fun rejectFriendRequest(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
@@ -56,7 +56,7 @@ class FriendShipController(
     }
 
     @PostMapping("/block")
-    fun blockFriendRequest(
+    override fun blockFriendRequest(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
