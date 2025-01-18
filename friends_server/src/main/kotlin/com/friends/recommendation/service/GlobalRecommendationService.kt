@@ -47,10 +47,9 @@ class GlobalRecommendationService(
         categoryIds: List<Long>,
         size: Int,
     ): ListBaseResponse<ChatRoomRecommendationResponseDto> {
-        val pageable = Pageable.ofSize(size)
-        val chatRooms = chatRoomRepository.findChatRoomWithCategoryIds(categoryIds, pageable)
+        val chatRooms = chatRoomRepository.findChatRoomWithCategoryIds(categoryIds, size)
         val result =
-            chatRooms.content.map {
+            chatRooms.map {
                 ChatRoomRecommendationResponseDto(
                     it.id,
                     it.title,
