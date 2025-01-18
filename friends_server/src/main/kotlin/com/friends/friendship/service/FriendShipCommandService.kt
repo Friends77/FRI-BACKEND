@@ -1,6 +1,8 @@
 package com.friends.friendship.service
 
+import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.service.AlarmCommandService
+import com.friends.friendship.dto.FriendShipReceiveDto
 import com.friends.friendship.entity.Friendship
 import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.exception.FriendShipAlreadyExistException
@@ -54,15 +56,19 @@ class FriendShipCommandService(
      * 수락된 친구에 대해서는 친구 리스트에서 조회됩니다.
      */
     fun acceptFriendship(
-        requesterId: Long,
         receiverId: Long,
+        friendShipReceiveDto: FriendShipReceiveDto,
     ) {
+        val requesterId = friendShipReceiveDto.requesterId
+        val alarmId = friendShipReceiveDto.alarmId
+
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
                 ?: throw FriendShipNotFoundException()
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendship.acceptFriendshipRequest()
+            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_ACCEPTED)
         } else {
             throw FriendShipNotWaitingException()
         }
@@ -73,15 +79,19 @@ class FriendShipCommandService(
      * 다시 요청할 수 있습니다.
      */
     fun rejectFriendship(
-        requesterId: Long,
         receiverId: Long,
+        friendShipReceiveDto: FriendShipReceiveDto,
     ) {
+        val requesterId = friendShipReceiveDto.requesterId
+        val alarmId = friendShipReceiveDto.alarmId
+
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
                 ?: throw FriendShipNotFoundException()
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendShipRepository.delete(friendship)
+            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_REJECTED)
         } else {
             throw FriendShipNotWaitingException()
         }
@@ -92,15 +102,19 @@ class FriendShipCommandService(
      * 차단된 친구는 친구 리스트에서 조회되지 않고 다시 요청할 수 없습니다.
      */
     fun blockFriendship(
-        requesterId: Long,
         receiverId: Long,
+        friendShipReceiveDto: FriendShipReceiveDto,
     ) {
+        val requesterId = friendShipReceiveDto.requesterId
+        val alarmId = friendShipReceiveDto.alarmId
+
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
                 ?: throw FriendShipNotFoundException()
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendship.blockFriendRequest()
+            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_BLOCKED)
         } else {
             throw FriendShipNotWaitingException()
         }

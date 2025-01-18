@@ -5,5 +5,6 @@ data class FriendShipRequestDto(
 )
 
 data class FriendShipReceiveDto(
+    val alarmId: Long,
     val requesterId: Long,
 )
