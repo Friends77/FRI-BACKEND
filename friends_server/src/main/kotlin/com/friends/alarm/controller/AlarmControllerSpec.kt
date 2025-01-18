@@ -21,6 +21,6 @@ interface AlarmControllerSpec {
     fun getAlarmList(
         memberId: Long,
         size: Int,
-        lastAlarmId: Long,
+        lastAlarmId: Long?,
     ): ResponseEntity<SliceBaseResponse<AlarmResponseDto>>
 }

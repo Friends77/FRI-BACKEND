@@ -16,7 +16,7 @@ class AlarmQueryService(
     fun getAlarmList(
         memberId: Long,
         size: Int,
-        lastAlarmId: Long,
+        lastAlarmId: Long?,
     ): SliceBaseResponse<AlarmResponseDto> {
         val result =
             alarmRepository.findAllByMemberIdBeforeId(memberId, size, lastAlarmId).map {
