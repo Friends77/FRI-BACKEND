@@ -81,4 +81,10 @@ enum class ErrorCode(
     // Message API error 21000대
     MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -21001, "존재하지 않는 메시지입니다."),
     NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -21002, "메세지 발신자가 아닙니다."),
+
+    // Friendship API error 22000대
+    FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, -22001, "이미 친구이거나, 친구 요청을 보낸 상태입니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -22002, "친구 관계나 요청 상태가 존재하지 않습니다."),
+    FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -22003, "친구 요청 대기 상태가 아닙니다."),
+    FRIENDSHIP_BLOCKED(HttpStatus.FORBIDDEN, -22004, "친구 요청이 차단되었습니다."),
 }
