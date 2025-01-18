@@ -33,4 +33,6 @@ class Alarm(
     fun changeType(type: AlarmType) {
         this.type = type
     }
+
+    fun getType(): AlarmType = type
 }

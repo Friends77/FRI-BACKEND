@@ -17,7 +17,7 @@ data class AlarmResponseDto(
 fun toAlarmResponseDto(alarm: Alarm) =
     AlarmResponseDto(
         id = alarm.id,
-        type = alarm.type,
+        type = alarm.getType(),
         message = alarm.message,
         senderId = alarm.sender.id,
         receiverId = alarm.receiver.id,
