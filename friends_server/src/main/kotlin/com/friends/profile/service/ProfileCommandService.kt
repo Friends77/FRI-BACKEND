@@ -24,9 +24,6 @@ class ProfileCommandService(
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val s3ClientService: S3ClientService,
 ) {
-    //TODO 기본이미지 url 설정
-    private val defaultImageUrl = ""
-
     //프로필 초기 작성
     fun createProfile(
         requestMemberId: Long,
@@ -34,12 +31,11 @@ class ProfileCommandService(
         profileImage: MultipartFile?,
     ) {
         val member =
-            memberRepository.findById(requestMemberId)
+            memberRepository
+                .findById(requestMemberId)
                 .orElseThrow { MemberNotFoundException() }
 
         val profileInterestTag = categoryRepository.findByIdIn(profileCreateDto.interestTag)
-        val imageUrl =
-            profileImage?.let { s3ClientService.upload(it) } ?: defaultImageUrl
         val profile =
             Profile(
                 birth = profileCreateDto.birth,
@@ -47,7 +43,7 @@ class ProfileCommandService(
                 location = profileCreateDto.location,
                 selfDescription = profileCreateDto.selfDescription,
                 mbti = profileCreateDto.mbti,
-                imageUrl = imageUrl,
+                imageUrl = profileImage?.let { s3ClientService.upload(it) },
                 member = member,
             )
         val profileInterestTagList =
@@ -70,12 +66,7 @@ class ProfileCommandService(
         val profile =
             profileRepository.findByMemberId(requestMemberId)
                 ?: throw ProfileNullResponseException()
-        if (profileImage != null) {
-            val newImageUrl = s3ClientService.upload(profileImage)
-            profileUpdateDto.imageUrl = newImageUrl
-        } else if (profile.imageUrl == defaultImageUrl) {
-            profileUpdateDto.imageUrl = defaultImageUrl
-        }
+        profile.imageUrl = profileImage?.let { s3ClientService.upload(it) }
         profileInterestTagRepository.deleteByProfileId(profile.id)
         profileInterestTagRepository.saveAll(
             categoryRepository.findByIdIn(profileUpdateDto.interestTag).map {

@@ -14,7 +14,7 @@ data class ProfileCreateDto(
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
-    var imageUrl: String,
+    var imageUrl: String? = null,
 )
 
 //수정가능한 필드 dto
@@ -38,8 +38,8 @@ data class ProfileResponseDto(
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
-    var interestTag: MutableSet<Category> = mutableSetOf(),
-    var imageUrl: String? = null,
+    var interestTag: List<Category> = listOf(),
+    var imageUrl: String,
 )
 
 data class ProfileSimpleResponseDto(
@@ -49,14 +49,21 @@ data class ProfileSimpleResponseDto(
     val selfDescription: String?,
 )
 
-data class ProfileWithDistanceDto(
+data class ProfileWithDistanceQueryDto(
     val id: Long,
     val nickname: String,
     val imageUrl: String? = null,
     val distance: Double,
 )
 
-data class ProfileWithCategories(
+data class ProfileWithDistanceResponseDto(
+    val id: Long,
+    val nickname: String,
+    val imageUrl: String,
+    val distance: Double,
+)
+
+data class ProfileWithCategoriesResponseDto(
     val id: Long,
     val nickname: String,
     val imageUrl: String,

@@ -3,7 +3,6 @@ package com.friends.profile.entity
 import com.friends.category.entity.Category
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.member.entity.Member
-import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -55,20 +54,6 @@ class Profile(
         this.mbti = profileUpdateDto.mbti
         this.imageUrl = profileUpdateDto.imageUrl
     }
-
-    fun toResponseDto(): ProfileResponseDto =
-        ProfileResponseDto(
-            memberId = this.member.id,
-            nickname = this.member.nickname,
-            email = this.member.email,
-            birth = this.birth,
-            gender = this.gender,
-            location = this.location,
-            selfDescription = this.selfDescription,
-            mbti = this.mbti,
-            interestTag = this.interestTag.map { it.category }.toMutableSet(),
-            imageUrl = this.imageUrl,
-        )
 }
 
 @Embeddable
