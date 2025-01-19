@@ -20,10 +20,9 @@ class GlobalRecommendationService(
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
     @Value("\${image.chat-room-base-url}")
     private val chatBaseImageUrl: String,
-) {
     @Value("\${image.profile-base-url}")
-    lateinit var profileBaseImageUrl: String
-
+    private val profileBaseImageUrl: String,
+) {
     fun getRecommendationByUserCategory(
         categoryIds: List<Long>,
         size: Int,
