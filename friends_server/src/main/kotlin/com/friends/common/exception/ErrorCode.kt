@@ -87,4 +87,7 @@ enum class ErrorCode(
     FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -22002, "친구 관계나 요청 상태가 존재하지 않습니다."),
     FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -22003, "친구 요청 대기 상태가 아닙니다."),
     FRIENDSHIP_BLOCKED(HttpStatus.FORBIDDEN, -22004, "친구 요청이 차단되었습니다."),
+
+    // Alarm API error 23000대
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, -23001, "존재하지 않는 알람입니다."),
 }

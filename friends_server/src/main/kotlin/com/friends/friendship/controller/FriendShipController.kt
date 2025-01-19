@@ -42,7 +42,7 @@ class FriendShipController(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
-        friendShipCommandService.acceptFriendship(requesterId = friendShipReceiveDto.requesterId, receiverId = memberId)
+        friendShipCommandService.acceptFriendship(memberId, friendShipReceiveDto)
         return ResponseEntity.noContent().build()
     }
 
@@ -51,7 +51,7 @@ class FriendShipController(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
-        friendShipCommandService.rejectFriendship(requesterId = friendShipReceiveDto.requesterId, receiverId = memberId)
+        friendShipCommandService.rejectFriendship(memberId, friendShipReceiveDto)
         return ResponseEntity.noContent().build()
     }
 
@@ -60,7 +60,7 @@ class FriendShipController(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void> {
-        friendShipCommandService.blockFriendship(requesterId = friendShipReceiveDto.requesterId, receiverId = memberId)
+        friendShipCommandService.blockFriendship(memberId, friendShipReceiveDto)
         return ResponseEntity.noContent().build()
     }
 }

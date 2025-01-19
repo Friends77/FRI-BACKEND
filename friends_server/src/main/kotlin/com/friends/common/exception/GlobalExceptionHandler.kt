@@ -2,12 +2,14 @@ package com.friends.common.exception
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
+import com.friends.alarm.AlarmException
 import com.friends.board.exception.BoardException
 import com.friends.board.exception.CommentException
 import com.friends.board.exception.VoteException
 import com.friends.category.CategoryException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
+import com.friends.friendship.exception.FriendShipException
 import com.friends.member.MemberExceptions
 import com.friends.message.MessageException
 import com.friends.oauth2.OAuth2Exception
@@ -200,6 +202,22 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(VoteException::class)
     fun handleVoteException(ex: VoteException): ResponseEntity<Any> {
         logger.error("Vote Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(AlarmException::class)
+    fun handleAlarmException(ex: AlarmException): ResponseEntity<Any> {
+        logger.error("Alarm Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(FriendShipException::class)
+    fun handleFriendShipException(ex: FriendShipException): ResponseEntity<Any> {
+        logger.error("FriendShip Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))
