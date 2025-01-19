@@ -42,6 +42,4 @@ class Friendship(
     fun blockFriendRequest() {
         friendshipStatus = FriendshipStatusEnums.BLOCK
     }
-
-    fun getFriendshipStatus(): FriendshipStatusEnums = friendshipStatus
 }
