@@ -42,7 +42,14 @@ data class ProfileResponseDto(
     var imageUrl: String,
 )
 
-data class ProfileWithDistanceQueryDto(
+data class ProfileSimpleResponseDto(
+    val memberId: Long,
+    val nickname: String,
+    val imageUrl: String,
+    val selfDescription: String?,
+)
+
+data class ProfileWithDistanceDto(
     val id: Long,
     val nickname: String,
     val imageUrl: String? = null,

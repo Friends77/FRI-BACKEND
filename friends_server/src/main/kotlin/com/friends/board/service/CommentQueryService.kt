@@ -1,7 +1,7 @@
 package com.friends.board.service
 
-import com.friends.board.BoardNotFoundException
 import com.friends.board.dto.CommentResponseDto
+import com.friends.board.exception.BoardNotFoundException
 import com.friends.board.repository.BoardRepository
 import com.friends.board.repository.CommentRepository
 import org.springframework.stereotype.Service
