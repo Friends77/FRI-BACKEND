@@ -49,7 +49,7 @@ data class ProfileSimpleResponseDto(
     val selfDescription: String?,
 )
 
-data class ProfileWithDistanceDto(
+data class ProfileWithDistanceQueryDto(
     val id: Long,
     val nickname: String,
     val imageUrl: String? = null,
