@@ -8,7 +8,9 @@ import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.friendship.repository.FriendshipRepository
+import com.friends.common.dto.SliceBaseResponse
+import com.friends.common.mapper.toSliceBaseResponse
+import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
@@ -24,7 +26,7 @@ class ChatRoomQueryService(
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomLikeRepository: ChatRoomLikeRepository,
     private val memberRepository: MemberRepository,
-    private val friendshipRepository: FriendshipRepository,
+    private val friendshipRepository: FriendShipRepository,
     @Value("\${image.chat-room-base-url}")
     private val chatRoomBaseImageUrl: String,
     @Value("\${image.profile-base-url}")

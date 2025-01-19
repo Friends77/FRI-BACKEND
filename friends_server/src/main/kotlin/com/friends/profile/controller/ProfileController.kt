@@ -1,6 +1,5 @@
 package com.friends.profile.controller
 
-import com.friends.profile.dto.ProfileCreateDto
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import com.friends.profile.service.ProfileCommandService
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
@@ -40,19 +38,20 @@ class ProfileController(
         return ResponseEntity.ok(profile)
     }
 
-    //프로필 작성(초기화면)
-    @PostMapping(
-        value = ["api/user/profile"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-    )
-    override fun createProfile(
-        @AuthenticationPrincipal memberId: Long,
-        @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart("profileImage") profileImage: MultipartFile?,
-    ): ResponseEntity<Void> {
-        profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
-        return ResponseEntity.noContent().build()
-    }
+    //프로필 작성(초기화면) -> 회원가입 시 초기 프로필 작성이 같이 이뤄짐으로 주석 처리
+
+//    @PostMapping(
+//        value = ["api/user/profile"],
+//        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+//    )
+//    override fun createProfile(
+//        @AuthenticationPrincipal memberId: Long,
+//        @RequestPart("profileData") @Valid profileCreateDto: ProfileCreateDto,
+//        @RequestPart("profileImage") profileImage: MultipartFile?,
+//    ): ResponseEntity<Void> {
+//        profileCommandService.createProfile(memberId, profileCreateDto, profileImage)
+//        return ResponseEntity.noContent().build()
+//    }
 
     //프로필 수정
     @PutMapping(

@@ -175,6 +175,7 @@ class MessageCommandService(
         memberId: Long,
         content: String,
         type: MessageType,
+        clientMessageId: String? = null,
     ): Message {
         val chatRoomLock = chatRoomLocks.computeIfAbsent(chatRoomId) { Any() }
 
@@ -193,7 +194,7 @@ class MessageCommandService(
             val message = messageRepository.save(Message.of(chatRoom, sender, content, type))
 
             // 채팅방의 모든 온라인 유저에게 메세지 전송
-            return sendAsynchronousMessage(message)
+            return sendAsynchronousMessage(message, clientMessageId)
         }
     }
 
@@ -211,6 +212,7 @@ class MessageCommandService(
 
     fun sendAsynchronousMessage(
         message: Message,
+        clientMessageId: String? = null,
     ): Message {
         val chatRoomId = message.chatRoom.id
         val onlineUserIdSet = onlineUsers[chatRoomId] ?: return message
@@ -224,6 +226,7 @@ class MessageCommandService(
                             try {
                                 val sendMessageDto =
                                     ChatSendMessageDto(
+                                        clientMessageId,
                                         message.id,
                                         chatRoomId,
                                         message.sender.id,

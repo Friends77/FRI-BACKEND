@@ -1,5 +1,6 @@
 package com.friends.alarm.service
 
+import com.friends.alarm.AlarmNotFoundException
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
@@ -116,5 +117,13 @@ class AlarmCommandService(
         onlineUserSessions[alarm.receiver.id]?.forEach {
             it.sendMessage(TextMessage(JsonUtil.toJson(alarmResponseDto)))
         }
+    }
+
+    fun changeAlarmType(
+        alarmId: Long,
+        alarmType: AlarmType,
+    ) {
+        val alarm = alarmRepository.findById(alarmId).orElseThrow { AlarmNotFoundException() }
+        alarm.changeType(alarmType)
     }
 }

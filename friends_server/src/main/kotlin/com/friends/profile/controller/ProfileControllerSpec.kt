@@ -1,6 +1,5 @@
 package com.friends.profile.controller
 
-import com.friends.profile.dto.ProfileCreateDto
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import io.swagger.v3.oas.annotations.Operation
@@ -42,20 +41,20 @@ interface ProfileControllerSpec {
         @PathVariable memberId: Long,
     ): ResponseEntity<ProfileResponseDto>
 
-    @Operation(
-        description = "회원가입 후 프로필 작성",
-        responses = [
-            ApiResponse(
-                responseCode = "204",
-                description = "프로필 작성 성공",
-            ),
-        ],
-    )
-    fun createProfile(
-        @AuthenticationPrincipal memberId: Long,
-        @RequestPart @Valid profileCreateDto: ProfileCreateDto,
-        @RequestPart profileImage: MultipartFile?,
-    ): ResponseEntity<Void>
+//    @Operation(
+//        description = "회원가입 후 프로필 작성",
+//        responses = [
+//            ApiResponse(
+//                responseCode = "204",
+//                description = "프로필 작성 성공",
+//            ),
+//        ],
+//    )
+//    fun createProfile(
+//        @AuthenticationPrincipal memberId: Long,
+//        @RequestPart @Valid profileCreateDto: ProfileCreateDto,
+//        @RequestPart profileImage: MultipartFile?,
+//    ): ResponseEntity<Void>
 
     @Operation(
         description = "프로필 수정",

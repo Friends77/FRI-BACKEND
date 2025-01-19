@@ -8,7 +8,7 @@ import com.friends.chat.createTestChatRoomList
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.friendship.repository.FriendshipRepository
+import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
@@ -19,6 +19,8 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.SliceImpl
 import java.util.Optional
 
 class ChatRoomQueryServiceTest :
@@ -29,7 +31,7 @@ class ChatRoomQueryServiceTest :
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
             val memberRepository = mockk<MemberRepository>()
-            val friendshipRepository = mockk<FriendshipRepository>()
+            val friendshipRepository = mockk<FriendShipRepository>()
             val chatRoomBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
             val profileBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
             val chatRoomQueryService =
