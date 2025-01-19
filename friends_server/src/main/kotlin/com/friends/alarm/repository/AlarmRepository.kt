@@ -1,6 +1,7 @@
 package com.friends.alarm.repository
 
 import com.friends.alarm.entity.Alarm
+import com.friends.common.util.getSingle
 import com.friends.common.util.getSlice
 import com.friends.member.entity.Member
 import com.linecorp.kotlinjdsl.querymodel.jpql.sort.Sorts.desc
@@ -19,6 +20,11 @@ interface AlarmCustomRepository {
         size: Int,
         lastAlarmId: Long? = null,
     ): Slice<Alarm>
+
+    fun countByReceiverIdAndIdGreaterThan(
+        receiverId: Long,
+        lastAlarmId: Long?,
+    ): Long
 }
 
 class AlarmCustomRepositoryImpl(
@@ -41,4 +47,23 @@ class AlarmCustomRepositoryImpl(
                 ).orderBy(desc(path(Alarm::id)))
         }
     }
+
+    /**
+     * 마지막으로 읽은 알람을 조회
+     * TODO : 읽지 않은 개수의 상한치 설정 필요
+     */
+    override fun countByReceiverIdAndIdGreaterThan(
+        receiverId: Long,
+        lastAlarmId: Long?,
+    ): Long =
+        kotlinJdslJpqlExecutor.getSingle {
+            select(count(entity(Alarm::class)))
+                .from(entity(Alarm::class))
+                .where(
+                    and(
+                        path(Alarm::receiver).path(Member::id).equal(receiverId),
+                        lastAlarmId?.let { path(Alarm::id).greaterThan(it) },
+                    ),
+                )
+        }
 }
