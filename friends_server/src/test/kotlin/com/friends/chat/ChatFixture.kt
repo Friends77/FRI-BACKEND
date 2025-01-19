@@ -13,7 +13,6 @@ import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.entity.ChatRoomLike
 import com.friends.chat.entity.ChatRoomMember
-import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.createTestCategory
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
@@ -21,9 +20,6 @@ import com.friends.message.createMockTestMessage
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import com.friends.profile.TEST_PROFILE_IMAGE_URL
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
-import org.springframework.data.domain.SliceImpl
 
 const val TEST_CHAT_ROOM_ID = 1L
 const val CHAT_ROOM_TITLE = "테스트 채팅방"
@@ -53,13 +49,9 @@ fun createTestChatRoomMember(
     lastReadMessage,
 )
 
-fun createTestSliceChatRoom(
-    chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
-) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
-
-fun createTestMockSliceChatRoom(
+fun createTestChatRoomList(
     chatRoomMember: ChatRoomMember = ChatRoomMember.of(createTestChatRoom(), createTestMember(), createMockTestMessage()),
-) = SliceImpl(listOf(chatRoomMember), Pageable.ofSize(TEST_SIZE), false)
+) = listOf(chatRoomMember)
 
 fun createTestChatRoomInfoResponseDto(
     chatRoomMember: ChatRoomMember = createTestChatRoomMember(),
@@ -70,13 +62,9 @@ fun createTestChatRoomInfoResponseDto(
     imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
 ) = toChatRoomInfoResponse(chatRoomMember, memberCount, representativeProfile, unreadMessageCount, lastReadMessage, imageUrl)
 
-fun createTestSliceResponseChatRoom(
-    sliceChatRoom: Slice<ChatRoomMember> = createTestSliceChatRoom(),
-) = toSliceBaseResponse(sliceChatRoom.map { createTestChatRoomInfoResponseDto(it) })
-
-fun createTestMockSliceResponseChatRoom(
-    sliceChatRoom: Slice<ChatRoomMember> = createTestMockSliceChatRoom(),
-) = toSliceBaseResponse(sliceChatRoom.map { createTestChatRoomInfoResponseDto(it) })
+fun createTestChatRoomMemberList(
+    chatRoomList: List<ChatRoomMember> = createTestChatRoomList(),
+) = chatRoomList.map { createTestChatRoomInfoResponseDto(it) }
 
 fun createTestToggleLikeResponseDto(
     chatRoomId: Long = TEST_CHAT_ROOM_ID,

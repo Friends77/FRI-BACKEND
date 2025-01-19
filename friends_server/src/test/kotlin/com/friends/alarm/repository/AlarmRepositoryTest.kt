@@ -9,13 +9,11 @@ import com.friends.support.annotation.RepositoryTest
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
-import jakarta.persistence.EntityManager
 
 @RepositoryTest
 class AlarmRepositoryTest(
     private val alarmRepository: AlarmRepository,
     private val memberRepository: MemberRepository,
-    private val entityManager: EntityManager,
 ) : DescribeSpec({
 
         lateinit var sender: Member
@@ -33,9 +31,6 @@ class AlarmRepositoryTest(
             alarm1 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람1", type = AlarmType.FRIEND_REQUEST))
             alarm2 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람2", type = AlarmType.FRIEND_REQUEST))
             alarm3 = alarmRepository.save(Alarm(sender = sender, receiver = receiver, message = "알람3", type = AlarmType.FRIEND_REQUEST))
-
-            entityManager.flush()
-            entityManager.clear()
         }
 
         describe("findAllByMemberIdBeforeId 메서드는") {

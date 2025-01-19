@@ -1,11 +1,10 @@
 package com.friends.chat.service
 
-import com.friends.TEST_SIZE
 import com.friends.chat.CHAT_ROOM_BASE_IMAGE_URL
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
-import com.friends.chat.createTestMockSliceChatRoom
+import com.friends.chat.createTestChatRoomList
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
@@ -51,19 +50,29 @@ class ChatRoomQueryServiceTest :
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())
                 `when`("정상적인 조회 정보가 들어올 경우") {
                     every { chatRoomMemberRepository.countByChatRoom(any()) } returns 10
-                    every { chatRoomMemberRepository.sliceChatRoomIdByMember(any(), any(), any(), any()) } returns createTestMockSliceChatRoom()
+                    every { chatRoomMemberRepository.findAllByMemberAndFriends(any(), any()) } returns createTestChatRoomList()
                     every { messageRepository.countUnreadMessages(any()) } returns 0
                     every { chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(any()) } returns listOf(createTestMember())
                     every { messageRepository.findRecentMessageInChatRoom(any()) } returns createMockTestMessage()
                     then("채팅방이 조회된다.") {
-                        chatRoomQueryService.getChatRooms(MEMBER_ID, TEST_SIZE, null, null)
+                        chatRoomQueryService.getChatRooms(MEMBER_ID, null)
+                    }
+                }
+
+                `when`("친구 중 해당 닉네임을 가진 친구가 없는 경우") {
+                    every { friendshipRepository.findFriendshipByMemberIdAndNickname(any(), any()) } returns emptyList()
+                    then("빈 리스트가 반환된다.") {
+                        chatRoomQueryService.getChatRooms(MEMBER_ID, "test")
+                        verify(exactly = 0) {
+                            chatRoomMemberRepository.findAllByMemberAndFriends(any(), any())
+                        }
                     }
                 }
 
                 `when`("해당 회원이 참여하고 있는 채팅방이 없는 경우") {
-                    every { chatRoomMemberRepository.sliceChatRoomIdByMember(any(), any(), any(), any()) } returns SliceImpl(listOf(), Pageable.ofSize(TEST_SIZE), false)
+                    every { chatRoomMemberRepository.findAllByMemberAndFriends(any(), any()) } returns emptyList()
                     then("빈 리스트가 반환된다.") {
-                        chatRoomQueryService.getChatRooms(MEMBER_ID, TEST_SIZE, null, null)
+                        chatRoomQueryService.getChatRooms(MEMBER_ID, null)
                         verify(exactly = 0) {
                             chatRoomMemberRepository.countByChatRoom(any())
                             messageRepository.countUnreadMessages(any())
