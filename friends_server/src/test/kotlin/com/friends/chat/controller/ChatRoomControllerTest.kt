@@ -106,6 +106,17 @@ class ChatRoomControllerTest(
                         )
                 }
             }
+
+            `when`("닉네임이 공백인 경우") {
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            getWithAuthentication(requestPath).param("nickname", " "),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
         }
 
         given("GET  $requestPath/{id} Test") {
