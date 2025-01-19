@@ -12,7 +12,6 @@ import com.friends.profile.entity.Profile
 import com.friends.support.annotation.RepositoryTest
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
-import jakarta.persistence.EntityManager
 import org.springframework.data.domain.Pageable
 
 @RepositoryTest
@@ -21,7 +20,6 @@ class ProfileCategoryRepositoryTest(
     private val memberRepository: MemberRepository,
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val categoryRepository: CategoryRepository,
-    private val entityManager: EntityManager,
 ) : DescribeSpec(
         {
             lateinit var member1: Member
@@ -45,9 +43,6 @@ class ProfileCategoryRepositoryTest(
                 profileInterestTagRepository.save(createTestProfileInterestTag(profile1, category = category2))
 
                 profileInterestTagRepository.save(createTestProfileInterestTag(profile2, category = category1))
-
-                entityManager.flush()
-                entityManager.clear()
             }
 
             describe("findProfileWithCategoryIds 메서드는") {
