@@ -2,7 +2,7 @@ package com.friends.recommendation.controller
 
 import com.friends.chat.dto.ChatRoomRecommendationResponseDto
 import com.friends.common.dto.ListBaseResponse
-import com.friends.profile.dto.ProfileWithCategories
+import com.friends.profile.dto.ProfileWithCategoriesResponseDto
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -22,7 +22,7 @@ interface GlobalRecommendationControllerSpec {
     fun getRecommendationByUserCategory(
         categoryIds: List<Long>,
         size: Int,
-    ): ResponseEntity<ListBaseResponse<ProfileWithCategories>>
+    ): ResponseEntity<ListBaseResponse<ProfileWithCategoriesResponseDto>>
 
     @Operation(
         description = "카테고리 기반 추천 API",

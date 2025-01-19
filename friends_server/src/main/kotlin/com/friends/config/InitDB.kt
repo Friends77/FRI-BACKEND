@@ -159,7 +159,6 @@ class InitDB(
                             // 생일은 1990년 1월 1일부터 1999년 12월 31일 사이의 랜덤한 날짜로 설정
                             birth = randomBirth,
                             gender = randomGender,
-                            imageUrl = "https://friends-bucket.s3.ap-northeast-2.amazonaws.com/2d397027-6448-414a-b155-17b5a41f6c34",
                             location = randomLocation,
                             mbti = randomMbti,
                         ),

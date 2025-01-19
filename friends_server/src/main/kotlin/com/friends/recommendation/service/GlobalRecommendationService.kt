@@ -5,7 +5,7 @@ import com.friends.chat.dto.ChatRoomRecommendationResponseDto
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.ListBaseResponse
-import com.friends.profile.dto.ProfileWithCategories
+import com.friends.profile.dto.ProfileWithCategoriesResponseDto
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
@@ -27,13 +27,13 @@ class GlobalRecommendationService(
     fun getRecommendationByUserCategory(
         categoryIds: List<Long>,
         size: Int,
-    ): ListBaseResponse<ProfileWithCategories> {
+    ): ListBaseResponse<ProfileWithCategoriesResponseDto> {
         val pageable = Pageable.ofSize(size)
         val profiles = profileRepository.findProfileWithCategoryIds(categoryIds, pageable)
 
         return ListBaseResponse(
             profiles.content.map {
-                ProfileWithCategories(
+                ProfileWithCategoriesResponseDto(
                     it.id,
                     it.member.nickname,
                     it.imageUrl ?: profileBaseImageUrl,

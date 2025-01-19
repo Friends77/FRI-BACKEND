@@ -2,7 +2,7 @@ package com.friends.recommendation.controller
 
 import com.friends.chat.dto.ChatRoomRecommendationResponseDto
 import com.friends.common.dto.ListBaseResponse
-import com.friends.profile.dto.ProfileWithCategories
+import com.friends.profile.dto.ProfileWithCategoriesResponseDto
 import com.friends.recommendation.service.GlobalRecommendationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +19,7 @@ class GlobalRecommendationController(
     override fun getRecommendationByUserCategory(
         @RequestParam categoryIds: List<Long>,
         @RequestParam(required = false, defaultValue = "20") size: Int,
-    ): ResponseEntity<ListBaseResponse<ProfileWithCategories>> {
+    ): ResponseEntity<ListBaseResponse<ProfileWithCategoriesResponseDto>> {
         val result = globalRecommendationService.getRecommendationByUserCategory(categoryIds, size)
         return ResponseEntity.ok(result)
     }
