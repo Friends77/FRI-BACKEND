@@ -9,7 +9,6 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.multipart.MultipartFile
 
@@ -60,14 +59,16 @@ interface ProfileControllerSpec {
         description = "프로필 수정",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "프로필 수정 성공",
             ),
         ],
     )
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart profileImage: MultipartFile?,
-    ): ResponseEntity<ProfileUpdateDto>
+        @RequestPart
+        @Valid
+        profileUpdateDto: ProfileUpdateDto,
+        @RequestPart(required = false) profileImage: MultipartFile?,
+    ): ResponseEntity<Void>
 }

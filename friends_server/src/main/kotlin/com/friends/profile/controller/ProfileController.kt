@@ -61,9 +61,9 @@ class ProfileController(
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart("profileImage") profileImage: MultipartFile?,
-    ): ResponseEntity<ProfileUpdateDto> {
+        @RequestPart(name = "profileImage", required = false) profileImage: MultipartFile?,
+    ): ResponseEntity<Void> {
         profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
-        return ResponseEntity.ok(profileUpdateDto)
+        return ResponseEntity.noContent().build()
     }
 }

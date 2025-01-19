@@ -13,7 +13,7 @@ import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
 import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
-import com.friends.support.TEST_IMAGE_FILE_URL
+import com.friends.support.TEST_IMAGE_UPLOAD_FILE_URL
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
@@ -27,6 +27,7 @@ val PROFILE_IMAGE: MultipartFile =
         byteArrayOf(1, 2, 3, 4), // 파일 내용 (예제 데이터)
     )
 const val TEST_PROFILE_IMAGE_URL = "test profile image url"
+const val TEST_IMAGE_URL = "test imageurl"
 
 fun createTestMember(): Member = Member(id = MEMBER_ID, nickname = "test name", email = "test@test.com", password = "1234", oauth2Provider = OAuth2Provider.GOOGLE)
 
@@ -34,13 +35,14 @@ fun createTestProfile(
     member: Member = createTestMember(),
     birth: LocalDate = LocalDate.now(),
     gender: GenderEnum = GenderEnum.MAN,
-): Profile = Profile(member = member, birth = birth, gender = gender, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl")
+    imageUrl: String = TEST_IMAGE_URL,
+): Profile = Profile(member = member, birth = birth, gender = gender, mbti = MbtiEnum.ENFJ, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = imageUrl)
 
 fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(memberId = createTestMember().id, nickname = createTestMember().nickname, email = "test@test.com", birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = "test imageurl", mbti = MbtiEnum.ENFJ)
 
-fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = TEST_IMAGE_FILE_URL)
+fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = TEST_IMAGE_UPLOAD_FILE_URL)
 
-fun updateTestProfile(): ProfileUpdateDto = ProfileUpdateDto(birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = "test update imageurl")
+fun updateTestProfile(imageUrl: String? = "test update imageurl"): ProfileUpdateDto = ProfileUpdateDto(birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = imageUrl)
 
 fun createTestProfileInterestTag(
     profile: Profile = createTestProfile(),

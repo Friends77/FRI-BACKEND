@@ -20,7 +20,7 @@ class S3ClientService(
 
     fun upload(
         multipartFile: MultipartFile,
-        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3), // s3 비용 절감을 위해 3일로 설정
+        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30), // s3 비용 절감을 위해 30일로 설정
     ): String {
         val filename =
             java.util.UUID

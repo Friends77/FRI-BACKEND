@@ -66,7 +66,18 @@ class ProfileCommandService(
         val profile =
             profileRepository.findByMemberId(requestMemberId)
                 ?: throw ProfileNullResponseException()
-        profile.imageUrl = profileImage?.let { s3ClientService.upload(it) }
+        profile.imageUrl =
+            if (profileImage != null) {
+                profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
+                s3ClientService.upload(profileImage)
+            } else {
+                if (profileUpdateDto.imageUrl == null) {
+                    profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
+                    null
+                } else {
+                    profile.imageUrl
+                }
+            }
         profileInterestTagRepository.deleteByProfileId(profile.id)
         profileInterestTagRepository.saveAll(
             categoryRepository.findByIdIn(profileUpdateDto.interestTag).map {
@@ -76,6 +87,6 @@ class ProfileCommandService(
                 )
             },
         )
-        profile.update(profileUpdateDto)
+        profile.update(profileUpdateDto, profile.imageUrl)
     }
 }
