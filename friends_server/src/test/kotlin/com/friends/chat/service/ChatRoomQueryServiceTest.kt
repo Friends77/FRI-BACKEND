@@ -9,6 +9,7 @@ import com.friends.chat.createTestMockSliceChatRoom
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
 import com.friends.member.repository.MemberRepository
@@ -21,7 +22,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.SliceImpl
-import org.springframework.test.util.ReflectionTestUtils
 import java.util.Optional
 
 class ChatRoomQueryServiceTest :
@@ -32,6 +32,9 @@ class ChatRoomQueryServiceTest :
             val chatRoomRepository = mockk<ChatRoomRepository>()
             val chatRoomLikeRepository = mockk<ChatRoomLikeRepository>()
             val memberRepository = mockk<MemberRepository>()
+            val friendshipRepository = mockk<FriendShipRepository>()
+            val chatRoomBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
+            val profileBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
             val chatRoomQueryService =
                 ChatRoomQueryService(
                     chatRoomMemberRepository,
@@ -39,10 +42,10 @@ class ChatRoomQueryServiceTest :
                     chatRoomRepository,
                     chatRoomLikeRepository,
                     memberRepository,
-                ).apply {
-                    ReflectionTestUtils.setField(this, "chatRoomBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL)
-                    ReflectionTestUtils.setField(this, "profileBaseImageUrl", CHAT_ROOM_BASE_IMAGE_URL)
-                }
+                    friendshipRepository,
+                    chatRoomBaseImageUrl,
+                    profileBaseImageUrl,
+                )
 
             given("getChatRooms 메소드 테스트") {
                 every { memberRepository.findById(any()) } returns Optional.of(createTestMember())

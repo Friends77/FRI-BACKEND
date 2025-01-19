@@ -30,6 +30,11 @@ interface FriendShipCustomRepository {
     fun findAllFriendsByMemberId(
         memberId: Long,
     ): List<Friendship>
+
+    fun findFriendshipByMemberIdAndNickname(
+        memberId: Long,
+        nickname: String?,
+    ): List<Member>
 }
 
 class FriendShipCustomRepositoryImpl(
@@ -50,4 +55,38 @@ class FriendShipCustomRepositoryImpl(
                         ),
                     )
             }
+
+    override fun findFriendshipByMemberIdAndNickname(
+        memberId: Long,
+        nickname: String?,
+    ): List<Member> {
+        val result1 =
+            kotlinJdslJpqlExecutor.getList {
+                select(path(Friendship::requester))
+                    .from(entity(Friendship::class))
+                    .where(
+                        and(
+                            path(Friendship::receiver).path(Member::id).equal(memberId),
+                            nickname?.let { path(Friendship::requester).path(Member::nickname).like("%$nickname%") },
+                            path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
+                        ),
+                    )
+            }
+        val result2 =
+            kotlinJdslJpqlExecutor.getList {
+                select(path(Friendship::receiver))
+                    .from(entity(Friendship::class))
+                    .where(
+                        and(
+                            path(Friendship::requester).path(Member::id).equal(memberId),
+                            nickname?.let { path(Friendship::receiver).path(Member::nickname).like("%$nickname%") },
+                            path(Friendship::getFriendshipStatus).equal(
+                                FriendshipStatusEnums.ACCEPT,
+                            ),
+                        ),
+                    )
+            }
+
+        return result1 + result2
+    }
 }

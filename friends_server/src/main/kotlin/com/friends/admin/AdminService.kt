@@ -9,13 +9,11 @@ import java.util.Date
 @Service
 class AdminService(
     private val s3ClientService: S3ClientService,
-) {
     @Value("\${image.chat-room-base-url}")
-    lateinit var chatRoomBaseImageUrl: String
-
+    private val chatRoomBaseImageUrl: String,
     @Value("\${image.profile-base-url}")
-    lateinit var profileBaseImageUrl: String
-
+    private val profileBaseImageUrl: String,
+) {
     fun uploadImage(
         file: MultipartFile,
         type: BaseImageType,
