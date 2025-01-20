@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/user/chat/invitation")
 class ChatRoomInvitationController(
     private val chatRoomInvitationService: ChatRoomInvitationService,
-) {
+) : ChatRoomInvitationControllerSpec {
     @PostMapping("/request")
-    fun requestInvitation(
+    override fun requestInvitation(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody chatRoomInvitationRequestDto: ChatRoomInvitationRequestDto,
     ) {
@@ -23,7 +23,7 @@ class ChatRoomInvitationController(
     }
 
     @PostMapping("/accept")
-    fun acceptInvitation(
+    override fun acceptInvitation(
         @AuthenticationPrincipal memberId: Long,
         @RequestBody chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto,
     ) {
@@ -31,7 +31,7 @@ class ChatRoomInvitationController(
     }
 
     @PostMapping("/reject")
-    fun rejectInvitation(
+    override fun rejectInvitation(
         @RequestBody chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto,
     ) {
         chatRoomInvitationService.rejectInvitation(chatRoomInvitationHandlerDto)
