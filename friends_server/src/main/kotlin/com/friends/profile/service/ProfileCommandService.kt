@@ -63,21 +63,29 @@ class ProfileCommandService(
         profileUpdateDto: ProfileUpdateDto,
         profileImage: MultipartFile?,
     ) {
-        val profile =
-            profileRepository.findByMemberId(requestMemberId)
-                ?: throw ProfileNullResponseException()
-        profile.imageUrl =
-            if (profileImage != null) {
-                profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
-                s3ClientService.upload(profileImage)
-            } else {
-                if (profileUpdateDto.imageUrl == null) {
-                    profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
-                    null
-                } else {
-                    profile.imageUrl
-                }
-            }
+        val profile = profileRepository.findByMemberId(requestMemberId) ?: throw ProfileNullResponseException()
+
+        val profileImageUrl = handleImageUpdate(profile, profileImage)
+        handleInterestTagUpdate(profile, profileUpdateDto)
+        profile.update(profileUpdateDto, profileImageUrl)
+    }
+
+    private fun handleImageUpdate(
+        profile: Profile,
+        profileImage: MultipartFile?,
+    ): String? {
+        profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
+        return if (profileImage != null) {
+            s3ClientService.upload(profileImage)
+        } else {
+            null
+        }
+    }
+
+    private fun handleInterestTagUpdate(
+        profile: Profile,
+        profileUpdateDto: ProfileUpdateDto,
+    ) {
         profileInterestTagRepository.deleteByProfileId(profile.id)
         profileInterestTagRepository.saveAll(
             categoryRepository.findByIdIn(profileUpdateDto.interestTag).map {
@@ -87,6 +95,5 @@ class ProfileCommandService(
                 )
             },
         )
-        profile.update(profileUpdateDto, profile.imageUrl)
     }
 }
