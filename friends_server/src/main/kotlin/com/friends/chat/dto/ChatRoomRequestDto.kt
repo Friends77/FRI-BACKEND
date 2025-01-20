@@ -26,3 +26,15 @@ data class ChatRoomUpdateRequestDto(
     @Schema(description = "기존 배경 이미지 삭제시 true, 변경 안 할 시 false)")
     val backgroundImageDelete: Boolean,
 )
+
+data class ChatRoomInvitationRequestDto(
+    @Schema(description = "초대할 채팅방의 id")
+    val chatRoomId: Long,
+    @Schema(description = "초대할 사용자 ID 리스트")
+    val receiverIdList: Set<Long>,
+)
+
+data class ChatRoomInvitationHandlerDto(
+    @Schema(defaultValue = "초대받은 알람의 id")
+    val alarmId: Long,
+)
