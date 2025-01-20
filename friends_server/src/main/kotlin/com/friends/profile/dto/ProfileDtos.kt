@@ -19,6 +19,7 @@ data class ProfileCreateDto(
 
 //수정가능한 필드 dto
 data class ProfileUpdateDto(
+    var nickname: String,
     var birth: LocalDate,
     var gender: GenderEnum,
     var location: Location? = null,

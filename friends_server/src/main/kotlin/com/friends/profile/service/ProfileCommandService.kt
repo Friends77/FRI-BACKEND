@@ -11,6 +11,7 @@ import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
 import com.friends.profile.repository.ProfileInterestTagRepository
 import com.friends.profile.repository.ProfileRepository
+import com.friends.security.service.AuthService
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
@@ -23,6 +24,7 @@ class ProfileCommandService(
     private val categoryRepository: CategoryRepository,
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val s3ClientService: S3ClientService,
+    private val authService: AuthService,
 ) {
     //프로필 초기 작성
     fun createProfile(
@@ -67,6 +69,7 @@ class ProfileCommandService(
 
         val profileImageUrl = handleImageUpdate(profile, profileImage)
         handleInterestTagUpdate(profile, profileUpdateDto)
+        handlerNicknameUpdate(profile, profileUpdateDto)
         profile.update(profileUpdateDto, profileImageUrl)
     }
 
@@ -95,5 +98,14 @@ class ProfileCommandService(
                 )
             },
         )
+    }
+
+    private fun handlerNicknameUpdate(
+        profile: Profile,
+        profileUpdateDto: ProfileUpdateDto,
+    ) {
+        if (authService.validateNickname(profileUpdateDto.nickname).isValid) {
+            profile.member.nickname = profileUpdateDto.nickname
+        }
     }
 }
