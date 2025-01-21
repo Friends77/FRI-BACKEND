@@ -24,4 +24,12 @@ class AlarmController(
         val result = alarmQueryService.getAlarmList(memberId, size, lastAlarmId)
         return ResponseEntity.ok(result)
     }
+
+    @GetMapping("/unread-count")
+    override fun getUnreadAlarmCount(
+        @AuthenticationPrincipal memberId: Long,
+    ): ResponseEntity<Long> {
+        val result = alarmQueryService.getUnreadAlarmCount(memberId)
+        return ResponseEntity.ok(result)
+    }
 }
