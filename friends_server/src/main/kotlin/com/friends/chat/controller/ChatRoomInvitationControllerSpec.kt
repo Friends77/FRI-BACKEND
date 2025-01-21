@@ -7,6 +7,7 @@ import com.friends.common.swagger.ApiErrorCodeExamples
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.ResponseEntity
 
 @Tag(name = "Chat Invitation")
 interface ChatRoomInvitationControllerSpec {
@@ -28,7 +29,7 @@ interface ChatRoomInvitationControllerSpec {
     fun requestInvitation(
         memberId: Long,
         chatRoomInvitationRequestDto: ChatRoomInvitationRequestDto,
-    )
+    ): ResponseEntity<String>
 
     @Operation(
         description = "채팅방 초대 수락 API",
@@ -49,7 +50,7 @@ interface ChatRoomInvitationControllerSpec {
     fun acceptInvitation(
         memberId: Long,
         chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto,
-    )
+    ): ResponseEntity<String>
 
     @Operation(
         description = "채팅방 초대 거절 API",
@@ -65,5 +66,5 @@ interface ChatRoomInvitationControllerSpec {
             ErrorCode.ALARM_NOT_FOUND,
         ],
     )
-    fun rejectInvitation(chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto)
+    fun rejectInvitation(chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto): ResponseEntity<String>
 }
