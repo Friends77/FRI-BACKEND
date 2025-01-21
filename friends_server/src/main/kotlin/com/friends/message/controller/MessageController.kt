@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -48,6 +49,15 @@ class MessageController(
         messageId: Long,
     ): ResponseEntity<Unit> {
         messageCommandService.deleteMessage(memberId, messageId)
+        return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping("/disconnect/{chatRoomId}")
+    override fun disconnectChatRoom(
+        @AuthenticationPrincipal memberId: Long,
+        @PathVariable chatRoomId: Long,
+    ): ResponseEntity<Unit> {
+        messageCommandService.disconnectChatRoom(chatRoomId, memberId)
         return ResponseEntity.noContent().build()
     }
 }
