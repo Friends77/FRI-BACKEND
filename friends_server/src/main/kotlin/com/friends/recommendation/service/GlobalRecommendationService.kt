@@ -55,6 +55,7 @@ class GlobalRecommendationService(
                     it.imageUrl ?: chatBaseImageUrl,
                     it.categories.map { chatRoomCategory -> CategoryInfoResponse(chatRoomCategory.category.id) },
                     chatRoomMemberRepository.countByChatRoom(it),
+                    chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(it.id).map { member -> member.profile?.imageUrl ?: profileBaseImageUrl },
                 )
             }
         return ListBaseResponse(result)

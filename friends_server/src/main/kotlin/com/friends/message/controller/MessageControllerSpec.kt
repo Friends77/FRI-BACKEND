@@ -89,4 +89,21 @@ interface MessageControllerSpec {
         memberId: Long,
         messageId: Long,
     ): ResponseEntity<Unit>
+
+    @Operation(
+        description =
+            "채팅방 종료 API <br>" +
+                "채팅방을 종료하거나, 다른 채팅방으로 이동할 경우 사용합니다 <br>" +
+                "이 API 가 보내진 시점 이후로 채팅방에 전송된 메세지는 읽지 않은 메세지가 됩니다",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "채팅방 종료하기 성공",
+            ),
+        ],
+    )
+    fun disconnectChatRoom(
+        memberId: Long,
+        chatRoomId: Long,
+    ): ResponseEntity<Unit>
 }

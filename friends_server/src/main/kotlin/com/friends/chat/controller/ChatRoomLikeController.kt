@@ -18,5 +18,5 @@ class ChatRoomLikeController(
         @PathVariable("chatRoomId")
         chatRoomId: Long,
         memberId: Long,
-    ): ResponseEntity<ToggleLikeResponseDto> = ResponseEntity.ok(chatRoomLikeCommandService.toggleLike(memberId, chatRoomId))
+    ): ResponseEntity<ToggleLikeResponseDto> = ResponseEntity.ok(chatRoomLikeCommandService.toggleLike(chatRoomId, memberId))
 }
