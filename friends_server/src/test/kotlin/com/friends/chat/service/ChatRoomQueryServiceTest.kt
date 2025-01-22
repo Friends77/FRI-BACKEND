@@ -112,7 +112,7 @@ class ChatRoomQueryServiceTest :
                 `when`("요청자와 매니저가 다른 경우") {
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = manager))
                     every { memberRepository.findById(manager.id) } returns Optional.of(manager)
-                    every { chatRoomMemberRepository.findMemberByChatRoom(any(), any(), any()) } returns members
+                    every { chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(any(), any(), any()) } returns members
                     then("채팅방 멤버 정보가 조회된다.") {
                         chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id, manager.id, members[0].id, members[1].id)
                     }
@@ -120,7 +120,7 @@ class ChatRoomQueryServiceTest :
 
                 `when`("요청자와 매니저가 같은 경우") {
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = requestMember))
-                    every { chatRoomMemberRepository.findMemberByChatRoom(any(), any(), any()) } returns emptyList()
+                    every { chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(any(), any(), any()) } returns emptyList()
                     then("채팅방 멤버 정보가 조회된다.") {
                         chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id)
                     }

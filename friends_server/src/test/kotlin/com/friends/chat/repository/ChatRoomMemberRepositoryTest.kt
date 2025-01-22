@@ -118,22 +118,22 @@ class ChatRoomMemberRepositoryTest(
             }
         }
 
-        describe("findMemberByChatRoom") {
+        describe("findMemberByChatRoomAndMemberExceptManager") {
             context("채팅방과 회원을 받으면") {
                 it("해당 채팅방에 참여중인 회원을 반환한다") {
-                    chatRoomMemberRepository.findMemberByChatRoom(chatRoom1, member1, null).map { member -> member.id } shouldBe listOf(member2.id, member3.id)
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom1, member1, null).map { member -> member.id } shouldBe listOf(member2.id, member3.id)
                 }
             }
 
             context("채팅방과 회원, 매니저를 받으면") {
                 it("해당 채팅방에 참여중인 회원을 반환한다") {
-                    chatRoomMemberRepository.findMemberByChatRoom(chatRoom1, member2, member1).map { member -> member.id } shouldBe listOf(member3.id)
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom1, member2, member1).map { member -> member.id } shouldBe listOf(member3.id)
                 }
             }
 
             context("채팅방과 회원, 매니저를 받으면") {
                 it("emptyList를 반환한다") {
-                    chatRoomMemberRepository.findMemberByChatRoom(chatRoom2, member3, member2).map { member -> member.id } shouldBe emptyList()
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom2, member3, member2).map { member -> member.id } shouldBe emptyList()
                 }
             }
         }
