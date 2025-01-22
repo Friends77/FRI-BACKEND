@@ -14,6 +14,8 @@ data class ChatRoomCreateRequestDto(
     @field:Size(min = 1, message = "채팅방 카테고리는 최소 1개 이상 선택해주세요.") //TODO: 카테고리 최대 개수 제한
     @Schema(description = "채팅방 카테고리 ID 리스트")
     val categoryIdList: Set<Long>,
+    @field:NullOrNotBlank(message = "채팅방 설명은 공백일 수 없습니다.")
+    val description: String?,
 )
 
 data class ChatRoomUpdateRequestDto(
@@ -25,4 +27,6 @@ data class ChatRoomUpdateRequestDto(
     val categoryIdList: Set<Long>?,
     @Schema(description = "기존 배경 이미지 삭제시 true, 변경 안 할 시 false)")
     val backgroundImageDelete: Boolean,
+    @field:NullOrNotBlank(message = "채팅방 설명은 공백일 수 없습니다.")
+    val description: String?,
 )

@@ -194,6 +194,7 @@ class InitDB(
                                 .take(randomInt)
                                 .map { it.id }
                                 .toSet(),
+                        "채팅방 $i 입니다.",
                     ),
                     members[0].id,
                     null,
@@ -210,6 +211,7 @@ class InitDB(
                                 .take(randomInt)
                                 .map { it.id }
                                 .toSet(),
+                        null,
                     ),
                     members[1].id,
                     null,

@@ -92,6 +92,18 @@ class ChatRoomControllerTest(
                         )
                 }
             }
+
+            `when`("채팅방 설명이 공백인 경우") {
+                val request = createTestChatRoomCreateRequestDto(description = " ")
+                then("400 에러 발생") {
+                    mockMvc
+                        .perform(
+                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
+                        ).andExpect(
+                            status().isBadRequest,
+                        )
+                }
+            }
         }
 
         given("GET $requestPath Test") {

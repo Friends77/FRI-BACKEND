@@ -51,7 +51,7 @@ class ChatRoomCommandService(
                 s3ClientService.upload(it)
             }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
+        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl, request.description))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
         messageCommandService.setChatRoomOnline(chatRoom.id, memberId)
         val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
@@ -172,6 +172,10 @@ class ChatRoomCommandService(
         var changeChatRoomInfo = false
         if (request.title != null && chatRoom.title != request.title) {
             chatRoom.title = request.title
+            changeChatRoomInfo = true
+        }
+        if (request.description != null && chatRoom.description != request.description) {
+            chatRoom.description = request.description
             changeChatRoomInfo = true
         }
         if (request.categoryIdList != null) {
