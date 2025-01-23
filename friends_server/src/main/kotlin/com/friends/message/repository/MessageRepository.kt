@@ -56,7 +56,7 @@ class MessageCustomRepositoryImpl(
                         and(
                             path(Message::chatRoom).equal(chatRoomMember.chatRoom),
                             path(Message::id).greaterThan(chatRoomMember.lastReadMessage.id),
-                            path(Message::type).path(MessageType::name).notLike("${MessageType.SYSTEM}%"),
+                            path(Message::type).`in`(MessageType.getNonSystemTypes()),
                         ),
                     )
             }.toInt()
@@ -111,7 +111,7 @@ class MessageCustomRepositoryImpl(
                 .where(
                     and(
                         path(Message::chatRoom).equal(chatRoom),
-                        path(Message::type).path(MessageType::name).notLike("${MessageType.SYSTEM}%"),
+                        path(Message::type).`in`(MessageType.getNonSystemTypes()),
                     ),
                 ).orderBy(path(Message::id).desc())
         }
