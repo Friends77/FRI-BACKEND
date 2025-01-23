@@ -1,6 +1,7 @@
 package com.friends.profile.dto
 
 import com.friends.category.entity.Category
+import com.friends.common.annotation.NullOrNotBlank
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
@@ -26,7 +27,8 @@ data class ProfileUpdateDto(
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
-    @Schema(description = "기존 프로필 이미지 URL, null이면 기본 이미지로 변경, 만일 이미지 파일을 업로드하면 해당 필드가 null이어도 업로드한 이미지로 변경")
+    @Schema(description = "프로필 이미지 URL, null이면 기본 이미지로 변경.")
+    @NullOrNotBlank(message = "프로필 이미지 URL은 공백일 수 없습니다.")
     var imageUrl: String? = null,
 )
 

@@ -5,7 +5,6 @@ import com.friends.profile.dto.ProfileUpdateDto
 import com.friends.profile.service.ProfileCommandService
 import com.friends.profile.service.ProfileQueryService
 import jakarta.validation.Valid
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class ProfileController(
@@ -54,16 +52,12 @@ class ProfileController(
 //    }
 
     //프로필 수정
-    @PutMapping(
-        value = ["api/user/profile"],
-        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
-    )
+    @PutMapping("api/user/profile")
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
         @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart(name = "profileImage", required = false) profileImage: MultipartFile?,
     ): ResponseEntity<Void> {
-        profileCommandService.updateProfile(memberId, profileUpdateDto, profileImage)
+        profileCommandService.updateProfile(memberId, profileUpdateDto)
         return ResponseEntity.noContent().build()
     }
 }

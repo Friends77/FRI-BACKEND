@@ -2,6 +2,7 @@ package com.friends.profile.service
 
 import com.friends.category.repository.CategoryRepository
 import com.friends.image.S3ClientService
+import com.friends.image.service.ImageCommandService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.ProfileNullResponseException
@@ -23,6 +24,7 @@ class ProfileCommandService(
     private val categoryRepository: CategoryRepository,
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val s3ClientService: S3ClientService,
+    private val imageCommandService: ImageCommandService,
 ) {
     //프로필 초기 작성
     fun createProfile(
@@ -61,14 +63,14 @@ class ProfileCommandService(
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile?,
     ) {
         val profile =
-            profileRepository.findByMemberId(requestMemberId)
-                ?: throw ProfileNullResponseException()
-        val changeProfileImage = handleImageUpdate(profile, profileUpdateDto, profileImage)
+            profileRepository.findByMemberId(requestMemberId) ?: throw ProfileNullResponseException()
+        val profileImageUrl = profile.imageUrl
+        imageCommandService.existsImage(profileImageUrl, profileUpdateDto.imageUrl)
         handleInterestTagUpdate(profile, profileUpdateDto)
-        profile.update(profileUpdateDto, changeProfileImage)
+        profile.update(profileUpdateDto)
+        imageCommandService.deleteOriginalImage(profileImageUrl, profileUpdateDto.imageUrl)
     }
 
     private fun handleInterestTagUpdate(
@@ -84,21 +86,5 @@ class ProfileCommandService(
                 )
             },
         )
-    }
-
-    private fun handleImageUpdate(
-        profile: Profile,
-        profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile?,
-    ): String? {
-        if (profileImage != null) {
-            profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
-            return s3ClientService.upload(profileImage)
-        }
-        if (profileUpdateDto.imageUrl == null) {
-            profile.imageUrl?.let { s3ClientService.deleteS3Object(it) }
-            return null
-        }
-        return profile.imageUrl
     }
 }

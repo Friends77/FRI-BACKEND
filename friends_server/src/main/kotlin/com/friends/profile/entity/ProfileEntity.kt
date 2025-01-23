@@ -46,14 +46,13 @@ class Profile(
 ) : BaseModifiableEntity() {
     fun update(
         profileUpdateDto: ProfileUpdateDto,
-        newProfileUrl: String?,
     ) {
         this.birth = profileUpdateDto.birth
         this.gender = profileUpdateDto.gender
         this.location = profileUpdateDto.location
         this.selfDescription = profileUpdateDto.selfDescription
         this.mbti = profileUpdateDto.mbti
-        this.imageUrl = newProfileUrl
+        this.imageUrl = profileUpdateDto.imageUrl
     }
 }
 

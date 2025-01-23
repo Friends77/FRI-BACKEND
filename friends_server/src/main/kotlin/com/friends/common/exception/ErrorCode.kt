@@ -41,6 +41,7 @@ enum class ErrorCode(
     // Profile API error 15000대
     PROFILE_NOT_FOUND(HttpStatus.NOT_FOUND, -15001, "해당 멤버의 프로필이 존재하지 않습니다."),
     PROFILE_LOCATION_NULL(HttpStatus.NOT_FOUND, -15002, "프로필 위치 정보가 존재하지 않습니다."),
+    PROFILE_URL_NOT_BLANK(HttpStatus.BAD_REQUEST, -15003, "프로필 이미지 URL은 공백일 수 없습니다."),
 
     // Board API error 16000대
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, -16001, "존재하지 않는 게시물입니다."),
@@ -94,4 +95,7 @@ enum class ErrorCode(
 
     // Search API error 24000대
     INVALID_SEARCH_NICKNAME(HttpStatus.BAD_REQUEST, -24001, "검색할 닉네임은 공백일 수 없습니다."),
+
+    // Image API error 25000대
+    INVALID_IMAGE_URL(HttpStatus.BAD_REQUEST, -25001, "유효하지 않은 이미지 URL입니다."),
 }
