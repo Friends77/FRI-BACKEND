@@ -10,7 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -55,7 +55,9 @@ class ProfileController(
     @PutMapping("api/user/profile")
     override fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestPart("profileData") @Valid profileUpdateDto: ProfileUpdateDto,
+        @RequestBody
+        @Valid
+        profileUpdateDto: ProfileUpdateDto,
     ): ResponseEntity<Void> {
         profileCommandService.updateProfile(memberId, profileUpdateDto)
         return ResponseEntity.noContent().build()

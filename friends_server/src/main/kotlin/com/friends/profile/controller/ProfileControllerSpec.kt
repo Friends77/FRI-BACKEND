@@ -11,7 +11,7 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.bind.annotation.RequestBody
 
 @Tag(name = "Profile", description = "프로필 API")
 interface ProfileControllerSpec {
@@ -73,7 +73,7 @@ interface ProfileControllerSpec {
     )
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestPart
+        @RequestBody
         @Valid
         profileUpdateDto: ProfileUpdateDto,
     ): ResponseEntity<Void>
