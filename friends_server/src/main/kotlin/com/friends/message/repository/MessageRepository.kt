@@ -56,7 +56,7 @@ class MessageCustomRepositoryImpl(
                         and(
                             path(Message::chatRoom).equal(chatRoomMember.chatRoom),
                             path(Message::id).greaterThan(chatRoomMember.lastReadMessage.id),
-                            path(Message::type).notEqual(MessageType.SYSTEM), // 시스템 메세지(입장 메세지 등)는 읽지 않은 메세지로 카운트하지 않음
+                            path(Message::type).path(MessageType::name).notLike("${MessageType.SYSTEM}%"),
                         ),
                     )
             }.toInt()
@@ -111,7 +111,7 @@ class MessageCustomRepositoryImpl(
                 .where(
                     and(
                         path(Message::chatRoom).equal(chatRoom),
-                        path(Message::type).notEqual(MessageType.SYSTEM),
+                        path(Message::type).path(MessageType::name).notLike("${MessageType.SYSTEM}%"),
                     ),
                 ).orderBy(path(Message::id).desc())
         }

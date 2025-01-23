@@ -5,6 +5,8 @@ import com.friends.common.entity.BaseTimeEntity
 import com.friends.member.entity.Member
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -27,6 +29,7 @@ class Message(
     @Column(nullable = false)
     var content: String,
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     var type: MessageType,
 ) : BaseTimeEntity() {
     companion object {
@@ -58,6 +61,10 @@ class Message(
 enum class MessageType {
     TEXT, // 일반 텍스트 메시지 및 이모지
     IMAGE,
-    SYSTEM,
     DELETE_MESSAGE,
+
+    SYSTEM,
+    SYSTEM_MEMBER_ENTER, // 채팅방 멤버 입장
+    SYSTEM_MEMBER_LEAVE, // 채팅방 멤버 퇴장
+    SYSTEM_NEW_MANAGER,
 }
