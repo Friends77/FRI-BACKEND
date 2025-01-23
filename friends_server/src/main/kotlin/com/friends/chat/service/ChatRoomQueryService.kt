@@ -8,8 +8,6 @@ import com.friends.chat.dto.mapper.toChatRoomInfoResponse
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.common.dto.SliceBaseResponse
-import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MemberNotFoundException
 import com.friends.member.entity.Member
@@ -69,5 +67,15 @@ class ChatRoomQueryService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
         memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         return toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId), chatRoom.imageUrl ?: chatRoomBaseImageUrl)
+    }
+
+    @Transactional(readOnly = true)
+    fun isUserInChatRoom(
+        chatRoomId: Long,
+        memberId: Long,
+    ): Boolean {
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
     }
 }
