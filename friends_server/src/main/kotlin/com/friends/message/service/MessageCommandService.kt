@@ -72,6 +72,19 @@ class MessageCommandService(
     }
 
     /**
+     * 테스트 유저를 만들어 채팅방을 참여시키면서 테스트 유저가 온라인 상태가 되는 문제가 생겼습니다.
+     * 이를 해제하기 위해 사용할 clear 메서드 입니다.
+     *
+     * 테스트 환경에서만 사용할 목적의 메서드입니다.
+     * 배포시에는 제거될 예정입니다.
+     */
+    fun clear() {
+        onlineUsers.clear()
+        sessions.clear()
+        chatRoomLocks.clear()
+    }
+
+    /**
      * 채팅방 ID를 키로 하여, 해당 채팅방에서 메시지를 보낼 때 동기화에 사용할 Lock 객체를 관리합니다.
      */
     private val chatRoomLocks = ConcurrentHashMap<Long, Any>()
