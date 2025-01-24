@@ -73,6 +73,16 @@ class ChatRoomQueryService(
     }
 
     @Transactional(readOnly = true)
+    fun isUserInChatRoom(
+        chatRoomId: Long,
+        memberId: Long,
+    ): Boolean {
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
+    }
+
+    @Transactional(readOnly = true)
     fun getChatRoomMemberInfo(
         chatRoomId: Long,
         memberId: Long,

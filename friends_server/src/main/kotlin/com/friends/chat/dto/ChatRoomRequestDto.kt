@@ -30,3 +30,15 @@ data class ChatRoomUpdateRequestDto(
     @field:NullOrNotBlank(message = "채팅방 설명은 공백일 수 없습니다.")
     val description: String?,
 )
+
+data class ChatRoomInvitationRequestDto(
+    @Schema(description = "초대할 채팅방의 id")
+    val chatRoomId: Long,
+    @Schema(description = "초대할 사용자 ID 리스트")
+    val receiverIdList: Set<Long>,
+)
+
+data class ChatRoomInvitationHandlerDto(
+    @Schema(defaultValue = "초대받은 알람의 id")
+    val alarmId: Long,
+)
