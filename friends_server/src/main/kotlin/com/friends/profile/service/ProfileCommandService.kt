@@ -60,16 +60,18 @@ class ProfileCommandService(
     }
 
     //프로필 수정
+    @Transactional
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
     ) {
-        val profile =
-            profileRepository.findByMemberId(requestMemberId) ?: throw ProfileNullResponseException()
+        val member = memberRepository.findById(requestMemberId).orElseThrow { MemberNotFoundException() }
+        val profile = profileRepository.findByMemberId(requestMemberId) ?: throw ProfileNullResponseException()
         val profileImageUrl = profile.imageUrl
         imageCommandService.existsImage(profileImageUrl, profileUpdateDto.imageUrl)
         handleInterestTagUpdate(profile, profileUpdateDto)
         profile.update(profileUpdateDto)
+        member.updateNickname(profileUpdateDto.nickname)
         imageCommandService.deleteOriginalImage(profileImageUrl, profileUpdateDto.imageUrl)
     }
 
