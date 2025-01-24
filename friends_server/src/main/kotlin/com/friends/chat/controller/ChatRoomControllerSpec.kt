@@ -250,6 +250,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.CHAT_ROOM_NOT_FOUND,
             ErrorCode.INVALID_CHAT_ROOM_ID,
             ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
         ],
     )
     fun getChatRoomMemberInfoList(
