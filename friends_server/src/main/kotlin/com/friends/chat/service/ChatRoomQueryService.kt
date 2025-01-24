@@ -74,6 +74,15 @@ class ChatRoomQueryService(
     }
 
     @Transactional(readOnly = true)
+    fun isUserInChatRoom(
+        chatRoomId: Long,
+        memberId: Long,
+    ): Boolean {
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
+    }
+    @Transactional(readOnly = true)
     fun getChatRoomMemberInfoList(
         chatRoomId: Long,
         memberId: Long,
@@ -121,16 +130,6 @@ class ChatRoomQueryService(
             throw ChatRoomMemberNotFoundException()
         }
         return chatRoomResponseMapper.toChatRoomMemberInfoResponseDto(newMember, memberFriendshipStatus(member = requester, friend = newMember), isManager = false, isMe = false)
-    }
-
-    @Transactional(readOnly = true)
-    fun isUserInChatRoom(
-        chatRoomId: Long,
-        memberId: Long,
-    ): Boolean {
-        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
-        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
     }
 
     private fun memberFriendshipStatus(
