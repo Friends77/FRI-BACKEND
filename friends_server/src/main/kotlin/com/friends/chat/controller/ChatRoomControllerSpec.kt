@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomMemberInfoResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.common.annotation.NullOrNotBlank
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Chat")
 interface ChatRoomControllerSpec {
     @Operation(
+        summary = "채팅방 생성",
         description = "채팅방 생성 API",
         responses = [
             ApiResponse(
@@ -59,6 +61,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<CreateChatRoomResponseDto>
 
     @Operation(
+        summary = "채팅방 리스트 조회",
         description = "채팅방 리스트 조회 API",
         responses = [
             ApiResponse(
@@ -84,6 +87,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<List<ChatRoomInfoResponseDto>>
 
     @Operation(
+        summary = "채팅방 상세 조회",
         description = "채팅방 상세조회 API",
         responses = [
             ApiResponse(
@@ -114,6 +118,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<ChatRoomDetailResponseDto>
 
     @Operation(
+        summary = "채팅방 입장",
         description = "채팅방 입장 API",
         responses = [
             ApiResponse(
@@ -138,6 +143,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 삭제(나가기)",
         description = "채팅방 삭제 API",
         responses = [
             ApiResponse(
@@ -163,6 +169,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 수정",
         description = "채팅방 수정 API",
         responses = [
             ApiResponse(
@@ -199,6 +206,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 강제 퇴장",
         description = "채팅방 강제 퇴장 API",
         responses = [
             ApiResponse(
@@ -226,4 +234,29 @@ interface ChatRoomControllerSpec {
         @RequestParam
         forceLeaveMemberId: Long,
     ): ResponseEntity<Void>
+
+    @Operation(
+        summary = "채팅방 인원 조회",
+        description = "채팅방 인원 조회 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방 인원 조회 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
+        ],
+    )
+    fun getChatRoomMembers(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<List<ChatRoomMemberInfoResponseDto>>
 }

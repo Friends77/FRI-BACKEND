@@ -13,6 +13,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 
 interface ChatRoomLikeControllerSpec {
     @Operation(
+        summary = "채팅방 좋아요 토글",
         description = "채팅방 좋아요 토글 API",
         responses = [
             ApiResponse(

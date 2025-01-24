@@ -43,6 +43,12 @@ interface ChatRoomMemberCustomRepository {
     ): List<ChatRoomMember>
 
     fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member>
+
+    fun findMemberByChatRoom(
+        chatRoom: ChatRoom,
+        member: Member,
+        manager: Member?,
+    ): List<Member>
 }
 
 class ChatRoomMemberCustomRepositoryImpl(
@@ -69,6 +75,23 @@ class ChatRoomMemberCustomRepositoryImpl(
                 .from(entity(ChatRoomMember::class), join(ChatRoomMember::member))
                 .where(path(ChatRoomMember::chatRoom).path(ChatRoom::id).eq(chatRoomId))
                 .orderBy(path(ChatRoomMember::id).asc())
+        }
+
+    override fun findMemberByChatRoom(
+        chatRoom: ChatRoom,
+        member: Member,
+        manager: Member?,
+    ): List<Member> =
+        kotlinJdslJpqlExecutor.getList {
+            select(path(ChatRoomMember::member))
+                .from(entity(ChatRoomMember::class), join(ChatRoomMember::member))
+                .where(
+                    and(
+                        path(ChatRoomMember::chatRoom).eq(chatRoom),
+                        path(ChatRoomMember::member).ne(member),
+                        manager?.let { path(ChatRoomMember::member).ne(it) },
+                    ),
+                ).orderBy(path(ChatRoomMember::member).path(Member::nickname).asc())
         }
 
     private fun Jpql.dynamicChatRoomList(
