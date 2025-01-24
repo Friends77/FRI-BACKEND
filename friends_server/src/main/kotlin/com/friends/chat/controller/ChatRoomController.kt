@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomMemberInfoResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.service.ChatRoomCommandService
@@ -112,4 +113,13 @@ class ChatRoomController(
         chatRoomCommandService.forcedToLeave(chatRoomId, memberId, forceLeaveMemberId)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
+
+    @GetMapping("/{id}/member")
+    override fun getChatRoomMembers(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<List<ChatRoomMemberInfoResponseDto>> = ResponseEntity.ok(chatRoomQueryService.getChatRoomMemberInfo(chatRoomId, memberId))
 }

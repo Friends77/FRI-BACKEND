@@ -5,22 +5,23 @@ import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
 import com.friends.chat.createTestChatRoomList
+import com.friends.chat.dto.mapper.ChatRoomResponseMapper
 import com.friends.chat.repository.ChatRoomLikeRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.MEMBER_ID
 import com.friends.member.createTestMember
+import com.friends.member.createTestMemberWithId
 import com.friends.member.repository.MemberRepository
 import com.friends.message.createMockTestMessage
 import com.friends.message.repository.MessageRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.SliceImpl
 import java.util.Optional
 
 class ChatRoomQueryServiceTest :
@@ -34,6 +35,7 @@ class ChatRoomQueryServiceTest :
             val friendshipRepository = mockk<FriendShipRepository>()
             val chatRoomBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
             val profileBaseImageUrl = CHAT_ROOM_BASE_IMAGE_URL
+            val chatRoomResponseMapper = ChatRoomResponseMapper(profileBaseImageUrl)
             val chatRoomQueryService =
                 ChatRoomQueryService(
                     chatRoomMemberRepository,
@@ -44,6 +46,7 @@ class ChatRoomQueryServiceTest :
                     friendshipRepository,
                     chatRoomBaseImageUrl,
                     profileBaseImageUrl,
+                    chatRoomResponseMapper,
                 )
 
             given("getChatRooms 메소드 테스트") {
@@ -96,6 +99,30 @@ class ChatRoomQueryServiceTest :
                     every { chatRoomRepository.findById(any()) } returns Optional.empty()
                     then("ChatRoomNotFoundException 에러가 발생한다.") {
                         shouldThrow<ChatRoomNotFoundException> { chatRoomQueryService.getChatRoomDetail(TEST_CHAT_ROOM_ID, MEMBER_ID) }
+                    }
+                }
+            }
+
+            given("getChatRoomMemberInfo 메소드 테스트") {
+                val requestMember = createTestMemberWithId(id = 1L)
+                val manager = createTestMemberWithId(id = 2L)
+                val members = listOf(createTestMemberWithId(id = 3L), createTestMemberWithId(id = 4L))
+                every { memberRepository.findById(requestMember.id) } returns Optional.of(requestMember)
+                every { friendshipRepository.findByRequesterAndReceiver(any(), any()) } returns null
+                `when`("요청자와 매니저가 다른 경우") {
+                    every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = manager))
+                    every { memberRepository.findById(manager.id) } returns Optional.of(manager)
+                    every { chatRoomMemberRepository.findMemberByChatRoom(any(), any(), any()) } returns members
+                    then("채팅방 멤버 정보가 조회된다.") {
+                        chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id, manager.id, members[0].id, members[1].id)
+                    }
+                }
+
+                `when`("요청자와 매니저가 같은 경우") {
+                    every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = requestMember))
+                    every { chatRoomMemberRepository.findMemberByChatRoom(any(), any(), any()) } returns emptyList()
+                    then("채팅방 멤버 정보가 조회된다.") {
+                        chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id)
                     }
                 }
             }
