@@ -110,6 +110,7 @@ class ChatRoomQueryServiceTest :
                 val members = listOf(createTestMemberWithId(id = 3L), createTestMemberWithId(id = 4L))
                 every { memberRepository.findById(requestMember.id) } returns Optional.of(requestMember)
                 every { friendshipRepository.findByRequesterAndReceiver(any(), any()) } returns null
+                every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns true
                 `when`("요청자와 매니저가 다른 경우") {
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = manager))
                     every { memberRepository.findById(manager.id) } returns Optional.of(manager)
