@@ -3,6 +3,7 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomMemberInfoResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.common.annotation.NullOrNotBlank
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Chat")
 interface ChatRoomControllerSpec {
     @Operation(
+        summary = "채팅방 생성",
         description = "채팅방 생성 API",
         responses = [
             ApiResponse(
@@ -46,6 +48,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.CHAT_ROOM_CATEGORY_INVALID_SIZE,
             ErrorCode.CHAT_ROOM_CATEGORY_NOT_FOUND,
             ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.NOT_BLANK_CHAT_ROOM_DESCRIPTION,
         ],
     )
     fun createChatRoom(
@@ -59,6 +62,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<CreateChatRoomResponseDto>
 
     @Operation(
+        summary = "채팅방 리스트 조회",
         description = "채팅방 리스트 조회 API",
         responses = [
             ApiResponse(
@@ -84,6 +88,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<List<ChatRoomInfoResponseDto>>
 
     @Operation(
+        summary = "채팅방 상세 조회",
         description = "채팅방 상세조회 API",
         responses = [
             ApiResponse(
@@ -114,6 +119,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<ChatRoomDetailResponseDto>
 
     @Operation(
+        summary = "채팅방 입장",
         description = "채팅방 입장 API",
         responses = [
             ApiResponse(
@@ -138,6 +144,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 삭제(나가기)",
         description = "채팅방 삭제 API",
         responses = [
             ApiResponse(
@@ -163,6 +170,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 수정",
         description = "채팅방 수정 API",
         responses = [
             ApiResponse(
@@ -183,6 +191,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.NOT_CHAT_ROOM_MANAGER,
             ErrorCode.CHAT_ROOM_UPDATE_NOTHING,
             ErrorCode.CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE,
+            ErrorCode.NOT_BLANK_CHAT_ROOM_DESCRIPTION,
         ],
     )
     fun updateChatRoom(
@@ -199,6 +208,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 강제 퇴장",
         description = "채팅방 강제 퇴장 API",
         responses = [
             ApiResponse(
@@ -226,4 +236,58 @@ interface ChatRoomControllerSpec {
         @RequestParam
         forceLeaveMemberId: Long,
     ): ResponseEntity<Void>
+
+    @Operation(
+        summary = "채팅방 인원 조회",
+        description = "채팅방 인원 조회 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방 인원 조회 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
+        ],
+    )
+    fun getChatRoomMemberInfoList(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<List<ChatRoomMemberInfoResponseDto>>
+
+    @Operation(
+        summary = "채팅방 내 특정 멤버 정보 검샘(채팅방 입장시 참여자 리스트에 표시하기 위함) ",
+        description = "채팅방 내 특정 멤버 정보 검색 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방 내 특정 멤버 정보 검색 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
+        ],
+    )
+    fun getChatRoomMemberInfo(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        requesterId: Long,
+        @PathVariable("memberId")
+        newMemberId: Long,
+    ): ResponseEntity<ChatRoomMemberInfoResponseDto>
 }

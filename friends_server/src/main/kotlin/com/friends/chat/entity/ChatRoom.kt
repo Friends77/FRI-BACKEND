@@ -38,6 +38,7 @@ class ChatRoom(
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(nullable = true)
     var lastMessage: Message? = null,
+    var description: String? = null,
 ) : BaseModifiableEntity() {
     fun increaseLikeCount() {
         this.likeCount++
@@ -61,6 +62,7 @@ class ChatRoom(
             title: String,
             manager: Member,
             imageUrl: String? = null,
-        ): ChatRoom = ChatRoom(title = title, manager = manager, imageUrl = imageUrl)
+            description: String? = null,
+        ): ChatRoom = ChatRoom(title = title, manager = manager, imageUrl = imageUrl, description = description)
     }
 }

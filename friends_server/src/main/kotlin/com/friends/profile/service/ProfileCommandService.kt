@@ -2,6 +2,7 @@ package com.friends.profile.service
 
 import com.friends.category.repository.CategoryRepository
 import com.friends.image.S3ClientService
+import com.friends.image.service.ImageCommandService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.ProfileNullResponseException
@@ -23,6 +24,7 @@ class ProfileCommandService(
     private val categoryRepository: CategoryRepository,
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val s3ClientService: S3ClientService,
+    private val imageCommandService: ImageCommandService,
 ) {
     //프로필 초기 작성
     fun createProfile(
@@ -58,15 +60,25 @@ class ProfileCommandService(
     }
 
     //프로필 수정
+    @Transactional
     fun updateProfile(
         requestMemberId: Long,
         profileUpdateDto: ProfileUpdateDto,
-        profileImage: MultipartFile?,
     ) {
-        val profile =
-            profileRepository.findByMemberId(requestMemberId)
-                ?: throw ProfileNullResponseException()
-        profile.imageUrl = profileImage?.let { s3ClientService.upload(it) }
+        val member = memberRepository.findById(requestMemberId).orElseThrow { MemberNotFoundException() }
+        val profile = profileRepository.findByMemberId(requestMemberId) ?: throw ProfileNullResponseException()
+        val profileImageUrl = profile.imageUrl
+        imageCommandService.existsImage(profileImageUrl, profileUpdateDto.imageUrl)
+        handleInterestTagUpdate(profile, profileUpdateDto)
+        profile.update(profileUpdateDto)
+        member.updateNickname(profileUpdateDto.nickname)
+        imageCommandService.deleteOriginalImage(profileImageUrl, profileUpdateDto.imageUrl)
+    }
+
+    private fun handleInterestTagUpdate(
+        profile: Profile,
+        profileUpdateDto: ProfileUpdateDto,
+    ) {
         profileInterestTagRepository.deleteByProfileId(profile.id)
         profileInterestTagRepository.saveAll(
             categoryRepository.findByIdIn(profileUpdateDto.interestTag).map {
@@ -76,6 +88,5 @@ class ProfileCommandService(
                 )
             },
         )
-        profile.update(profileUpdateDto)
     }
 }

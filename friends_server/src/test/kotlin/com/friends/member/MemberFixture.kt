@@ -34,4 +34,13 @@ fun createTestMember(
     profile: Profile? = null,
 ) = Member.createUser(nickname, email, password, oauth2Provider).apply { ReflectionTestUtils.setField(this, "profile", profile) }
 
+fun createTestMemberWithId(
+    id: Long = MEMBER_ID,
+    nickname: String = MEMBER_NICKNAME,
+    email: String = MEMBER_EMAIL,
+    password: String = MEMBER_PASSWORD,
+    oauth2Provider: OAuth2Provider? = null,
+    profile: Profile? = null,
+) = Member(id = id, nickname = nickname, email = email, password = password, oauth2Provider = oauth2Provider).apply { ReflectionTestUtils.setField(this, "profile", profile) }
+
 fun createTestMemberWithoutProfile(): Member = Member(id = MEMBER_ID_WITHOUT_PROFILE, nickname = "test name2", email = "test@test2.com", password = "12345", oauth2Provider = OAuth2Provider.NAVER)

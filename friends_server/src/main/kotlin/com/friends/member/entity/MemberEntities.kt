@@ -89,6 +89,10 @@ class Member(
             authorities.add(Authority(role = role, member = this))
         }
     }
+
+    fun updateNickname(nickname: String) {
+        this.nickname = nickname
+    }
 }
 
 @Entity
