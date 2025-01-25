@@ -3,6 +3,7 @@ package com.friends.profile
 import com.friends.category.entity.Category
 import com.friends.createTestCategory
 import com.friends.member.MEMBER_ID
+import com.friends.member.MEMBER_NICKNAME
 import com.friends.member.entity.Member
 import com.friends.member.entity.OAuth2Provider
 import com.friends.profile.dto.ProfileCreateDto
@@ -42,7 +43,9 @@ fun createTestProfileResponseDto(): ProfileResponseDto = ProfileResponseDto(memb
 
 fun createTestProfileCreateDto(): ProfileCreateDto = ProfileCreateDto(birth = LocalDate.now(), gender = GenderEnum.MAN, location = Location(10.0, 10.0), selfDescription = "test self description", imageUrl = TEST_IMAGE_UPLOAD_FILE_URL)
 
-fun updateTestProfile(imageUrl: String? = "test update imageurl"): ProfileUpdateDto = ProfileUpdateDto(birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = imageUrl)
+fun updateTestProfile(
+    imageUrl: String? = "test update imageurl",
+): ProfileUpdateDto = ProfileUpdateDto(nickname = MEMBER_NICKNAME, birth = LocalDate.now(), gender = GenderEnum.WOMAN, location = Location(20.0, 20.0), selfDescription = "test update self description", mbti = MbtiEnum.ENTJ, imageUrl = imageUrl)
 
 fun createTestProfileInterestTag(
     profile: Profile = createTestProfile(),

@@ -72,6 +72,7 @@ class ProfileCommandServiceTest :
             every { categoryRepository.findByIdIn(any<Set<Long>>()) } returns listOf(createTestCategory())
             every { profileInterestTagRepository.saveAll(any<List<ProfileInterestTag>>()) } returns listOf(createTestProfileInterestTag())
             every { s3ClientService.deleteS3Object(any()) } returns Unit
+            every { memberRepository.findById(MEMBER_ID) } returns Optional.of(createTestMember())
             `when`("존재하는 프로필을 수정하면") {
                 every { s3ClientService.isExist(any()) } returns true
                 then("수정된 프로필이 저장되어야 한다.") {
