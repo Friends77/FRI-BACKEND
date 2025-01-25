@@ -6,7 +6,6 @@ import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.member.MEMBER_OTHER_EMAIL
 import com.friends.member.createTestMember
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
@@ -33,12 +32,12 @@ class MessageRepositoryTest(
             lateinit var chatRoomMember2: ChatRoomMember
             lateinit var message: Message
             beforeEach {
-                member = memberRepository.save(createTestMember())
-                member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL))
+                member = memberRepository.save(createTestMember(email = "message@com2"))
+                member2 = memberRepository.save(createTestMember(email = "message@com"))
                 chatRoom1 = chatRoomRepository.save(createTestChatRoom(manager = member))
                 chatRoom2 = chatRoomRepository.save(createTestChatRoom(manager = member2))
-                val enterMessage = messageRepository.save(createTestMessage(chatRoom1, member, Message.enterMessage(member.nickname), MessageType.SYSTEM))
-                messageRepository.save(createTestMessage(chatRoom1, member2, Message.enterMessage(member2.nickname), MessageType.SYSTEM))
+                val enterMessage = messageRepository.save(createTestMessage(chatRoom1, member, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER))
+                messageRepository.save(createTestMessage(chatRoom1, member2, Message.enterMessage(member2.nickname), MessageType.SYSTEM_MEMBER_ENTER))
                 message = messageRepository.save(createTestMessage(chatRoom1, member2))
                 chatRoomMember1 = chatRoomMemberRepository.save(createTestChatRoomMember(member = member, chatRoom = chatRoom1, lastReadMessage = enterMessage))
                 chatRoomMember2 = chatRoomMemberRepository.save(createTestChatRoomMember(member = member2, chatRoom = chatRoom1, lastReadMessage = message))

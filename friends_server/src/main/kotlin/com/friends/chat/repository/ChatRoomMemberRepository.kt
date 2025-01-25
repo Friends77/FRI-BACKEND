@@ -4,13 +4,10 @@ import com.friends.chat.entity.ChatRoom
 import com.friends.chat.entity.ChatRoomMember
 import com.friends.common.util.getLimitList
 import com.friends.common.util.getList
-import com.friends.common.util.getSlice
 import com.friends.member.entity.Member
 import com.linecorp.kotlinjdsl.dsl.jpql.Jpql
 import com.linecorp.kotlinjdsl.querymodel.jpql.predicate.Predicate
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.repository.KotlinJdslJpqlExecutor
-import org.springframework.data.domain.Pageable
-import org.springframework.data.domain.Slice
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
@@ -40,38 +37,37 @@ interface ChatRoomMemberRepository :
 }
 
 interface ChatRoomMemberCustomRepository {
-    fun sliceChatRoomIdByMember(
+    fun findAllByMemberAndFriends(
         memberId: Long,
-        memberList: List<Member>,
-        size: Int,
-        lastChatRoomMemberId: Long?,
-    ): Slice<ChatRoomMember>
+        memberList: List<Member>?,
+    ): List<ChatRoomMember>
 
     fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member>
+
+    fun findMemberByChatRoom(
+        chatRoom: ChatRoom,
+        member: Member,
+        manager: Member?,
+    ): List<Member>
 }
 
 class ChatRoomMemberCustomRepositoryImpl(
     private val kotlinJdslJpqlExecutor: KotlinJdslJpqlExecutor,
 ) : ChatRoomMemberCustomRepository {
-    override fun sliceChatRoomIdByMember(
+    override fun findAllByMemberAndFriends(
         memberId: Long,
-        memberList: List<Member>,
-        size: Int,
-        lastChatRoomMemberId: Long?,
-    ): Slice<ChatRoomMember> {
-        val pageable = Pageable.ofSize(size)
-        return kotlinJdslJpqlExecutor.getSlice(pageable) {
+        memberList: List<Member>?,
+    ): List<ChatRoomMember> =
+        kotlinJdslJpqlExecutor.getList {
             select(entity(ChatRoomMember::class)) // 중복 제거
                 .from(entity(ChatRoomMember::class), join(ChatRoomMember::chatRoom))
                 .where(
                     and(
                         path(ChatRoomMember::member).path(Member::id).eq(memberId), // 내가 속한 채팅방
                         dynamicChatRoomList(memberList), // 친구들이 속한 채팅방이어야한다는 조건
-                        dynamicLastChatRoomId(lastChatRoomMemberId),
                     ),
                 ).orderBy(path(ChatRoomMember::id).desc())
         }
-    }
 
     override fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member> =
         kotlinJdslJpqlExecutor.getLimitList(0, 4) {
@@ -81,14 +77,27 @@ class ChatRoomMemberCustomRepositoryImpl(
                 .orderBy(path(ChatRoomMember::id).asc())
         }
 
-    private fun Jpql.dynamicLastChatRoomId(
-        lastChatRoomMemberId: Long?,
-    ): Predicate? = if (lastChatRoomMemberId == null) null else path(ChatRoomMember::id).lessThan(lastChatRoomMemberId)
+    override fun findMemberByChatRoom(
+        chatRoom: ChatRoom,
+        member: Member,
+        manager: Member?,
+    ): List<Member> =
+        kotlinJdslJpqlExecutor.getList {
+            select(path(ChatRoomMember::member))
+                .from(entity(ChatRoomMember::class), join(ChatRoomMember::member))
+                .where(
+                    and(
+                        path(ChatRoomMember::chatRoom).eq(chatRoom),
+                        path(ChatRoomMember::member).ne(member),
+                        manager?.let { path(ChatRoomMember::member).ne(it) },
+                    ),
+                ).orderBy(path(ChatRoomMember::member).path(Member::nickname).asc())
+        }
 
     private fun Jpql.dynamicChatRoomList(
-        memberList: List<Member>,
+        memberList: List<Member>?,
     ): Predicate? =
-        if (memberList.isEmpty()) {
+        if (memberList == null) {
             null
         } else {
             path(ChatRoomMember::chatRoom).`in`( // 해당 채팅방이 친구가 속한 채팅방인지 확인

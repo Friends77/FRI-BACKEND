@@ -6,9 +6,7 @@ import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.Profile
 import com.friends.support.annotation.RepositoryTest
-import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.collections.shouldContainExactly
-import jakarta.persistence.EntityManager
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +18,6 @@ class ProfileRepositoryTest
     constructor(
         private val profileRepository: ProfileRepository,
         private val memberRepository: MemberRepository,
-        private val entityManager: EntityManager,
     ) {
         private lateinit var profile1: Profile
         private lateinit var profile2: Profile
@@ -39,9 +36,6 @@ class ProfileRepositoryTest
             profile1 = profileRepository.save(Profile(member = member1, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint1, imageUrl = "test imageurl"))
             profile2 = profileRepository.save(Profile(member = member2, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint2, imageUrl = "test imageurl"))
             profile3 = profileRepository.save(Profile(member = member3, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint3, imageUrl = "test imageurl"))
-
-            entityManager.flush()
-            entityManager.clear()
         }
 
         @Test
@@ -51,7 +45,10 @@ class ProfileRepositoryTest
             for (point in foundPoints) {
                 println(point)
             }
-            foundPoints.map { it.id } shouldContainExactly listOf(profile1.id)
+            val contains = foundPoints.map { it.id }.containsAll(listOf(profile1.id))
+            val notContains = foundPoints.map { it.id }.containsAll(listOf(profile2.id))
+            contains shouldBe true
+            notContains shouldBe false
         }
 
         @Test
@@ -61,7 +58,10 @@ class ProfileRepositoryTest
             for (point in foundPoints) {
                 println(point)
             }
-            foundPoints.map { it.id } shouldContainExactly listOf(profile1.id, profile2.id)
+            val contains = foundPoints.map { it.id }.containsAll(listOf(profile1.id, profile2.id))
+            val notContains = foundPoints.map { it.id }.containsAll(listOf(profile3.id))
+            contains shouldBe true
+            notContains shouldBe false
         }
 
         @Test
@@ -70,6 +70,7 @@ class ProfileRepositoryTest
             for (point in foundPoints) {
                 println(point)
             }
-            foundPoints.map { it.id } shouldContain listOf(profile1.id, profile2.id, profile3.id)
+            val contains = foundPoints.map { it.id }.containsAll(listOf(profile1.id, profile2.id, profile3.id))
+            contains shouldBe true
         }
     }

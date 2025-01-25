@@ -1,5 +1,7 @@
 package com.friends.board.entity
 
+import com.friends.board.exception.VoteOptionPositiveCountException
+import com.friends.common.entity.BaseModifiableEntity
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -20,9 +22,15 @@ class Vote(
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     var board: Board,
-    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL])
+    @OneToMany(mappedBy = "vote", cascade = [CascadeType.ALL], orphanRemoval = true)
     var options: MutableList<VoteOption> = mutableListOf(),
-)
+) : BaseModifiableEntity() {
+    fun addOption(content: String): VoteOption {
+        val option = VoteOption(vote = this, content = content)
+        options.add(option)
+        return option
+    }
+}
 
 /*
 * 투표 선택지 테이블
@@ -38,4 +46,16 @@ class VoteOption(
     @Column(length = 255, nullable = false)
     var content: String,
     var voteCount: Int = 0,
-)
+) {
+    fun increaseVoteCount() {
+        voteCount++
+    }
+
+    fun decreaseVoteCount() {
+        if (voteCount > 0) {
+            voteCount--
+        } else {
+            throw VoteOptionPositiveCountException()
+        }
+    }
+}

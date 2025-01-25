@@ -6,6 +6,9 @@ import com.friends.category.repository.CategoryRepository
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.chat.service.ChatRoomCommandService
+import com.friends.friendship.entity.Friendship
+import com.friends.friendship.entity.FriendshipStatusEnums
+import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
 import com.friends.profile.entity.GenderEnum
@@ -123,6 +126,7 @@ class InitDB(
         private val profileInterestTagRepository: ProfileInterestTagRepository,
         private val chatRoomCommandService: ChatRoomCommandService,
         private val chatRoomRepository: ChatRoomRepository,
+        private val friendshipRepository: FriendShipRepository,
     ) {
         fun init() {
             // 100 명의 테스트 유저 생성
@@ -159,7 +163,6 @@ class InitDB(
                             // 생일은 1990년 1월 1일부터 1999년 12월 31일 사이의 랜덤한 날짜로 설정
                             birth = randomBirth,
                             gender = randomGender,
-                            imageUrl = "https://friends-bucket.s3.ap-northeast-2.amazonaws.com/2d397027-6448-414a-b155-17b5a41f6c34",
                             location = randomLocation,
                             mbti = randomMbti,
                         ),
@@ -220,6 +223,18 @@ class InitDB(
                 val randomMembers = members.shuffled().take(randomInt)
                 for (member in randomMembers) {
                     chatRoomCommandService.enterChatRoom(chatRoom.id, member.id)
+                }
+            }
+
+            // 랜덤으로 친구 추가
+            for (member in members) {
+                val randomInt = (1..5).random()
+                val randomFriends = members.shuffled().take(randomInt)
+                for (friend in randomFriends) {
+                    if (member.id == friend.id) {
+                        continue
+                    }
+                    friendshipRepository.save(Friendship(id = 0L, receiver = member, requester = friend, friendshipStatus = FriendshipStatusEnums.ACCEPT))
                 }
             }
         }

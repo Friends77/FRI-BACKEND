@@ -24,9 +24,15 @@ class Alarm(
     @JoinColumn(name = "receiver_id")
     val receiver: Member,
     @Enumerated(EnumType.STRING)
-    val type: AlarmType,
+    private var type: AlarmType,
     val message: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
     val invitedChatRoom: ChatRoom? = null,
-) : BaseModifiableEntity()
+) : BaseModifiableEntity() {
+    fun changeType(type: AlarmType) {
+        this.type = type
+    }
+
+    fun getType(): AlarmType = type
+}

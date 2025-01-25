@@ -1,6 +1,7 @@
 package com.friends.chat.dto
 
 import com.friends.category.dto.CategoryInfoResponse
+import com.friends.friendship.entity.FriendshipRequestStatusEnums
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
@@ -44,7 +45,37 @@ data class ChatRoomDetailResponseDto(
     val isLike: Boolean,
 )
 
+data class ChatRoomRecommendationResponseDto(
+    @Schema(description = "채팅방 ID")
+    val id: Long,
+    @Schema(description = "채팅방 제목")
+    val title: String,
+    @Schema(description = "채팅방 이미지 URL")
+    val imageUrl: String,
+    @Schema(description = "채팅방 카테고리 리스트")
+    val categoryIdList: List<CategoryInfoResponse>,
+    @Schema(description = "채팅방 참여자 수")
+    val participantCount: Int,
+    @Schema(description = "채팅방 참여자 프로필 리스트(최대 4명)")
+    val participantProfileList: List<String>,
+)
+
 data class CreateChatRoomResponseDto(
     @Schema(description = "채팅방 ID")
     val chatRoomId: Long,
+)
+
+data class ChatRoomMemberInfoResponseDto(
+    @Schema(description = "채팅방 참여자 ID")
+    val id: Long,
+    @Schema(description = "채팅방 참여자 닉네임")
+    val nickname: String,
+    @Schema(description = "채팅방 참여자 프로필 이미지 URL")
+    val profileImageUrl: String,
+    @Schema(description = "친구 신청 상태")
+    val friendshipStatusEnums: FriendshipRequestStatusEnums,
+    @Schema(description = "채팅방 방장 여부")
+    val isManager: Boolean,
+    @Schema(description = "본인 여부")
+    val isMe: Boolean,
 )

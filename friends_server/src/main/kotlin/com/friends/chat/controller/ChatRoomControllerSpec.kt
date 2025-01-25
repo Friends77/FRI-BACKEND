@@ -3,10 +3,10 @@ package com.friends.chat.controller
 import com.friends.chat.dto.ChatRoomCreateRequestDto
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
+import com.friends.chat.dto.ChatRoomMemberInfoResponseDto
 import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
-import com.friends.chat.util.SliceChatRoomInfoResponseDto
-import com.friends.common.dto.SliceBaseResponse
+import com.friends.common.annotation.NullOrNotBlank
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
 import io.swagger.v3.oas.annotations.Operation
@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile
 @Tag(name = "Chat")
 interface ChatRoomControllerSpec {
     @Operation(
+        summary = "채팅방 생성",
         description = "채팅방 생성 API",
         responses = [
             ApiResponse(
@@ -60,43 +61,33 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<CreateChatRoomResponseDto>
 
     @Operation(
+        summary = "채팅방 리스트 조회",
         description = "채팅방 리스트 조회 API",
         responses = [
             ApiResponse(
                 responseCode = "200",
                 description = "채팅방 조회 성공",
-                content = [
-                    Content(
-                        mediaType = "application/json",
-                        schema = Schema(implementation = SliceChatRoomInfoResponseDto::class),
-                    ),
-                ],
             ),
         ],
     )
     @ApiErrorCodeExamples(
         [
-            ErrorCode.INVALID_SIZE,
             ErrorCode.INVALID_LAST_CHAT_ROOM_ID,
             ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.INVALID_SEARCH_NICKNAME,
         ],
     )
     fun getChatRooms(
         @AuthenticationPrincipal
         memberId: Long,
-        @Positive(message = "size는 양수여야 합니다.")
-        @RequestParam("size", defaultValue = "100")
-        size: Int,
-        @Positive(message = "lastChatRoomId는 양수여야 합니다.")
-        @RequestParam("lastChatRoomMemberId", required = false)
-        @Schema(description = "마지막으로 조회된 참여하는 채팅방 연관 ID를 넣어주면 됩니다. 처음부터 조회시 null로 보내주시면 됩니다.")
-        lastChatRoomMemberId: Long?,
-        @Schema(description = "친구 닉네임 기반 친구와 함께 참여 중인 채팅방 리스트는 아직 구현되지 않았습니다, 해당 필드 null로 보내주시면 전체 검색됩니다.")
+        @Schema(description = "해당 필드 null로 보내주시면 전체 검색, 특정 단어를 보내면 해당 단어를 포함하고 있는 닉네임 가진 유저와 함께 참여중인 채팅방을 검색합니다.")
         @RequestParam("nickname", required = false)
+        @NullOrNotBlank(message = "검색할 닉네임은 공백일 수 없습니다.")
         nickname: String?,
-    ): ResponseEntity<SliceBaseResponse<ChatRoomInfoResponseDto>>
+    ): ResponseEntity<List<ChatRoomInfoResponseDto>>
 
     @Operation(
+        summary = "채팅방 상세 조회",
         description = "채팅방 상세조회 API",
         responses = [
             ApiResponse(
@@ -127,6 +118,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<ChatRoomDetailResponseDto>
 
     @Operation(
+        summary = "채팅방 입장",
         description = "채팅방 입장 API",
         responses = [
             ApiResponse(
@@ -151,6 +143,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 삭제(나가기)",
         description = "채팅방 삭제 API",
         responses = [
             ApiResponse(
@@ -176,6 +169,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 수정",
         description = "채팅방 수정 API",
         responses = [
             ApiResponse(
@@ -212,6 +206,7 @@ interface ChatRoomControllerSpec {
     ): ResponseEntity<Void>
 
     @Operation(
+        summary = "채팅방 강제 퇴장",
         description = "채팅방 강제 퇴장 API",
         responses = [
             ApiResponse(
@@ -239,4 +234,29 @@ interface ChatRoomControllerSpec {
         @RequestParam
         forceLeaveMemberId: Long,
     ): ResponseEntity<Void>
+
+    @Operation(
+        summary = "채팅방 인원 조회",
+        description = "채팅방 인원 조회 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방 인원 조회 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
+        ],
+    )
+    fun getChatRoomMembers(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        memberId: Long,
+    ): ResponseEntity<List<ChatRoomMemberInfoResponseDto>>
 }

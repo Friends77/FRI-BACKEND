@@ -65,6 +65,7 @@ enum class ErrorCode(
     CHAT_ROOM_UPDATE_NOTHING(HttpStatus.BAD_REQUEST, -17013, "이전과 동일하여 수정할 내용이 없습니다."),
     CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE(HttpStatus.BAD_REQUEST, -17014, "기본 이미지는 삭제할 수 없습니다."),
     NOT_FORCE_LEAVE_YOURSELF(HttpStatus.FORBIDDEN, -17015, "자신을 강제로 퇴장시킬 수 없습니다."),
+
     // Comment API error 18000대
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, -18001, "존재하지 않는 댓글입니다."),
     INVALID_COMMENT_ACCESS(HttpStatus.FORBIDDEN, -18002, "댓글에 대한 유효하지 않은 접근입니다."),
@@ -72,11 +73,29 @@ enum class ErrorCode(
     // category API error 19000대
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, -19001, "존재하지 않는 카테고리입니다."),
 
-    // Message API error 20000대
-    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 메시지입니다."),
-    NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -20002, "메세지 발신자가 아닙니다."),
+    // Vote API error 20000대
+    VOTE_NOT_FOUND(HttpStatus.NOT_FOUND, -20001, "존재하지 않는 투표입니다."),
+    VOTE_OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, -20002, "존재하지 않는 선택지입니다."),
+    VOTE_OPTION_POSITIVE_COUNT(HttpStatus.BAD_REQUEST, -20003, "투표수는 0 이상이어야 합니다."),
+    VOTE_NOT_FOUND_IN_BOARD(HttpStatus.NOT_FOUND, -20004, "해당 게시글에 투표가 존재하지 않습니다."),
 
-    // Redis API error 22000대
-    REDISSON_LOCK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -22001, "레디스 락을 사용할 수 없습니다."),
-    INVALID_REDISSON_IDENTIFIER(HttpStatus.INTERNAL_SERVER_ERROR, -22002, "레디스 락 식별자가 잘못되었습니다."),
+    // Message API error 21000대
+    MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, -21001, "존재하지 않는 메시지입니다."),
+    NOT_MESSAGE_SENDER(HttpStatus.FORBIDDEN, -21002, "메세지 발신자가 아닙니다."),
+
+    // Friendship API error 22000대
+    FRIENDSHIP_ALREADY_EXIST(HttpStatus.CONFLICT, -22001, "이미 친구이거나, 친구 요청을 보낸 상태입니다."),
+    FRIENDSHIP_NOT_FOUND(HttpStatus.NOT_FOUND, -22002, "친구 관계나 요청 상태가 존재하지 않습니다."),
+    FRIENDSHIP_NOT_WAITING(HttpStatus.BAD_REQUEST, -22003, "친구 요청 대기 상태가 아닙니다."),
+    FRIENDSHIP_BLOCKED(HttpStatus.FORBIDDEN, -22004, "친구 요청이 차단되었습니다."),
+
+    // Alarm API error 23000대
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, -23001, "존재하지 않는 알람입니다."),
+
+    // Search API error 24000대
+    INVALID_SEARCH_NICKNAME(HttpStatus.BAD_REQUEST, -24001, "검색할 닉네임은 공백일 수 없습니다."),
+
+    // Redis API error 25000대
+    REDISSON_LOCK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -25001, "레디스 락을 사용할 수 없습니다."),
+    INVALID_REDISSON_IDENTIFIER(HttpStatus.INTERNAL_SERVER_ERROR, -25002, "레디스 락 식별자가 잘못되었습니다."),
 }

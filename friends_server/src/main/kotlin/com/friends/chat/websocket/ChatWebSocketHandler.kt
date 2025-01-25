@@ -1,6 +1,7 @@
 package com.friends.chat.websocket
 
 import com.friends.chat.UnexpectedChatRoomException
+import com.friends.chat.dto.ChatErrorMessageDto
 import com.friends.chat.dto.ChatReceiveMessageDto
 import com.friends.chat.dto.PingPongDto
 import com.friends.chat.dto.PingPongType
@@ -49,19 +50,39 @@ class ChatWebSocketHandler(
             // ignore
         }
 
-        val chatMessage = JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
-        val memberId = getMemberId(session)
-        /**
-         * 채팅 웹소켓을 통해 보내는 메세지는 TEXT 타입만 있다고 가정합니다.
-         * 이미지의 경우 웹소켓이 아닌 REST API 를 통해 이미지를 업로드하고 이미지 URL 을 채팅방에 보내는 방식으로 구현합니다. // TODO : 채팅방 내에서 이미지 전송하는 API 구현
-         */
-        messageCommandService.sendMessage(
-            chatMessage.chatRoomId,
-            memberId,
-            chatMessage.message,
-            chatMessage.messageType,
-        )
-        // TODO : 아래 내용 리뷰 받고 수정
+        val chatMessage =
+            try {
+                JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
+            } catch (e: Exception) {
+                val chatErrorMessageDto =
+                    ChatErrorMessageDto(
+                        clientMessageId = null,
+                        code = 400,
+                        message = "메세지 전송 양식이 부적절합니다.",
+                    )
+                session.sendMessage(TextMessage(JsonUtil.toJson(chatErrorMessageDto)))
+                return
+            }
+
+        try {
+            val memberId = getMemberId(session)
+
+            messageCommandService.sendMessage(
+                chatMessage.chatRoomId,
+                memberId,
+                chatMessage.content,
+                chatMessage.type,
+                chatMessage.clientMessageId,
+            )
+        } catch (e: Exception) {
+            val chatErrorMessageDto =
+                ChatErrorMessageDto(
+                    clientMessageId = chatMessage.clientMessageId,
+                    code = 500,
+                    message = e.message ?: "알 수 없는 오류가 발생했습니다.",
+                )
+            session.sendMessage(TextMessage(JsonUtil.toJson(chatErrorMessageDto)))
+        }
     }
 
     override fun afterConnectionClosed(
