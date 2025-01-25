@@ -224,6 +224,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
 
+    @ExceptionHandler(RedisLockException::class)
+    fun handleRedisLockException(ex: RedisLockException): ResponseEntity<Any> {
+        logger.error("Redis Lock Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
     @ExceptionHandler(ImageException::class)
     fun handleImageException(ex: ImageException): ResponseEntity<Any> {
         logger.error("Image Exception", ex)

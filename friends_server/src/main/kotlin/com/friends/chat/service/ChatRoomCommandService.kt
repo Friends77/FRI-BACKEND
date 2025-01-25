@@ -18,6 +18,8 @@ import com.friends.chat.entity.ChatRoomMember
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.common.annotation.DistributedLock
+import com.friends.common.key.CHAT_ROOM_LIKE_LOCK
 import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
@@ -51,10 +53,10 @@ class ChatRoomCommandService(
                 s3ClientService.upload(it)
             }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl))
+        val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl, request.description))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
-        messageCommandService.setChatRoomOnline(chatRoom.id, memberId)
-        val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
+        messageCommandService.setChatRoomOnline(memberId, chatRoom.id)
+        val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
         return CreateChatRoomResponseDto(chatRoom.id)
     }
@@ -67,8 +69,8 @@ class ChatRoomCommandService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
-            messageCommandService.setChatRoomOnline(chatRoomId, memberId)
-            val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM)
+            messageCommandService.setChatRoomOnline(memberId, chatRoomId)
+            val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
         }
     }
@@ -89,11 +91,11 @@ class ChatRoomCommandService(
         if (chatRoomMemberRepository.countByChatRoom(chatRoom) == 0) {
             deleteChatRoom(chatRoom)
         } else {
-            messageCommandService.sendMessage(chatRoomId, memberId, Message.exitMessage(member.nickname), MessageType.SYSTEM) // 채팅방에 나갔다는 메세지 전송
+            messageCommandService.sendMessage(chatRoomId, memberId, Message.exitMessage(member.nickname), MessageType.SYSTEM_MEMBER_LEAVE) // 채팅방에 나갔다는 메세지 전송
             if (chatRoom.manager == member) {
                 val newManager = chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom).member
                 chatRoom.changeManager(newManager)
-                messageCommandService.sendMessage(chatRoomId, newManager.id, Message.changeManagerMessage(newManager.nickname), MessageType.SYSTEM) // 새로운 매니저에게 매니저 변경 메세지 전송
+                messageCommandService.sendMessage(chatRoomId, newManager.id, Message.changeManagerMessage(newManager.nickname), MessageType.SYSTEM_NEW_MANAGER) // 새로운 매니저에게 매니저 변경 메세지 전송
             }
         }
     }
@@ -105,6 +107,7 @@ class ChatRoomCommandService(
     }
 
     @Transactional
+    @DistributedLock(lockName = CHAT_ROOM_LIKE_LOCK, identifier = "chatRoomId")
     fun updateChatRoom(
         chatRoomId: Long,
         request: ChatRoomUpdateRequestDto?,
@@ -138,7 +141,7 @@ class ChatRoomCommandService(
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, forceLeaveMember) ?: throw NotChatRoomMemberException()
         chatRoomMemberRepository.delete(chatRoomMember)
         messageCommandService.setChatRoomOffline(forceLeaveMemberId, chatRoomId)
-        messageCommandService.sendMessage(chatRoomId, memberId, Message.forceExitMessage(forceLeaveMember.nickname), MessageType.SYSTEM)
+        messageCommandService.sendMessage(chatRoomId, memberId, Message.forceExitMessage(forceLeaveMember.nickname), MessageType.SYSTEM_MEMBER_LEAVE)
     }
 
     private fun updateChatRoomImageUrl(
@@ -172,6 +175,10 @@ class ChatRoomCommandService(
         var changeChatRoomInfo = false
         if (request.title != null && chatRoom.title != request.title) {
             chatRoom.title = request.title
+            changeChatRoomInfo = true
+        }
+        if (request.description != null && chatRoom.description != request.description) {
+            chatRoom.description = request.description
             changeChatRoomInfo = true
         }
         if (request.categoryIdList != null) {

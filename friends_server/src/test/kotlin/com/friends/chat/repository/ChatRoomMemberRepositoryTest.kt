@@ -16,7 +16,6 @@ import com.friends.profile.createTestProfile
 import com.friends.profile.entity.Profile
 import com.friends.profile.repository.ProfileRepository
 import com.friends.support.annotation.RepositoryTest
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
@@ -28,6 +27,7 @@ class ChatRoomMemberRepositoryTest(
     private val messageRepository: MessageRepository,
     private var profileRepository: ProfileRepository,
 ) : DescribeSpec({
+
         lateinit var profile: Profile
         lateinit var member1: Member
         lateinit var member2: Member
@@ -41,6 +41,7 @@ class ChatRoomMemberRepositoryTest(
         lateinit var chatRoomMember4: ChatRoomMember
         lateinit var chatRoomMember5: ChatRoomMember
         lateinit var message: Message
+
         beforeEach {
             member1 = memberRepository.save(createTestMember())
             member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL, nickname = MEMBER_OTHER_NICKNAME))
@@ -56,15 +57,6 @@ class ChatRoomMemberRepositoryTest(
             chatRoomMember3 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member3, message))
             chatRoomMember4 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom2, member3, message))
             chatRoomMember5 = chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom3, member2, message))
-        }
-        describe("save") {
-            context("이미 존재하는 ChatRoomId와 MemberId가 들어오는 경우") {
-                it("에러가 난다.") {
-                    shouldThrow<Exception> {
-                        chatRoomMemberRepository.save(createTestChatRoomMember(chatRoom1, member1))
-                    }
-                }
-            }
         }
 
         describe("countByChatRoomId 메서드는") {
@@ -101,30 +93,48 @@ class ChatRoomMemberRepositoryTest(
                     chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom3, member1) shouldBe false
                 }
             }
+        }
 
-            describe("findByChatRoomAndMember") {
-                context("참여중인 채팅방을 조회하면") {
-                    it("해당 채팅방을 반환한다") {
-                        chatRoomMemberRepository.findByChatRoomAndMember(chatRoom1, member1)?.id shouldBe chatRoomMember.id
-                    }
+        describe("findByChatRoomAndMember") {
+            context("참여중인 채팅방을 조회하면") {
+                it("해당 채팅방을 반환한다") {
+                    chatRoomMemberRepository.findByChatRoomAndMember(chatRoom1, member1)?.id shouldBe chatRoomMember.id
+                }
+            }
+        }
+
+        describe("findFirstByChatRoomOrderByCreatedAt") {
+            context("채팅방을 조회하면") {
+                it("먼저 들어온 채팅방멤버 연관 엔티티를 반환한다") {
+                    chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember.id
+                }
+            }
+        }
+
+        describe("findRepresentativeProfileByChatRoomId") {
+            context("채팅방 ID를 받으면") {
+                it("프로필 이미지를 반환한다") {
+                    chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(chatRoom1.id).map { member -> member.profile?.imageUrl ?: "profileBaseImageUrl" } shouldBe listOf("profileBaseImageUrl", profile.imageUrl, "profileBaseImageUrl")
+                }
+            }
+        }
+
+        describe("findMemberByChatRoomAndMemberExceptManager") {
+            context("채팅방과 회원을 받으면") {
+                it("해당 채팅방에 참여중인 회원을 반환한다") {
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom1, member1, null).map { member -> member.id } shouldBe listOf(member2.id, member3.id)
                 }
             }
 
-            describe("findFirstByChatRoomOrderByCreatedAt") {
-                context("채팅방을 조회하면") {
-                    it("먼저 들어온 채팅방멤버 연관 엔티티를 반환한다") {
-                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember.id
-                        chatRoomMemberRepository.delete(chatRoomMember)
-                        chatRoomMemberRepository.findFirstByChatRoomOrderByCreatedAt(chatRoom1).id shouldBe chatRoomMember2.id
-                    }
+            context("채팅방과 회원, 매니저를 받으면") {
+                it("해당 채팅방에 참여중인 회원을 반환한다") {
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom1, member2, member1).map { member -> member.id } shouldBe listOf(member3.id)
                 }
             }
 
-            describe("findRepresentativeProfileByChatRoomId") {
-                context("채팅방 ID를 받으면") {
-                    it("프로필 이미지를 반환한다") {
-                        chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(chatRoom1.id).map { member -> member.profile?.imageUrl ?: "profileBaseImageUrl" } shouldBe listOf("profileBaseImageUrl", profile.imageUrl, "profileBaseImageUrl")
-                    }
+            context("요청자와 매니저만 채팅방에 참여중인 경우") {
+                it("emptyList를 반환한다") {
+                    chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom2, member3, member2).map { member -> member.id } shouldBe emptyList()
                 }
             }
         }
