@@ -11,6 +11,7 @@ import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.entity.Member
 import com.friends.member.repository.MemberRepository
+import com.friends.message.service.MessageCommandService
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
@@ -127,6 +128,7 @@ class InitDB(
         private val chatRoomCommandService: ChatRoomCommandService,
         private val chatRoomRepository: ChatRoomRepository,
         private val friendshipRepository: FriendShipRepository,
+        private val messageCommandService: MessageCommandService,
     ) {
         fun init() {
             // 100 명의 테스트 유저 생성
@@ -239,6 +241,8 @@ class InitDB(
                     friendshipRepository.save(Friendship(id = 0L, receiver = member, requester = friend, friendshipStatus = FriendshipStatusEnums.ACCEPT))
                 }
             }
+
+            messageCommandService.clear()
         }
     }
 }

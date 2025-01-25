@@ -55,8 +55,8 @@ class ChatRoomCommandService(
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl, request.description))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
-        messageCommandService.setChatRoomOnline(memberId, chatRoom.id)
         val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
+        messageCommandService.setChatRoomOnline(chatRoom.id, memberId)
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
         return CreateChatRoomResponseDto(chatRoom.id)
     }
@@ -69,8 +69,8 @@ class ChatRoomCommandService(
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
-            messageCommandService.setChatRoomOnline(memberId, chatRoomId)
             val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
+            messageCommandService.setChatRoomOnline(chatRoomId, memberId)
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
         }
     }
