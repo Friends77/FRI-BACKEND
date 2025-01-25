@@ -1,6 +1,7 @@
 package com.friends.chat.service
 
 import com.friends.chat.CHAT_ROOM_BASE_IMAGE_URL
+import com.friends.chat.ChatRoomMemberNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.TEST_CHAT_ROOM_ID
 import com.friends.chat.createTestChatRoom
@@ -103,18 +104,19 @@ class ChatRoomQueryServiceTest :
                 }
             }
 
-            given("getChatRoomMemberInfo 메소드 테스트") {
+            given("getChatRoomMemberInfoList 메소드 테스트") {
                 val requestMember = createTestMemberWithId(id = 1L)
                 val manager = createTestMemberWithId(id = 2L)
                 val members = listOf(createTestMemberWithId(id = 3L), createTestMemberWithId(id = 4L))
                 every { memberRepository.findById(requestMember.id) } returns Optional.of(requestMember)
                 every { friendshipRepository.findByRequesterAndReceiver(any(), any()) } returns null
+                every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns true
                 `when`("요청자와 매니저가 다른 경우") {
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = manager))
                     every { memberRepository.findById(manager.id) } returns Optional.of(manager)
                     every { chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(any(), any(), any()) } returns members
                     then("채팅방 멤버 정보가 조회된다.") {
-                        chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id, manager.id, members[0].id, members[1].id)
+                        chatRoomQueryService.getChatRoomMemberInfoList(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id, manager.id, members[0].id, members[1].id)
                     }
                 }
 
@@ -122,7 +124,29 @@ class ChatRoomQueryServiceTest :
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = requestMember))
                     every { chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(any(), any(), any()) } returns emptyList()
                     then("채팅방 멤버 정보가 조회된다.") {
-                        chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id)
+                        chatRoomQueryService.getChatRoomMemberInfoList(TEST_CHAT_ROOM_ID, requestMember.id).map { it.id } shouldBe listOf(requestMember.id)
+                    }
+                }
+            }
+
+            given("getChatRoomMemberInfo 메소드 테스트") {
+                val requestMember = createTestMemberWithId(id = 1L)
+                val newMember = createTestMemberWithId(id = 2L)
+                every { memberRepository.findById(requestMember.id) } returns Optional.of(requestMember)
+                every { memberRepository.findById(newMember.id) } returns Optional.of(newMember)
+                every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom(manager = newMember))
+                every { friendshipRepository.findByRequesterAndReceiver(any(), any()) } returns null
+                `when`("정상적인 요청이 들어올 경우") {
+                    every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns true
+                    then("채팅방 멤버 정보가 조회된다.") {
+                        chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id, newMember.id).id shouldBe newMember.id
+                    }
+                }
+
+                `when`("요청자나 찾고자하는 멤버가 채팅방에 없는 경우") {
+                    every { chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(any(), any()) } returns false
+                    then("ChatRoomMemberNotFoundException 에러가 발생한다.") {
+                        shouldThrow<ChatRoomMemberNotFoundException> { chatRoomQueryService.getChatRoomMemberInfo(TEST_CHAT_ROOM_ID, requestMember.id, newMember.id) }
                     }
                 }
             }

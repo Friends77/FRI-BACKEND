@@ -41,6 +41,7 @@ class ChatRoomMemberRepositoryTest(
         lateinit var chatRoomMember4: ChatRoomMember
         lateinit var chatRoomMember5: ChatRoomMember
         lateinit var message: Message
+
         beforeEach {
             member1 = memberRepository.save(createTestMember())
             member2 = memberRepository.save(createTestMember(email = MEMBER_OTHER_EMAIL, nickname = MEMBER_OTHER_NICKNAME))
@@ -131,7 +132,7 @@ class ChatRoomMemberRepositoryTest(
                 }
             }
 
-            context("채팅방과 회원, 매니저를 받으면") {
+            context("요청자와 매니저만 채팅방에 참여중인 경우") {
                 it("emptyList를 반환한다") {
                     chatRoomMemberRepository.findMemberByChatRoomAndMemberExceptManager(chatRoom2, member3, member2).map { member -> member.id } shouldBe emptyList()
                 }

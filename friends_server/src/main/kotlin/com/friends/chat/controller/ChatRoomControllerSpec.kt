@@ -252,13 +252,42 @@ interface ChatRoomControllerSpec {
             ErrorCode.CHAT_ROOM_NOT_FOUND,
             ErrorCode.INVALID_CHAT_ROOM_ID,
             ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
         ],
     )
-    fun getChatRoomMembers(
+    fun getChatRoomMemberInfoList(
         @PathVariable("id")
         @Positive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
     ): ResponseEntity<List<ChatRoomMemberInfoResponseDto>>
+
+    @Operation(
+        summary = "채팅방 내 특정 멤버 정보 검샘(채팅방 입장시 참여자 리스트에 표시하기 위함) ",
+        description = "채팅방 내 특정 멤버 정보 검색 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방 내 특정 멤버 정보 검색 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.CHAT_ROOM_NOT_FOUND,
+            ErrorCode.INVALID_CHAT_ROOM_ID,
+            ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.CHAT_ROOM_MEMBER_NOT_FOUND,
+        ],
+    )
+    fun getChatRoomMemberInfo(
+        @PathVariable("id")
+        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        chatRoomId: Long,
+        @AuthenticationPrincipal
+        requesterId: Long,
+        @PathVariable("memberId")
+        newMemberId: Long,
+    ): ResponseEntity<ChatRoomMemberInfoResponseDto>
 }

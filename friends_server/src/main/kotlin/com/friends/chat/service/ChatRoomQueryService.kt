@@ -1,5 +1,6 @@
 package com.friends.chat.service
 
+import com.friends.chat.ChatRoomMemberNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.ChatRoomDetailResponseDto
 import com.friends.chat.dto.ChatRoomInfoResponseDto
@@ -81,14 +82,16 @@ class ChatRoomQueryService(
         val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
     }
-
     @Transactional(readOnly = true)
-    fun getChatRoomMemberInfo(
+    fun getChatRoomMemberInfoList(
         chatRoomId: Long,
         memberId: Long,
     ): List<ChatRoomMemberInfoResponseDto> {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
         val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
+            throw ChatRoomMemberNotFoundException()
+        }
         val isManager = chatRoom.manager == member
         var manager: Member? = null
         val chatRoomMemberList =
@@ -112,6 +115,21 @@ class ChatRoomQueryService(
                 }
         chatRoomMemberList.addAll(members)
         return chatRoomMemberList
+    }
+
+    @Transactional(readOnly = true)
+    fun getChatRoomMemberInfo(
+        chatRoomId: Long,
+        requesterId: Long,
+        newMemberId: Long,
+    ): ChatRoomMemberInfoResponseDto {
+        val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
+        val requester = memberRepository.findById(requesterId).orElseThrow { throw MemberNotFoundException() }
+        val newMember = memberRepository.findById(newMemberId).orElseThrow { throw MemberNotFoundException() }
+        if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, newMember) || !chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, requester)) {
+            throw ChatRoomMemberNotFoundException()
+        }
+        return chatRoomResponseMapper.toChatRoomMemberInfoResponseDto(newMember, memberFriendshipStatus(member = requester, friend = newMember), isManager = false, isMe = false)
     }
 
     private fun memberFriendshipStatus(
