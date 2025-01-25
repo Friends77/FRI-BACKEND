@@ -94,4 +94,8 @@ enum class ErrorCode(
 
     // Search API error 24000대
     INVALID_SEARCH_NICKNAME(HttpStatus.BAD_REQUEST, -24001, "검색할 닉네임은 공백일 수 없습니다."),
+
+    // Redis API error 25000대
+    REDISSON_LOCK_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, -25001, "레디스 락을 사용할 수 없습니다."),
+    INVALID_REDISSON_IDENTIFIER(HttpStatus.INTERNAL_SERVER_ERROR, -25002, "레디스 락 식별자가 잘못되었습니다."),
 }

@@ -58,6 +58,17 @@ class Message(
 enum class MessageType {
     TEXT, // 일반 텍스트 메시지 및 이모지
     IMAGE,
-    SYSTEM,
     DELETE_MESSAGE,
+
+    SYSTEM,
+    SYSTEM_MEMBER_ENTER, // 채팅방 멤버 입장
+    SYSTEM_MEMBER_LEAVE, // 채팅방 멤버 퇴장
+    SYSTEM_NEW_MANAGER,
+    ;
+
+    companion object {
+        fun getNonSystemTypes(): List<MessageType> = listOf(TEXT, IMAGE, DELETE_MESSAGE)
+
+        fun getSystemTypes(): List<MessageType> = listOf(SYSTEM, SYSTEM_MEMBER_ENTER, SYSTEM_MEMBER_LEAVE, SYSTEM_NEW_MANAGER)
+    }
 }
