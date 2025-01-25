@@ -20,7 +20,7 @@ class S3ClientService(
 
     fun upload(
         multipartFile: MultipartFile,
-        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 3), // s3 비용 절감을 위해 3일로 설정
+        expirationTime: Date = Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30), // s3 비용 절감을 위해 30일로 설정
     ): String {
         val filename =
             java.util.UUID
@@ -38,6 +38,11 @@ class S3ClientService(
         }
 
         return "https://$bucketName.s3.$region.amazonaws.com/$filename"
+    }
+
+    fun isExist(fileUrl: String): Boolean {
+        val fileKey = fileUrl.substringAfterLast("/")
+        return s3Client.doesObjectExist(bucketName, fileKey)
     }
 
     //프로필 수정 시, 이전 이미지 s3 버킷에서 삭제 로직

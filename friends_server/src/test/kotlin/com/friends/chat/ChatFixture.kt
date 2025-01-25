@@ -20,13 +20,12 @@ import com.friends.message.createMockTestMessage
 import com.friends.message.createTestMessage
 import com.friends.message.entity.Message
 import com.friends.profile.TEST_PROFILE_IMAGE_URL
-import com.friends.support.TEST_IMAGE_FILE_URL
 
 const val TEST_CHAT_ROOM_ID = 1L
 const val CHAT_ROOM_TITLE = "테스트 채팅방"
 const val CREATE_CHAT_ROOM_REQUEST = "chatRoomCreateRequestDto"
 const val CHAT_ROOM_BASE_IMAGE_URL = "chatRoomBaseImageUrl"
-private val mapper = ChatRoomResponseMapper(TEST_IMAGE_FILE_URL)
+private val mapper = ChatRoomResponseMapper(CHAT_ROOM_BASE_IMAGE_URL)
 
 fun createTestChatRoom(
     title: String = CHAT_ROOM_TITLE,

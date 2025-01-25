@@ -10,6 +10,7 @@ import com.friends.category.CategoryException
 import com.friends.chat.ChatException
 import com.friends.email.EmailException
 import com.friends.friendship.exception.FriendShipException
+import com.friends.image.ImageException
 import com.friends.member.MemberExceptions
 import com.friends.message.MessageException
 import com.friends.oauth2.OAuth2Exception
@@ -226,6 +227,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(RedisLockException::class)
     fun handleRedisLockException(ex: RedisLockException): ResponseEntity<Any> {
         logger.error("Redis Lock Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
+    @ExceptionHandler(ImageException::class)
+    fun handleImageException(ex: ImageException): ResponseEntity<Any> {
+        logger.error("Image Exception", ex)
         return ResponseEntity
             .status(ex.errorCode.httpStatus)
             .body(ErrorResponse.of(ex.errorCode, ex.message))

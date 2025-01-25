@@ -1,9 +1,11 @@
 package com.friends.profile.dto
 
 import com.friends.category.entity.Category
+import com.friends.common.annotation.NullOrNotBlank
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
+import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
 
 //작성용 dto
@@ -19,12 +21,15 @@ data class ProfileCreateDto(
 
 //수정가능한 필드 dto
 data class ProfileUpdateDto(
+    var nickname: String,
     var birth: LocalDate,
     var gender: GenderEnum,
     var location: Location? = null,
     var selfDescription: String? = null,
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
+    @Schema(description = "프로필 이미지 URL, null이면 기본 이미지로 변경.")
+    @NullOrNotBlank(message = "프로필 이미지 URL은 공백일 수 없습니다.")
     var imageUrl: String? = null,
 )
 

@@ -1,5 +1,7 @@
 package com.friends.profile.controller
 
+import com.friends.common.exception.ErrorCode
+import com.friends.common.swagger.ApiErrorCodeExamples
 import com.friends.profile.dto.ProfileResponseDto
 import com.friends.profile.dto.ProfileUpdateDto
 import io.swagger.v3.oas.annotations.Operation
@@ -10,8 +12,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestPart
-import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Profile", description = "프로필 API")
 interface ProfileControllerSpec {
@@ -60,14 +60,21 @@ interface ProfileControllerSpec {
         description = "프로필 수정",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "204",
                 description = "프로필 수정 성공",
             ),
         ],
     )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.PROFILE_URL_NOT_BLANK,
+            ErrorCode.INVALID_IMAGE_URL,
+        ],
+    )
     fun updateProfile(
         @AuthenticationPrincipal memberId: Long,
-        @RequestBody @Valid profileUpdateDto: ProfileUpdateDto,
-        @RequestPart profileImage: MultipartFile?,
-    ): ResponseEntity<ProfileUpdateDto>
+        @RequestBody
+        @Valid
+        profileUpdateDto: ProfileUpdateDto,
+    ): ResponseEntity<Void>
 }
