@@ -34,12 +34,14 @@ fun createTestChatRoom(
     imageUrl: String? = null,
     likeCount: Int = 0,
     categories: List<ChatRoomCategory> = emptyList(),
-) = ChatRoom(id = 0L, title = title, manager = manager, imageUrl = imageUrl, likeCount = likeCount, categories = categories)
+    description: String? = null,
+) = ChatRoom(id = 0L, title = title, manager = manager, imageUrl = imageUrl, likeCount = likeCount, categories = categories, description = description)
 
 fun createTestChatRoomCreateRequestDto(
     title: String = CHAT_ROOM_TITLE,
     categories: Set<Long> = setOf(TEST_CATEGORY_ID),
-) = ChatRoomCreateRequestDto(title, categories)
+    description: String? = null,
+) = ChatRoomCreateRequestDto(title, categories, description)
 
 fun createTestChatRoomMember(
     chatRoom: ChatRoom = createTestChatRoom(),
@@ -94,7 +96,7 @@ fun createTestChatRoomUpdateRequestDto(
     title: String? = null,
     categoryIds: Set<Long> = emptySet(),
     backgroundImageDelete: Boolean = false,
-) = ChatRoomUpdateRequestDto(title, categoryIds, backgroundImageDelete)
+) = ChatRoomUpdateRequestDto(title, categoryIds, backgroundImageDelete, null)
 
 fun createTestChatRoomCategory(
     chatRoom: ChatRoom = createTestChatRoom(),

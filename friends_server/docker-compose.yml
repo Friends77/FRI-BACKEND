@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: CustomPostgresqlDockerfile
     container_name: my_postgres
     environment:
       POSTGRES_USER: myuser

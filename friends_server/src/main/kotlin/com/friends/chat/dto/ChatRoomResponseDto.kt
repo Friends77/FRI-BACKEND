@@ -58,6 +58,8 @@ data class ChatRoomRecommendationResponseDto(
     val participantCount: Int,
     @Schema(description = "채팅방 참여자 프로필 리스트(최대 4명)")
     val participantProfileList: List<String>,
+    @Schema(description = "채팅방 설명")
+    val description: String?,
 )
 
 data class CreateChatRoomResponseDto(

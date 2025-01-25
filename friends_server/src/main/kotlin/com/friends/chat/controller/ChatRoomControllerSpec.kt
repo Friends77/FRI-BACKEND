@@ -48,6 +48,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.CHAT_ROOM_CATEGORY_INVALID_SIZE,
             ErrorCode.CHAT_ROOM_CATEGORY_NOT_FOUND,
             ErrorCode.NOT_FOUND_MEMBER,
+            ErrorCode.NOT_BLANK_CHAT_ROOM_DESCRIPTION,
         ],
     )
     fun createChatRoom(
@@ -190,6 +191,7 @@ interface ChatRoomControllerSpec {
             ErrorCode.NOT_CHAT_ROOM_MANAGER,
             ErrorCode.CHAT_ROOM_UPDATE_NOTHING,
             ErrorCode.CHAT_ROOM_BASE_IMAGE_CANNOT_DELETE,
+            ErrorCode.NOT_BLANK_CHAT_ROOM_DESCRIPTION,
         ],
     )
     fun updateChatRoom(

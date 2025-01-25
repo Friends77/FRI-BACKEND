@@ -104,7 +104,7 @@ class ChatRoomQueryService(
                 }
         val members =
             chatRoomMemberRepository
-                .findMemberByChatRoom(chatRoom, member, manager)
+                .findMemberByChatRoomAndMemberExceptManager(chatRoom, member, manager)
                 .map {
                     chatRoomResponseMapper.toChatRoomMemberInfoResponseDto(
                         it,

@@ -44,7 +44,7 @@ interface ChatRoomMemberCustomRepository {
 
     fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member>
 
-    fun findMemberByChatRoom(
+    fun findMemberByChatRoomAndMemberExceptManager(
         chatRoom: ChatRoom,
         member: Member,
         manager: Member?,
@@ -77,7 +77,7 @@ class ChatRoomMemberCustomRepositoryImpl(
                 .orderBy(path(ChatRoomMember::id).asc())
         }
 
-    override fun findMemberByChatRoom(
+    override fun findMemberByChatRoomAndMemberExceptManager(
         chatRoom: ChatRoom,
         member: Member,
         manager: Member?,
