@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 const val COOKIE_HEARER = "Set-Cookie"
 
@@ -32,11 +34,13 @@ class AuthController(
     private val authService: AuthService,
     private val atRtService: AtRtService,
 ) : AuthControllerSpec {
-    @PostMapping("/register")
+    @PostMapping("/register", consumes = ["multipart/form-data"])
     override fun register(
-        @RequestBody registerRequestDto: RegisterRequestDto,
+        @RequestPart registerRequestDto: RegisterRequestDto,
+        @RequestPart(required = false)
+        profileImage: MultipartFile?,
     ): ResponseEntity<String> {
-        authService.register(registerRequestDto)
+        authService.register(registerRequestDto, profileImage)
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.")
     }
 
