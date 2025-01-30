@@ -8,10 +8,10 @@ import com.friends.chat.dto.ChatRoomUpdateRequestDto
 import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
+import com.friends.common.annotation.CustomPositive
 import com.friends.common.annotation.NullOrNotBlank
 import com.friends.common.exception.ErrorCode
 import jakarta.validation.Valid
-import jakarta.validation.constraints.Positive
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
 import org.springframework.http.ResponseEntity
@@ -56,7 +56,7 @@ class ChatRoomController(
     @GetMapping("/{id}")
     override fun getChatRoomDetail(
         @PathVariable("id")
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
@@ -87,7 +87,7 @@ class ChatRoomController(
     @PatchMapping("/{id}", consumes = [MULTIPART_FORM_DATA_VALUE])
     override fun updateChatRoom(
         @PathVariable("id")
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @RequestPart(required = false)
         @Valid
@@ -104,7 +104,7 @@ class ChatRoomController(
     @DeleteMapping("/{id}/user")
     override fun forcedToLeave(
         @PathVariable("id")
-        @Positive(message = "chatRoomId는 0보다 커야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
@@ -118,7 +118,7 @@ class ChatRoomController(
     @GetMapping("/{id}/member")
     override fun getChatRoomMemberInfoList(
         @PathVariable("id")
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
@@ -127,7 +127,7 @@ class ChatRoomController(
     @GetMapping("/{id}/member/{memberId}")
     override fun getChatRoomMemberInfo(
         @PathVariable("id")
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         requesterId: Long,
