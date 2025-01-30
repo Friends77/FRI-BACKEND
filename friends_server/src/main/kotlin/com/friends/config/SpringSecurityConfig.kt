@@ -48,14 +48,12 @@ class SpringSecurityConfig(
                 .requestMatchers(
                     "/api/auth/**",
                     "/api/global/**",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**",
                     "ws/chat/**",
                     "ws/alarm/**",
                 ).permitAll()
                 .requestMatchers("/api/user/**")
                 .hasAuthority(Role.ROLE_USER.name)
-                .requestMatchers("/api/admin/**")
+                .requestMatchers("/api/admin/**", "/swagger-ui/**", "/v3/api-docs/**")
                 .hasAuthority(Role.ROLE_ADMIN.name)
                 .anyRequest()
                 .authenticated()
