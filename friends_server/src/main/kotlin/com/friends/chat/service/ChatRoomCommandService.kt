@@ -19,6 +19,8 @@ import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.annotation.DistributedLock
+import com.friends.common.exception.ErrorCode
+import com.friends.common.exception.ParameterValidationException
 import com.friends.common.key.CHAT_ROOM_LIKE_LOCK
 import com.friends.image.S3ClientService
 import com.friends.member.MemberNotFoundException
@@ -48,6 +50,8 @@ class ChatRoomCommandService(
         memberId: Long,
         backgroundImage: MultipartFile?,
     ): CreateChatRoomResponseDto {
+        if (request.title.isBlank()) throw ParameterValidationException(errorCode = ErrorCode.NOT_BLANK_CHAT_ROOM_DESCRIPTION)
+        if (request.categoryIdList.isEmpty()) throw ParameterValidationException(errorCode = ErrorCode.CHAT_ROOM_CATEGORY_INVALID_SIZE)
         val imageUrl =
             backgroundImage?.let {
                 s3ClientService.upload(it)
