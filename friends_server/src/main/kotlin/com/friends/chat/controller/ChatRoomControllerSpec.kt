@@ -83,7 +83,7 @@ interface ChatRoomControllerSpec {
         memberId: Long,
         @Schema(description = "해당 필드 null로 보내주시면 전체 검색, 특정 단어를 보내면 해당 단어를 포함하고 있는 닉네임 가진 유저와 함께 참여중인 채팅방을 검색합니다.")
         @RequestParam("nickname", required = false)
-        @NullOrNotBlank(message = "검색할 닉네임은 공백일 수 없습니다.")
+        @NullOrNotBlank(errorCode = ErrorCode.INVALID_SEARCH_NICKNAME)
         nickname: String?,
     ): ResponseEntity<List<ChatRoomInfoResponseDto>>
 

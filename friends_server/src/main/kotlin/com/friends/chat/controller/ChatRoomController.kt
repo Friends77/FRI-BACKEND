@@ -9,6 +9,7 @@ import com.friends.chat.dto.CreateChatRoomResponseDto
 import com.friends.chat.service.ChatRoomCommandService
 import com.friends.chat.service.ChatRoomQueryService
 import com.friends.common.annotation.NullOrNotBlank
+import com.friends.common.exception.ErrorCode
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Positive
 import org.springframework.http.HttpStatus
@@ -48,7 +49,7 @@ class ChatRoomController(
         @AuthenticationPrincipal
         memberId: Long,
         @RequestParam("nickname", required = false)
-        @NullOrNotBlank(message = "검색할 닉네임은 공백일 수 없습니다.")
+        @NullOrNotBlank(errorCode = ErrorCode.INVALID_SEARCH_NICKNAME)
         nickname: String?,
     ): ResponseEntity<List<ChatRoomInfoResponseDto>> = ResponseEntity.ok(chatRoomQueryService.getChatRooms(memberId, nickname))
 

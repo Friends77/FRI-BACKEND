@@ -2,6 +2,7 @@ package com.friends.profile.dto
 
 import com.friends.category.entity.Category
 import com.friends.common.annotation.NullOrNotBlank
+import com.friends.common.exception.ErrorCode
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.MbtiEnum
@@ -29,7 +30,7 @@ data class ProfileUpdateDto(
     var mbti: MbtiEnum? = null,
     var interestTag: MutableSet<Long> = mutableSetOf(),
     @Schema(description = "프로필 이미지 URL, null이면 기본 이미지로 변경.")
-    @NullOrNotBlank(message = "프로필 이미지 URL은 공백일 수 없습니다.")
+    @field:NullOrNotBlank(errorCode = ErrorCode.PROFILE_URL_NOT_BLANK)
     var imageUrl: String? = null,
 )
 
