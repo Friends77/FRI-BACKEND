@@ -31,6 +31,7 @@ class InitDB(
     private val initTestMember: InitTestMember,
     private val initCategory: InitCategory,
     private val initTestUser: InitTestUser,
+    private val initAdmin: InitAdmin,
 ) {
     @Value("\${spring.jpa.hibernate.ddl-auto}")
     lateinit var ddlAuto: String
@@ -41,9 +42,27 @@ class InitDB(
         if (ddlAuto != "create") {
             return
         }
-        initTestMember.init()
+//        initTestMember.init()
         initCategory.init()
-        initTestUser.init()
+        initAdmin.init()
+//        initTestUser.init()
+    }
+
+    @Component
+    class InitAdmin(
+        private val memberRepository: MemberRepository,
+        private val passwordEncoder: PasswordEncoder,
+    ) {
+        fun init() {
+            // 관리자 유저 생성
+            memberRepository.save(
+                Member.createAdmin(
+                    nickname = "admin",
+                    email = "admin",
+                    password = passwordEncoder.encode("admin@1234"),
+                ),
+            )
+        }
     }
 
     @Component
