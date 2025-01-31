@@ -18,6 +18,7 @@ import com.friends.chat.entity.ChatRoomCategory
 import com.friends.chat.repository.ChatRoomCategoryRepository
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
+import com.friends.common.exception.ParameterValidationException
 import com.friends.createTestCategory
 import com.friends.image.S3ClientService
 import com.friends.member.MEMBER_ID
@@ -74,6 +75,34 @@ class ChatRoomCommandServiceTest :
                         )
                     }
                 }
+
+                `when`("채팅방 제목이 공백인 경우") {
+                    val InvaildRequest = createTestChatRoomCreateRequestDto(title = " ")
+                    then("ParameterException이 발생한다.") {
+                        shouldThrow<ParameterValidationException> {
+                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                        }
+                    }
+                }
+
+                `when`("채팅방 제목이 0자인 경우") {
+                    val InvaildRequest = createTestChatRoomCreateRequestDto(title = "")
+                    then("ParameterException이 발생한다.") {
+                        shouldThrow<ParameterValidationException> {
+                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                        }
+                    }
+                }
+
+                `when`("카테고리 리스트가 empty인 경우") {
+                    val InvaildRequest = createTestChatRoomCreateRequestDto(categories = emptySet())
+                    then("ParameterException이 발생한다.") {
+                        shouldThrow<ParameterValidationException> {
+                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                        }
+                    }
+                }
+
                 `when`("전달 받은 카테고리 ID List에 해당하는 카테고리가 전부 없을 경우") {
                     then("ChatRoomCategoryNotFoundException이 발생한다.") {
                         every { categoryRepository.findByIdIn(any()) } returns emptyList()
