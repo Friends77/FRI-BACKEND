@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.ResponseEntity
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "Auth")
 interface AuthControllerSpec {
@@ -41,6 +42,7 @@ interface AuthControllerSpec {
     )
     fun register(
         registerRequestDto: RegisterRequestDto,
+        profileImage: MultipartFile?,
     ): ResponseEntity<String>
 
     @Operation(

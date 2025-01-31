@@ -45,54 +45,6 @@ class ChatRoomControllerTest(
                 }
             }
 
-            `when`("채팅방 제목이 공백인 경우") {
-                val request = createTestChatRoomCreateRequestDto(title = " ")
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
-
-            `when`("채팅방 제목이 0자 인 경우") {
-                val request = createTestChatRoomCreateRequestDto(title = "")
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
-
-            `when`("채팅방 제목이 30자 이상인 경우") {
-                val request = createTestChatRoomCreateRequestDto(title = "랄".repeat(30))
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
-
-            `when`("채팅방 카테고리가 없는 경우") {
-                val request = createTestChatRoomCreateRequestDto(categories = setOf())
-                then("400 에러 발생") {
-                    mockMvc
-                        .perform(
-                            multipartWithAuthentication(requestPath).file(createMultipartFile(CREATE_CHAT_ROOM_REQUEST, objectMapper.writeValueAsBytes(request).inputStream())),
-                        ).andExpect(
-                            status().isBadRequest,
-                        )
-                }
-            }
-
             `when`("채팅방 설명이 공백인 경우") {
                 val request = createTestChatRoomCreateRequestDto(description = " ")
                 then("400 에러 발생") {

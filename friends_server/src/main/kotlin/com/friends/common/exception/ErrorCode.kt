@@ -53,7 +53,6 @@ enum class ErrorCode(
     // Chat API error 17000대
     CHAT_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, -17001, "존재하지 않는 채팅방입니다."),
     CHAT_ROOM_TITLE_BLANK(HttpStatus.BAD_REQUEST, -17002, "채팅방 제목은 공백일 수 없습니다."),
-    CHAT_ROOM_TITLE_INVALID_LENGTH(HttpStatus.BAD_REQUEST, -17003, "채팅방 제목은 1자 이상 20자 이하로 입력해주세요."),
     CHAT_ROOM_CATEGORY_INVALID_SIZE(HttpStatus.BAD_REQUEST, -17004, "채팅방 카테고리는 최소 1개 이상 선택해주세요."),
     CHAT_ROOM_POSITIVE_LIKE_COUNT(HttpStatus.BAD_REQUEST, -17005, "채팅방 좋아요 수는 0 이상이어야 합니다."),
     CHAT_ROOM_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, -17006, "전부 존재하지 않는 채팅방 카테고리입니다."),

@@ -240,6 +240,14 @@ class GlobalExceptionHandler : ResponseEntityExceptionHandler() {
             .body(ErrorResponse.of(ex.errorCode, ex.message))
     }
 
+    @ExceptionHandler(ParameterValidationException::class)
+    fun handleParameterValidationException(ex: ParameterValidationException): ResponseEntity<Any> {
+        logger.error("Parameter Validation Exception", ex)
+        return ResponseEntity
+            .status(ex.errorCode.httpStatus)
+            .body(ErrorResponse.of(ex.errorCode, ex.message))
+    }
+
     private fun MethodArgumentNotValidException.messages(): List<String> = bindingResult.fieldErrors.map { "${it.field}: ${it.defaultMessage.orEmpty()}" } // 필드 이름과 기본 메세지 반환
 
     private fun HandlerMethodValidationException.messages(): List<String> =

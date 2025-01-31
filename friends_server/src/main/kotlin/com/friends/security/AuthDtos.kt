@@ -26,7 +26,6 @@ data class RegisterRequestDto(
     val selfDescription: String? = null,
     val mbti: MbtiEnum? = null,
     val interestTag: List<Long> = emptyList(),
-    val imageUrl: String? = null,
     val location: LocationDto? = null,
 )
 

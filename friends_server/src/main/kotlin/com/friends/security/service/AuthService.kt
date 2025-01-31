@@ -3,6 +3,7 @@ package com.friends.security.service
 import com.friends.category.CategoryNotFoundException
 import com.friends.category.repository.CategoryRepository
 import com.friends.config.AuthProperties
+import com.friends.image.S3ClientService
 import com.friends.jwt.AtRtService
 import com.friends.jwt.JwtService
 import com.friends.jwt.JwtType
@@ -33,6 +34,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDate
 
 @Service
@@ -47,6 +49,7 @@ class AuthService(
     private val profileInterestTagRepository: ProfileInterestTagRepository,
     private val categoryRepository: CategoryRepository,
     private val profileRepository: ProfileRepository,
+    private val s3ClientService: S3ClientService,
 ) {
     @Transactional(readOnly = true)
     fun login(
@@ -77,6 +80,7 @@ class AuthService(
     @Transactional
     fun register(
         registerRequestDto: RegisterRequestDto,
+        profileImage: MultipartFile?,
     ) {
         // emailAuthToken 검증
         if (!jwtService.validate(registerRequestDto.authToken)) {
@@ -108,7 +112,7 @@ class AuthService(
         val profile =
             Profile(
                 member = user,
-                imageUrl = registerRequestDto.imageUrl,
+                imageUrl = profileImage?.let { s3ClientService.upload(it) },
                 gender = registerRequestDto.gender,
                 birth = LocalDate.of(registerRequestDto.birth, 1, 1),
                 location = registerRequestDto.location?.let { Location(it.latitude, it.longitude) },

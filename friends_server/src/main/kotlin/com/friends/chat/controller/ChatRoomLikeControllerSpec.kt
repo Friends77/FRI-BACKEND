@@ -1,13 +1,13 @@
 package com.friends.chat.controller
 
 import com.friends.chat.dto.ToggleLikeResponseDto
+import com.friends.common.annotation.CustomPositive
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.validation.constraints.Positive
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 
@@ -38,7 +38,7 @@ interface ChatRoomLikeControllerSpec {
         ],
     )
     fun toggleLike(
-        @Positive(message = "채팅방 ID는 양수여야 합니다.")
+        @CustomPositive(message = "채팅방 ID는 양수여야 합니다.")
         chatRoomId: Long,
         @AuthenticationPrincipal
         memberId: Long,
