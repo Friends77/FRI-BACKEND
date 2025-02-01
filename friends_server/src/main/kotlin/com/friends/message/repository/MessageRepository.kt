@@ -40,6 +40,8 @@ interface MessageCustomRepository {
     ): Slice<Message>
 
     fun findRecentMessageInChatRoom(chatRoom: ChatRoom): Message?
+
+    fun findRecentMessageInChatRoomWithSystemMessage(chatRoom: ChatRoom): Message?
 }
 
 class MessageCustomRepositoryImpl(
@@ -113,6 +115,15 @@ class MessageCustomRepositoryImpl(
                         path(Message::chatRoom).equal(chatRoom),
                         path(Message::type).`in`(MessageType.getNonSystemTypes()),
                     ),
+                ).orderBy(path(Message::id).desc())
+        }
+
+    override fun findRecentMessageInChatRoomWithSystemMessage(chatRoom: ChatRoom): Message? =
+        kotlinJdslJpqlExecutor.find {
+            select(entity(Message::class))
+                .from(entity(Message::class))
+                .where(
+                    path(Message::chatRoom).equal(chatRoom),
                 ).orderBy(path(Message::id).desc())
         }
 }

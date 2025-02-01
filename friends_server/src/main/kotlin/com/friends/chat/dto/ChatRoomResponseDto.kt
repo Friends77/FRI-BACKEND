@@ -43,6 +43,10 @@ data class ChatRoomDetailResponseDto(
     val likeCount: Int,
     @Schema(description = "해당 채팅방 좋아요 여부(좋아요 눌렀을 시, true)")
     val isLike: Boolean,
+    @Schema(description = "유저가 마지막으로 읽은 메세지의 id")
+    val lastReadMessageId: Long?,
+    @Schema(description = "채팅방의 마지막 메세지의 id")
+    val lastMessageId: Long?,
 )
 
 data class ChatRoomRecommendationResponseDto(

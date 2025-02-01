@@ -43,6 +43,8 @@ class ChatRoomResponseMapper(
         memberCount: Int,
         isLike: Boolean,
         imageUrl: String,
+        lastReadMessageId: Long?,
+        lastMessageId: Long?,
     ) = ChatRoomDetailResponseDto(
         id = chatRoom.id,
         title = chatRoom.title,
@@ -51,6 +53,8 @@ class ChatRoomResponseMapper(
         participantCount = memberCount,
         likeCount = chatRoom.likeCount,
         isLike = isLike,
+        lastReadMessageId = lastReadMessageId,
+        lastMessageId = lastMessageId,
     )
 
     fun toChatRoomMemberInfoResponseDto(

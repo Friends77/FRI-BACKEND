@@ -85,7 +85,7 @@ fun createTestChatRoomDetailResponseDto(
     memberCount: Int = TEST_SIZE,
     like: Boolean = false,
     imageUrl: String = CHAT_ROOM_BASE_IMAGE_URL,
-) = mapper.toChatRoomDetailResponseDto(chatRoom, memberCount, like, imageUrl)
+) = mapper.toChatRoomDetailResponseDto(chatRoom, memberCount, like, imageUrl, null, null)
 
 fun createTestCreateChatRoomResponseDto(
     chatRoomId: Long = TEST_CHAT_ROOM_ID,
