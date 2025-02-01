@@ -3,6 +3,7 @@ package com.friends.security
 import com.friends.member.entity.OAuth2Provider
 import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.MbtiEnum
+import java.time.LocalDate
 import java.util.Date
 
 data class LoginRequestDto(
@@ -21,7 +22,7 @@ data class RegisterRequestDto(
     val email: String? = null,
     val password: String? = null,
     val nickname: String,
-    val birth: Int,
+    val birth: LocalDate,
     val gender: GenderEnum,
     val selfDescription: String? = null,
     val mbti: MbtiEnum? = null,
