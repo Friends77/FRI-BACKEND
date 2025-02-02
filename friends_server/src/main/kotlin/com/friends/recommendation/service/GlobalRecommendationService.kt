@@ -1,10 +1,10 @@
 package com.friends.recommendation.service
 
-import com.friends.category.dto.CategoryInfoResponse
 import com.friends.chat.dto.ChatRoomRecommendationResponseDto
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.ListBaseResponse
+import com.friends.common.mapper.toCategoryInfoResponse
 import com.friends.profile.dto.ProfileWithCategoriesResponseDto
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.beans.factory.annotation.Value
@@ -53,7 +53,7 @@ class GlobalRecommendationService(
                     it.id,
                     it.title,
                     it.imageUrl ?: chatBaseImageUrl,
-                    it.categories.map { chatRoomCategory -> CategoryInfoResponse(chatRoomCategory.category.id) },
+                    it.categories.map { chatRoomCategory -> toCategoryInfoResponse(chatRoomCategory.category) },
                     chatRoomMemberRepository.countByChatRoom(it),
                     chatRoomMemberRepository.findRepresentativeProfileByChatRoomId(it.id).map { member -> member.profile?.imageUrl ?: profileBaseImageUrl },
                     it.description,
