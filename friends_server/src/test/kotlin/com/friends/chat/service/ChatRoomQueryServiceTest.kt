@@ -91,6 +91,8 @@ class ChatRoomQueryServiceTest :
                     every { chatRoomMemberRepository.countByChatRoom(any()) } returns 10
                     every { chatRoomRepository.findById(any()) } returns Optional.of(createTestChatRoom())
                     every { chatRoomLikeRepository.existsByChatRoomAndMemberId(any(), any()) } returns true
+                    every { chatRoomMemberRepository.findByChatRoomAndMember(any(), any()) } returns null
+                    every { messageRepository.findRecentMessageInChatRoom(any()) } returns null
                     then("채팅방이 조회된다.") {
                         chatRoomQueryService.getChatRoomDetail(TEST_CHAT_ROOM_ID, MEMBER_ID)
                     }
