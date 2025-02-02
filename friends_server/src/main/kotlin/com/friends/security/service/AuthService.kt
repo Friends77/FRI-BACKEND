@@ -35,7 +35,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
-import java.time.LocalDate
 
 @Service
 class AuthService(
@@ -114,7 +113,7 @@ class AuthService(
                 member = user,
                 imageUrl = profileImage?.let { s3ClientService.upload(it) },
                 gender = registerRequestDto.gender,
-                birth = LocalDate.of(registerRequestDto.birth, 1, 1),
+                birth = registerRequestDto.birth,
                 location = registerRequestDto.location?.let { Location(it.latitude, it.longitude) },
                 selfDescription = registerRequestDto.selfDescription,
                 mbti = registerRequestDto.mbti,
