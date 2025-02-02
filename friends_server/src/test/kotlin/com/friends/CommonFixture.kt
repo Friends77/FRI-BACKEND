@@ -1,6 +1,5 @@
 package com.friends
 
-import com.friends.category.dto.CategoryInfoResponse
 import com.friends.category.entity.Category
 import com.friends.category.entity.CategoryType
 
@@ -13,7 +12,3 @@ fun createTestCategory(
     name: String = TEST_CATEGORY_NAME,
     type: CategoryType = CategoryType.SUBJECT,
 ) = Category(id, name, type)
-
-fun createTestCategoryInfoResponse(
-    id: Long = TEST_CATEGORY_ID,
-) = CategoryInfoResponse(id)

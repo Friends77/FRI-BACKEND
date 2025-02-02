@@ -7,4 +7,4 @@ import org.springframework.data.domain.Slice
 
 fun <T> toSliceBaseResponse(slice: Slice<T>): SliceBaseResponse<T> = SliceBaseResponse(content = slice.content, hasNext = slice.hasNext())
 
-fun toCategoryInfoResponse(category: Category) = CategoryInfoResponse(category.id)
+fun toCategoryInfoResponse(category: Category) = CategoryInfoResponse(category.id, category.name, category.type, category.image)
