@@ -69,8 +69,19 @@ class ChatRoomQueryService(
         memberId: Long,
     ): ChatRoomDetailResponseDto {
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow { throw ChatRoomNotFoundException() }
-        memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        return chatRoomResponseMapper.toChatRoomDetailResponseDto(chatRoom, chatRoomMemberRepository.countByChatRoom(chatRoom), chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId), chatRoom.imageUrl ?: chatRoomBaseImageUrl)
+        val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
+        val participantCount = chatRoomMemberRepository.countByChatRoom(chatRoom)
+        val isLike = chatRoomLikeRepository.existsByChatRoomAndMemberId(chatRoom, memberId)
+        val lastReadMessageId = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom = chatRoom, member = member)?.lastReadMessage?.id
+        val lastMessage = messageRepository.findRecentMessageInChatRoomWithSystemMessage(chatRoom)
+        return chatRoomResponseMapper.toChatRoomDetailResponseDto(
+            chatRoom = chatRoom,
+            memberCount = participantCount,
+            isLike = isLike,
+            imageUrl = chatRoom.imageUrl ?: chatRoomBaseImageUrl,
+            lastReadMessageId = lastReadMessageId,
+            lastMessageId = lastMessage?.id,
+        )
     }
 
     @Transactional(readOnly = true)
@@ -82,6 +93,7 @@ class ChatRoomQueryService(
         val member = memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
         return chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)
     }
+
     @Transactional(readOnly = true)
     fun getChatRoomMemberInfoList(
         chatRoomId: Long,
