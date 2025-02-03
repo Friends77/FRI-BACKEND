@@ -2,6 +2,7 @@ package com.friends.member.entity
 
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.profile.entity.Profile
+import com.friends.security.securityException.InvalidPasswordException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -77,6 +78,20 @@ class Member(
                 addAuthority(Role.ROLE_USER) // 기본 권한으로 사용자 권한 추가
                 addAuthority(Role.ROLE_ADMIN) // 관리자 권한 추가
             }
+
+        fun validatePassword(password: String): Boolean {
+            val lengthRegex = Regex(".{8,20}") // 길이 제한
+            val lowerCaseRegex = Regex(".*[a-z].*") // 소문자 포함
+            val digitRegex = Regex(".*[0-9].*") // 숫자 포함
+            val specialCharRegex = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*") // 특수문자 포함
+            val noWhiteSpaceRegex = Regex("^[^\\s]*\$") // 공백 금지
+
+            return lengthRegex.matches(password) &&
+                lowerCaseRegex.containsMatchIn(password) &&
+                digitRegex.containsMatchIn(password) &&
+                specialCharRegex.containsMatchIn(password) &&
+                noWhiteSpaceRegex.matches(password)
+        }
     }
 
     /**
@@ -97,6 +112,9 @@ class Member(
     fun getPassword(): String? = password
 
     fun updatePassword(newPassword: String) {
+        if (!validatePassword(newPassword)) {
+            throw InvalidPasswordException()
+        }
         this.password = newPassword
     }
 }
