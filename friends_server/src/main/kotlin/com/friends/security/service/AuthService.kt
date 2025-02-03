@@ -248,12 +248,12 @@ class AuthService(
             throw InvalidPasswordException()
         }
         // 새 비밀번호와 기존 비밀번호가 같은지 검사
-        if (passwordEncoder.matches(newPassword, member.password)) {
+        if (passwordEncoder.matches(newPassword, member.getPassword())) {
             throw DuplicateNewPasswordException()
         }
 
         // jwt 에서 email 을 추출하고 해당 email 을 가진 사용자의 비밀번호를 변경합니다.
-        member.password = passwordEncoder.encode(newPassword)
+        member.updatePassword(passwordEncoder.encode(newPassword))
         memberRepository.save(member)
     }
 }
