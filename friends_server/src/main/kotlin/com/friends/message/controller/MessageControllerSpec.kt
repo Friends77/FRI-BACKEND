@@ -1,6 +1,5 @@
 package com.friends.message.controller
 
-import com.friends.common.dto.ListBaseResponse
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
@@ -33,7 +32,9 @@ interface MessageControllerSpec {
     fun getUnreadMessages(
         memberId: Long,
         chatRoomId: Long,
-    ): ResponseEntity<ListBaseResponse<MessageResponseDto>>
+        size: Int,
+        lastMessageId: Long?,
+    ): ResponseEntity<SliceBaseResponse<MessageResponseDto>>
 
     @Operation(
         description =

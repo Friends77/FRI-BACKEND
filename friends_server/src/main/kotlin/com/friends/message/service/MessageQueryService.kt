@@ -4,7 +4,6 @@ import com.friends.chat.ChatRoomMemberNotFoundException
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
-import com.friends.common.dto.ListBaseResponse
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.MemberNotFoundException
@@ -26,14 +25,16 @@ class MessageQueryService(
     fun getUnreadMessage(
         memberId: Long,
         chatRoomId: Long,
-    ): ListBaseResponse<MessageResponseDto> {
+        lastMessageId: Long?,
+        size: Int,
+    ): SliceBaseResponse<MessageResponseDto> {
         val member = memberRepository.findById(memberId).orElse(null) ?: throw MemberNotFoundException()
         val chatRoom = chatRoomRepository.findById(chatRoomId).orElse(null) ?: throw ChatRoomNotFoundException()
         // 채팅방에 속한 멤버인지 확인하는 유효성 검사도 같이 수행합니다.
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw ChatRoomMemberNotFoundException()
 
-        val messages = messageRepository.findUnreadMessagesForMember(chatRoomMember).map { toMessageResponseDto(it) }
-        return ListBaseResponse(messages)
+        val messages = messageRepository.findUnreadMessagesForMemberBeforeId(chatRoomMember, lastMessageId, size).map { toMessageResponseDto(it) }
+        return toSliceBaseResponse(messages)
     }
 
     fun getPreviousMessages(

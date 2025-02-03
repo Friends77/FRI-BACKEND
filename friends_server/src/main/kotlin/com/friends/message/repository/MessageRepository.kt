@@ -33,6 +33,12 @@ interface MessageCustomRepository {
         chatRoomMember: ChatRoomMember,
     ): List<Message>
 
+    fun findUnreadMessagesForMemberBeforeId(
+        chatRoomMember: ChatRoomMember,
+        messageId: Long? = null,
+        size: Int,
+    ): Slice<Message>
+
     fun findMessagesBeforeIdInChatRoom(
         chatRoom: ChatRoom,
         messageId: Long? = null,
@@ -78,6 +84,30 @@ class MessageCustomRepositoryImpl(
                     ),
                 ).orderBy(path(Message::id).asc())
         }
+
+    /**
+     * 채팅방의 읽지 않은 메세지를 가져 옵니다.
+     * id 오름차순으로 정렬합니다.
+     * messageId 가 주어지면 해당 messageId 보다 큰 메세지를 가져옵니다. -> 이후 메세지 조회
+     * size 만큼 가져옵니다.
+     */
+    override fun findUnreadMessagesForMemberBeforeId(
+        chatRoomMember: ChatRoomMember,
+        messageId: Long?,
+        size: Int,
+    ): Slice<Message> {
+        val pageable = Pageable.ofSize(size)
+        return kotlinJdslJpqlExecutor.getSlice(pageable) {
+            select(entity(Message::class))
+                .from(entity(Message::class))
+                .where(
+                    and(
+                        path(Message::chatRoom).equal(chatRoomMember.chatRoom),
+                        messageId?.let { path(Message::id).greaterThan(it) },
+                    ),
+                ).orderBy(path(Message::id).asc())
+        }
+    }
 
     /**
      * 채팅방의 특정 메세지 이전의 메세지를 가져옵니다.

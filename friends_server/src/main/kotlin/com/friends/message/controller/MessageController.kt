@@ -1,6 +1,5 @@
 package com.friends.message.controller
 
-import com.friends.common.dto.ListBaseResponse
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.message.dto.MessageResponseDto
 import com.friends.message.service.MessageCommandService
@@ -25,8 +24,10 @@ class MessageController(
     override fun getUnreadMessages(
         @AuthenticationPrincipal memberId: Long,
         @PathVariable chatRoomId: Long,
-    ): ResponseEntity<ListBaseResponse<MessageResponseDto>> {
-        val result = messageQueryService.getUnreadMessage(memberId, chatRoomId)
+        @RequestParam("size", defaultValue = "20") size: Int,
+        @RequestParam("lastMessageId", required = false) lastMessageId: Long?,
+    ): ResponseEntity<SliceBaseResponse<MessageResponseDto>> {
+        val result = messageQueryService.getUnreadMessage(memberId, chatRoomId, lastMessageId, size)
         return ResponseEntity.ok(result)
     }
 
