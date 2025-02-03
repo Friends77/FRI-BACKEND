@@ -21,6 +21,7 @@ import com.friends.security.CheckEmailResponseDto
 import com.friends.security.CheckNicknameResponseDto
 import com.friends.security.OAuth2LoginDto
 import com.friends.security.RegisterRequestDto
+import com.friends.security.securityException.DuplicateNewPasswordException
 import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.EmailNotFoundException
 import com.friends.security.securityException.InvalidNicknameException
@@ -236,12 +237,23 @@ class AuthService(
         if (!jwtService.validate(emailAuthToken)) {
             throw InvalidTokenException()
         }
+        val emailFromToken = jwtService.getClaim(emailAuthToken, "email", String::class.java) ?: throw InvalidTokenException()
+
+        // 유저 존재 여부 확인
+        val member = memberRepository.findByEmail(emailFromToken) ?: throw EmailNotFoundException()
+
+        // 패스워드 유효성 검사
+        // 적절한 비밀번호 패턴인지 검사
+        if (!validatePassword(newPassword)) {
+            throw InvalidPasswordException()
+        }
+        // 새 비밀번호와 기존 비밀번호가 같은지 검사
+        if (passwordEncoder.matches(newPassword, member.password)) {
+            throw DuplicateNewPasswordException()
+        }
 
         // jwt 에서 email 을 추출하고 해당 email 을 가진 사용자의 비밀번호를 변경합니다.
-        val emailFromToken = jwtService.getClaim(emailAuthToken, "email", String::class.java) ?: throw InvalidTokenException()
-        memberRepository.findByEmail(emailFromToken)?.apply {
-            password = passwordEncoder.encode(newPassword)
-            memberRepository.save(this)
-        } ?: throw EmailNotFoundException()
+        member.password = passwordEncoder.encode(newPassword)
+        memberRepository.save(member)
     }
 }
