@@ -39,6 +39,15 @@ interface ProfileRepository :
         @Param("distance") distance: Double,
         pageable: Pageable? = null,
     ): List<ProfileWithDistanceQueryDto>
+
+    @Query(
+        """
+        SELECT p
+        FROM Profile p
+        ORDER BY random()
+    """,
+    )
+    fun findRandomProfile(pageable: Pageable): List<Profile>
 }
 
 interface ProfileCustomRepository {

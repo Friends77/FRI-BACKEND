@@ -5,6 +5,7 @@ import com.friends.chat.repository.ChatRoomMemberRepository
 import com.friends.chat.repository.ChatRoomRepository
 import com.friends.common.dto.ListBaseResponse
 import com.friends.common.mapper.toCategoryInfoResponse
+import com.friends.profile.dto.ProfileSimpleResponseDto
 import com.friends.profile.dto.ProfileWithCategoriesResponseDto
 import com.friends.profile.repository.ProfileRepository
 import org.springframework.beans.factory.annotation.Value
@@ -60,5 +61,20 @@ class GlobalRecommendationService(
                 )
             }
         return ListBaseResponse(result)
+    }
+
+    fun getUserRecommendation(size: Int): ListBaseResponse<ProfileSimpleResponseDto> {
+        val pageable = Pageable.ofSize(size)
+        val profiles = profileRepository.findRandomProfile(pageable)
+        return ListBaseResponse(
+            profiles.map {
+                ProfileSimpleResponseDto(
+                    it.id,
+                    it.member.nickname,
+                    it.imageUrl ?: profileBaseImageUrl,
+                    it.selfDescription,
+                )
+            },
+        )
     }
 }
