@@ -25,3 +25,5 @@ class InvalidPasswordException : AuthenticationException(ErrorCode.INVALID_PASSW
 class DuplicateNewPasswordException : AuthenticationException(ErrorCode.DUPLICATE_NEW_PASSWORD)
 
 class InvalidNicknameException : AuthenticationException(ErrorCode.INVALID_NICKNAME)
+
+class OAuth2ResetPasswordException : AuthenticationException(ErrorCode.OAUTH2_RESET_PASSWORD)
