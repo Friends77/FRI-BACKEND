@@ -22,4 +22,6 @@ class EmailDuplicateException : AuthenticationException(ErrorCode.EMAIL_ALREADY_
 
 class InvalidPasswordException : AuthenticationException(ErrorCode.INVALID_PASSWORD)
 
+class DuplicateNewPasswordException : AuthenticationException(ErrorCode.DUPLICATE_NEW_PASSWORD)
+
 class InvalidNicknameException : AuthenticationException(ErrorCode.INVALID_NICKNAME)

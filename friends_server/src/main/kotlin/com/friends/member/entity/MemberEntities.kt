@@ -29,7 +29,7 @@ class Member(
     // 이메일은 중복되지 않아야 하며 수정되지 않아야 합니다.
     @Column(unique = true, updatable = false)
     val email: String,
-    var password: String? = null,
+    private var password: String? = null,
     @Enumerated(EnumType.STRING)
     var oauth2Provider: OAuth2Provider?,
     // 권한 리스트는 기본적으로 비어 있는 리스트로 초기화
@@ -92,6 +92,12 @@ class Member(
 
     fun updateNickname(nickname: String) {
         this.nickname = nickname
+    }
+
+    fun getPassword(): String? = password
+
+    fun updatePassword(newPassword: String) {
+        this.password = newPassword
     }
 }
 
