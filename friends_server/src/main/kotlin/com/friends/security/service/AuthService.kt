@@ -38,6 +38,8 @@ class AuthService(
     private val categoryRepository: CategoryRepository,
     private val profileRepository: ProfileRepository,
     private val s3ClientService: S3ClientService,
+    private val authValidator: AuthValidator,
+    private val authPasswordService: AuthPasswordService,
 ) {
     @Transactional(readOnly = true)
     fun login(

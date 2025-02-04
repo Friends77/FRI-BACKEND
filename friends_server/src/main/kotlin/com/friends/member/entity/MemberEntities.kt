@@ -2,7 +2,6 @@ package com.friends.member.entity
 
 import com.friends.common.entity.BaseModifiableEntity
 import com.friends.profile.entity.Profile
-import com.friends.security.securityException.InvalidPasswordException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -98,9 +97,6 @@ class Member(
     fun getPassword(): String? = password
 
     fun updatePassword(newPassword: String) {
-        if (!validatePassword(newPassword)) {
-            throw InvalidPasswordException()
-        }
         this.password = newPassword
     }
 }

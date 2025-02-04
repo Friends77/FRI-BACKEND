@@ -1,25 +1,38 @@
 package com.friends.security.service
 
+import com.friends.jwt.JwtService
+import com.friends.member.entity.Member
+import com.friends.member.repository.MemberRepository
 import com.friends.security.securityException.DuplicateNewPasswordException
 import com.friends.security.securityException.InvalidPasswordException
+import com.friends.security.securityException.InvalidTokenException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component
 class AuthValidator(
+    private val jwtService: JwtService,
+    private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun validateResetPassword(
-        encryptedOldPassword: String,
+        member: Member,
         newPassword: String,
     ) {
         if (!isValidPasswordPattern(newPassword)) {
             throw InvalidPasswordException()
         }
 
-        if (isPreviousPassword(encryptedOldPassword, newPassword)) {
+        if (isPreviousPassword(member.getPassword()!!, newPassword)) {
             throw DuplicateNewPasswordException()
         }
+    }
+
+    fun validateEmailAuthTokenAndReturnEmail(emailAuthToken: String): String {
+        if (!jwtService.validate(emailAuthToken)) {
+            throw InvalidTokenException()
+        }
+        return jwtService.getClaim(emailAuthToken, "email", String::class.java) ?: throw InvalidTokenException()
     }
 
     private fun isValidPasswordPattern(password: String): Boolean {

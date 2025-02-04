@@ -90,3 +90,8 @@ data class PasswordResetRequestDto(
     val emailAuthToken: String,
     val newPassword: String,
 )
+
+data class ResetPasswordRequestDto(
+    val emailAuthToken: String,
+    val newPassword: String,
+)
