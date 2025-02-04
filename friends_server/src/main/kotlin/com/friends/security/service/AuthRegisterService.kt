@@ -13,21 +13,22 @@ import com.friends.security.securityException.EmailDuplicateException
 import com.friends.security.securityException.InvalidNicknameException
 import com.friends.security.securityException.InvalidPasswordException
 import com.friends.security.securityException.InvalidTokenException
+import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
 
+@Service
 class AuthRegisterService(
     private val jwtService: JwtService,
+    private val authValidator: AuthValidator,
 ) {
     @Transactional
     fun register(
         registerRequestDto: RegisterRequestDto,
         profileImage: MultipartFile?,
     ) {
-        // emailAuthToken 검증
-        if (!jwtService.validate(registerRequestDto.authToken)) {
-            throw InvalidTokenException()
-        }
+        // emailAuthToken 검증하고 이메일 추출
+        val email = authValidator.validateEmailAuthTokenAndReturnEmail(registerRequestDto.authToken)
 
         // Email-Password 회원가입인지, OAuth2 회원가입인지 확인
         val type = jwtService.getClaim(registerRequestDto.authToken, "type", String::class.java)?.let { JwtType.valueOf(it) } ?: throw InvalidTokenException()
