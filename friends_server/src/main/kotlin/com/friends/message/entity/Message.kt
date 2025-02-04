@@ -24,7 +24,7 @@ class Message(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false, updatable = false)
     val sender: Member,
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     var content: String,
     @Column(nullable = false)
     var type: MessageType,
