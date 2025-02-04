@@ -252,8 +252,7 @@ class AuthService(
             throw DuplicateNewPasswordException()
         }
 
-        // jwt 에서 email 을 추출하고 해당 email 을 가진 사용자의 비밀번호를 변경합니다.
+        // 비밀번호 업데이트
         member.updatePassword(passwordEncoder.encode(newPassword))
-        memberRepository.save(member)
     }
 }
