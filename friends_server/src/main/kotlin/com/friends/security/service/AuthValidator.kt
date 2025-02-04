@@ -2,7 +2,6 @@ package com.friends.security.service
 
 import com.friends.jwt.JwtService
 import com.friends.member.entity.Member
-import com.friends.member.repository.MemberRepository
 import com.friends.security.securityException.DuplicateNewPasswordException
 import com.friends.security.securityException.InvalidPasswordException
 import com.friends.security.securityException.InvalidTokenException
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Component
 @Component
 class AuthValidator(
     private val jwtService: JwtService,
-    private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
     fun validateResetPassword(
