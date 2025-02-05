@@ -8,12 +8,15 @@ import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
 import com.friends.message.service.MessageCommandService
+import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator
 import org.springframework.web.socket.handler.TextWebSocketHandler
+
+private val logger = KotlinLogging.logger {}
 
 @Component
 class ChatWebSocketHandler(
@@ -23,11 +26,13 @@ class ChatWebSocketHandler(
     companion object {
         private const val SEND_TIME_LIMIT = 2000 // 2초
         private const val BUFFER_SIZE_LIMIT = 1024 * 1024 // 1MB
+        private const val TEXT_MAX_SIZE = 1 * 1024 * 1024 // 1MB
     }
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
         try {
             val memberId = getMemberId(session)
+            session.textMessageSizeLimit = TEXT_MAX_SIZE
             messageCommandService.setAllChatRoomsOnline(memberId, ConcurrentWebSocketSessionDecorator(session, SEND_TIME_LIMIT, BUFFER_SIZE_LIMIT))
         } catch (e: Exception) {
             session.close(CloseStatus.SERVER_ERROR)// 채팅방 연결 종료 후 에러 처리
@@ -54,6 +59,7 @@ class ChatWebSocketHandler(
             try {
                 JsonUtil.fromJson<ChatReceiveMessageDto>(message.payload)
             } catch (e: Exception) {
+                logger.error(e) { "메세지 전송 양식이 부적절합니다. " + message.payload }
                 val chatErrorMessageDto =
                     ChatErrorMessageDto(
                         clientMessageId = null,
