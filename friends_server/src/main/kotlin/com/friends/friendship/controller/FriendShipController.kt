@@ -9,9 +9,11 @@ import com.friends.profile.dto.ProfileSimpleResponseDto
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -25,6 +27,16 @@ class FriendShipController(
         @AuthenticationPrincipal memberId: Long,
     ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>> {
         val result = friendShipQueryService.getFriendshipList(memberId)
+        return ResponseEntity.ok(ListBaseResponse(result))
+    }
+
+    @GetMapping("/chatRoom/{chatRoomId}/invite-list")
+    override fun getFriendShipChatRoomInvite(
+        @PathVariable chatRoomId: Long,
+        @AuthenticationPrincipal memberId: Long,
+        @RequestParam("nickname", required = false) nickname: String?,
+    ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>> {
+        val result = friendShipQueryService.getFriendshipListNotInChatRoomByName(memberId, chatRoomId, nickname)
         return ResponseEntity.ok(ListBaseResponse(result))
     }
 

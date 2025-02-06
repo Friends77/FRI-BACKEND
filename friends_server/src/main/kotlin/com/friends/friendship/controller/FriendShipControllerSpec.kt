@@ -106,4 +106,19 @@ interface FriendShipControllerSpec {
         memberId: Long,
         friendShipReceiveDto: FriendShipReceiveDto,
     ): ResponseEntity<Void>
+
+    @Operation(
+        description = "채팅방에서 친구 초대 목록 조회 API",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "채팅방에서 친구 초대 목록 조회 성공",
+            ),
+        ],
+    )
+    fun getFriendShipChatRoomInvite(
+        chatRoomId: Long,
+        memberId: Long,
+        nickname: String?,
+    ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>>
 }

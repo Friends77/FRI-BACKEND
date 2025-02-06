@@ -29,6 +29,7 @@ interface FriendShipRepository :
 interface FriendShipCustomRepository {
     fun findAllFriendsByMemberId(
         memberId: Long,
+        nickname: String? = null,
     ): List<Friendship>
 
     fun findFriendshipByMemberIdAndNickname(
@@ -40,7 +41,10 @@ interface FriendShipCustomRepository {
 class FriendShipCustomRepositoryImpl(
     private val kotlinJdslJpqlExecutor: KotlinJdslJpqlExecutor,
 ) : FriendShipCustomRepository {
-    override fun findAllFriendsByMemberId(memberId: Long): List<Friendship> =
+    override fun findAllFriendsByMemberId(
+        memberId: Long,
+        nickname: String?,
+    ): List<Friendship> =
         kotlinJdslJpqlExecutor
             .getList {
                 select(entity(Friendship::class))
@@ -52,6 +56,12 @@ class FriendShipCustomRepositoryImpl(
                                 path(Friendship::receiver).path(Member::id).equal(memberId),
                             ),
                             path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
+                            nickname?.let {
+                                or(
+                                    path(Friendship::requester).path(Member::nickname).like("%$nickname%"),
+                                    path(Friendship::receiver).path(Member::nickname).like("%$nickname%"),
+                                )
+                            },
                         ),
                     )
             }

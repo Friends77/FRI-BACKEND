@@ -34,6 +34,8 @@ interface ChatRoomMemberRepository :
     ): ChatRoomMember
 
     fun findByChatRoom(chatRoom: ChatRoom): List<ChatRoomMember>
+
+    fun findAllByChatRoomId(chatRoomId: Long): List<ChatRoomMember>
 }
 
 interface ChatRoomMemberCustomRepository {
