@@ -21,19 +21,8 @@ class FriendShipQueryService(
         chatRoomId: Long,
         nickname: String?,
     ): List<ProfileSimpleResponseDto> {
-        // 친구 관계가 맺어진 사람들 조회
-        val chatRoomMembers = friendShipRepository.findAllFriendsByMemberId(chatRoomId, nickname)
-
-        // 친구만 추출
-        val friends =
-            chatRoomMembers.map { chatRoomMember ->
-                // 요청자와 수락자 중 "나"가 아닌 멤버의 ID를 추출
-                if (chatRoomMember.requester.id == chatRoomId) {
-                    chatRoomMember.receiver
-                } else {
-                    chatRoomMember.requester
-                }
-            }
+        // 친구 관계가 맺어진 사람들 중 닉네임으로 검색 (닉네임이 null 이라면 전체 검색)
+        val friends = friendShipRepository.findFriendshipByMemberIdAndNickname(chatRoomId, nickname)
 
         // 채팅방에 속한 사람 조회
         val usersInChatRoom = chatRoomMemberRepository.findAllByChatRoomId(chatRoomId)
