@@ -40,7 +40,9 @@ interface FriendShipCustomRepository {
 class FriendShipCustomRepositoryImpl(
     private val kotlinJdslJpqlExecutor: KotlinJdslJpqlExecutor,
 ) : FriendShipCustomRepository {
-    override fun findAllFriendsByMemberId(memberId: Long): List<Friendship> =
+    override fun findAllFriendsByMemberId(
+        memberId: Long,
+    ): List<Friendship> =
         kotlinJdslJpqlExecutor
             .getList {
                 select(entity(Friendship::class))
