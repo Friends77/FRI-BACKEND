@@ -25,6 +25,7 @@ enum class ErrorCode(
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, -11008, "인증되지 않은 사용자입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, -11009, "권한이 없습니다."),
     DUPLICATE_NEW_PASSWORD(HttpStatus.BAD_REQUEST, -11010, "새 비밀번호가 이전 비밀번호와 동일합니다."),
+    OAUTH2_RESET_PASSWORD(HttpStatus.BAD_REQUEST, -11011, "OAuth2로 가입한 계정은 비밀번호를 변경할 수 없습니다."),
 
     // Member API error 12000대
     NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, -12001, "존재하지 않는 회원입니다."),
