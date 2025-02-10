@@ -11,6 +11,7 @@ import com.friends.profile.entity.Profile
 import com.friends.profile.repository.ProfileRepository
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -43,9 +44,9 @@ class FriendShipQueryServiceTest(
 
             beforeEach {
                 requester = memberRepository.save(createTestMember(email = "test1"))
-                receiver1 = memberRepository.save(createTestMember(email = "test2"))
-                receiver2 = memberRepository.save(createTestMember(email = "test3"))
-                receiver3 = memberRepository.save(createTestMember(email = "test4"))
+                receiver1 = memberRepository.save(createTestMember(email = "test2", nickname = "test1"))
+                receiver2 = memberRepository.save(createTestMember(email = "test3", nickname = "test2"))
+                receiver3 = memberRepository.save(createTestMember(email = "test4", nickname = "test3"))
 
                 requesterProfile = profileRepository.save(createTestProfile(requester))
                 receiver1Profile = profileRepository.save(createTestProfile(receiver1))
@@ -61,7 +62,7 @@ class FriendShipQueryServiceTest(
                         friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
                         friendship3 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver3, friendshipStatus = FriendshipStatusEnums.BLOCK))
 
-                        val result = friendShipQueryService.getFriendshipList(requester.id)
+                        val result = friendShipQueryService.getFriendshipList(requester.id, null)
 
                         result.map { it.memberId } shouldContainExactly
                             listOf(
@@ -74,7 +75,7 @@ class FriendShipQueryServiceTest(
                         friendship1 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver1, friendshipStatus = FriendshipStatusEnums.ACCEPT))
                         friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
 
-                        val result = friendShipQueryService.getFriendshipList(requester.id)
+                        val result = friendShipQueryService.getFriendshipList(requester.id, null)
 
                         result.map { it.nickname } shouldContainExactly
                             listOf(
@@ -82,6 +83,16 @@ class FriendShipQueryServiceTest(
                                 receiver2Profile.member.nickname, // test2
                                 receiver3Profile.member.nickname, // test3
                             )
+                    }
+
+                    it("닉네임 검색이 가능하다.") {
+                        friendship1 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver1, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+                        friendship2 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver2, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+                        friendship3 = friendShipRepository.save(Friendship(requester = requester, receiver = receiver3, friendshipStatus = FriendshipStatusEnums.ACCEPT))
+
+                        val result = friendShipQueryService.getFriendshipList(requester.id, "2")
+
+                        result.map { it.memberId } shouldBe listOf(receiver2.id)
                     }
                 }
             }
