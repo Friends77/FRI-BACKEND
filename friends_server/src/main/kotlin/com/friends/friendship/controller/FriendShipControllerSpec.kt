@@ -24,6 +24,7 @@ interface FriendShipControllerSpec {
     )
     fun getFriendShip(
         memberId: Long,
+        nickname: String?,
     ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>>
 
     @Operation(

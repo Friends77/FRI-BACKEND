@@ -25,8 +25,10 @@ class FriendShipController(
     @GetMapping
     override fun getFriendShip(
         @AuthenticationPrincipal memberId: Long,
+        @RequestParam("nickname", required = false)
+        nickname: String?,
     ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>> {
-        val result = friendShipQueryService.getFriendshipList(memberId)
+        val result = friendShipQueryService.getFriendshipList(memberId, nickname)
         return ResponseEntity.ok(ListBaseResponse(result))
     }
 

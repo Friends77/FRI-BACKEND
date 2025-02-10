@@ -1,6 +1,8 @@
 package com.friends.friendship.service
 
 import com.friends.chat.repository.ChatRoomMemberRepository
+import com.friends.common.exception.ErrorCode
+import com.friends.common.exception.ParameterValidationException
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.profile.dto.ProfileSimpleResponseDto
 import org.springframework.beans.factory.annotation.Value
@@ -49,20 +51,13 @@ class FriendShipQueryService(
 
     fun getFriendshipList(
         memberId: Long,
+        nickName: String?,
     ): List<ProfileSimpleResponseDto> {
+        if (nickName != null && nickName.isBlank()) {
+            throw ParameterValidationException(ErrorCode.INVALID_SEARCH_NICKNAME)
+        }
         // Friendship 조회
-        val friendships = friendShipRepository.findAllFriendsByMemberId(memberId)
-
-        // 친구만 추출
-        val friends =
-            friendships.map { friendship ->
-                // 요청자와 수락자 중 "나"가 아닌 멤버의 ID를 추출
-                if (friendship.requester.id == memberId) {
-                    friendship.receiver
-                } else {
-                    friendship.requester
-                }
-            }
+        val friends = friendShipRepository.findFriendshipByMemberIdAndNickname(memberId, nickName)
 
         // DTO 변환 및 정렬
         return friends
