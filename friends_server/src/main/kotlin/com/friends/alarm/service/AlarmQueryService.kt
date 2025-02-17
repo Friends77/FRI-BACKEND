@@ -1,5 +1,6 @@
 package com.friends.alarm.service
 
+import com.friends.alarm.AlarmNotFoundException
 import com.friends.alarm.AlarmResponseDto
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.MemberLastReadAlarm
@@ -56,4 +57,10 @@ class AlarmQueryService(
         val lastReadAlarm = memberLastReadAlarmRepository.findByMemberId(memberId)
         return alarmRepository.countByReceiverIdAndIdGreaterThan(memberId, lastReadAlarm?.alarm?.id)
     }
+
+    fun getSenderId(alarmId: Long) =
+        alarmRepository
+            .findById(alarmId)
+            .orElseThrow { AlarmNotFoundException() }
+            .sender.id
 }

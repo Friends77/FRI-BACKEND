@@ -2,6 +2,7 @@ package com.friends.friendship.service
 
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.service.AlarmCommandService
+import com.friends.alarm.service.AlarmQueryService
 import com.friends.friendship.dto.FriendShipReceiveDto
 import com.friends.friendship.entity.Friendship
 import com.friends.friendship.entity.FriendshipStatusEnums
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class FriendShipCommandService(
     private val friendShipRepository: FriendShipRepository,
     private val alarmCommandService: AlarmCommandService,
+    private val alarmQueryService: AlarmQueryService,
     private val memberRepository: MemberRepository,
 ) {
     /**
@@ -59,8 +61,8 @@ class FriendShipCommandService(
         receiverId: Long,
         friendShipReceiveDto: FriendShipReceiveDto,
     ) {
-        val requesterId = friendShipReceiveDto.requesterId
         val alarmId = friendShipReceiveDto.alarmId
+        val requesterId = alarmQueryService.getSenderId(friendShipReceiveDto.alarmId)
 
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
@@ -82,8 +84,8 @@ class FriendShipCommandService(
         receiverId: Long,
         friendShipReceiveDto: FriendShipReceiveDto,
     ) {
-        val requesterId = friendShipReceiveDto.requesterId
         val alarmId = friendShipReceiveDto.alarmId
+        val requesterId = alarmQueryService.getSenderId(friendShipReceiveDto.alarmId)
 
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
@@ -105,8 +107,8 @@ class FriendShipCommandService(
         receiverId: Long,
         friendShipReceiveDto: FriendShipReceiveDto,
     ) {
-        val requesterId = friendShipReceiveDto.requesterId
         val alarmId = friendShipReceiveDto.alarmId
+        val requesterId = alarmQueryService.getSenderId(friendShipReceiveDto.alarmId)
 
         val friendship =
             friendShipRepository.findByRequesterIdAndReceiverId(requesterId, receiverId)
