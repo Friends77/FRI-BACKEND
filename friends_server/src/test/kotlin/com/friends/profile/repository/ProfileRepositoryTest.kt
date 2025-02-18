@@ -6,10 +6,13 @@ import com.friends.profile.entity.GenderEnum
 import com.friends.profile.entity.Location
 import com.friends.profile.entity.Profile
 import com.friends.support.annotation.RepositoryTest
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import java.time.LocalDate
 
 @RepositoryTest
@@ -22,6 +25,9 @@ class ProfileRepositoryTest
         private lateinit var profile1: Profile
         private lateinit var profile2: Profile
         private lateinit var profile3: Profile
+        private lateinit var profile4: Profile
+        private lateinit var profile5: Profile
+        private lateinit var profile6: Profile
 
         @BeforeEach
         fun setup() {
@@ -32,10 +38,16 @@ class ProfileRepositoryTest
             val member1 = memberRepository.save(Member.createUser("test1", "1test@com"))
             val member2 = memberRepository.save(Member.createUser("test2", "2test@com"))
             val member3 = memberRepository.save(Member.createUser("test3", "3test@com"))
+            val member4 = memberRepository.save(Member.createUser("test4", "4test@com"))
+            val member5 = memberRepository.save(Member.createUser("test5", "5test@com"))
+            val member6 = memberRepository.save(Member.createUser("test6", "6test@com"))
 
             profile1 = profileRepository.save(Profile(member = member1, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint1, imageUrl = "test imageurl"))
             profile2 = profileRepository.save(Profile(member = member2, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint2, imageUrl = "test imageurl"))
             profile3 = profileRepository.save(Profile(member = member3, birth = LocalDate.now(), gender = GenderEnum.MAN, location = testPoint3, imageUrl = "test imageurl"))
+            profile4 = profileRepository.save(Profile(member = member4, birth = LocalDate.now(), gender = GenderEnum.WOMAN))
+            profile5 = profileRepository.save(Profile(member = member5, birth = LocalDate.now(), gender = GenderEnum.WOMAN))
+            profile6 = profileRepository.save(Profile(member = member6, birth = LocalDate.now(), gender = GenderEnum.WOMAN))
         }
 
         @Test
@@ -72,5 +84,24 @@ class ProfileRepositoryTest
             }
             val contains = foundPoints.map { it.id }.containsAll(listOf(profile1.id, profile2.id, profile3.id))
             contains shouldBe true
+        }
+
+        @Test
+        fun `친구를 제외한 랜덤 프로필 조회`() {
+            val pageable = PageRequest.of(0, 3)
+            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, listOf(profile1.member), profile2.member)
+            profiles shouldNotContain profile1
+            profiles shouldNotContain profile2
+            profiles.size shouldBe 3
+        }
+
+        @Test
+        fun `친구가 없는 경우 랜덤 프로필 조회`() {
+            val pageable = PageRequest.of(0, 100)
+            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, emptyList(), profile1.member)
+            profiles shouldNotContain profile1
+            profiles shouldContain profile2
+            profiles shouldContain profile4
+            profiles shouldContain profile6
         }
     }
