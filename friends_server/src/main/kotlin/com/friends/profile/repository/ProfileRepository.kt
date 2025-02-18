@@ -2,6 +2,7 @@ package com.friends.profile.repository
 
 import com.friends.category.entity.Category
 import com.friends.common.util.getSlice
+import com.friends.member.entity.Member
 import com.friends.profile.dto.ProfileWithDistanceQueryDto
 import com.friends.profile.entity.Profile
 import com.friends.profile.entity.ProfileInterestTag
@@ -48,6 +49,20 @@ interface ProfileRepository :
     """,
     )
     fun findRandomProfile(pageable: Pageable): List<Profile>
+
+    @Query(
+        """
+        SELECT distinct p, random() as rand
+        FROM Profile p
+        WHERE p.member NOT IN :friendIds and p.member != :member
+        ORDER BY random()
+    """,
+    )
+    fun findRandomProfileExcludeFriend(
+        pageable: Pageable,
+        friendIds: List<Member>,
+        member: Member,
+    ): List<Profile>
 }
 
 interface ProfileCustomRepository {

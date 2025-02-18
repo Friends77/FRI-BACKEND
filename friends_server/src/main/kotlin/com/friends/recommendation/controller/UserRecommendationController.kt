@@ -1,6 +1,7 @@
 package com.friends.recommendation.controller
 
 import com.friends.common.dto.ListBaseResponse
+import com.friends.profile.dto.ProfileSimpleResponseDto
 import com.friends.profile.dto.ProfileWithDistanceResponseDto
 import com.friends.recommendation.service.UserRecommendationService
 import org.springframework.http.ResponseEntity
@@ -22,6 +23,15 @@ class UserRecommendationController(
         @RequestParam(required = false, defaultValue = "20") size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithDistanceResponseDto>> {
         val result = userRecommendationService.getDistanceRecommendation(memberId, distance, size)
+        return ResponseEntity.ok(result)
+    }
+
+    @GetMapping("/user")
+    override fun getUserRecommendation(
+        @RequestParam(required = false, defaultValue = "20") size: Int,
+        @AuthenticationPrincipal memberId: Long,
+    ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>> {
+        val result = userRecommendationService.getRecommendationByRandom(size, memberId)
         return ResponseEntity.ok(result)
     }
 }
