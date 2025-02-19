@@ -1,6 +1,7 @@
 package com.friends.alarm
 
 import com.friends.alarm.entity.Alarm
+import com.friends.common.util.LocalDateTimeUtil
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
@@ -19,6 +20,6 @@ class AlarmMapper(
             nickname = alarm.sender.nickname,
             receiverId = alarm.receiver.id,
             invitedChatRoomId = alarm.invitedChatRoom?.id,
-            createdAt = alarm.createdAt,
+            createdAt = LocalDateTimeUtil.toTimeStamp(alarm.createdAt),
         )
 }

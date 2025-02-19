@@ -1,7 +1,6 @@
 package com.friends.alarm
 
 import com.friends.alarm.entity.AlarmType
-import java.time.LocalDateTime
 
 data class AlarmResponseDto(
     val id: Long,
@@ -12,5 +11,5 @@ data class AlarmResponseDto(
     val nickname: String,
     val receiverId: Long,
     val invitedChatRoomId: Long? = null,
-    val createdAt: LocalDateTime,
+    val createdAt: Long,
 )
