@@ -1,10 +1,10 @@
 package com.friends.alarm.service
 
+import com.friends.alarm.AlarmMapper
 import com.friends.alarm.AlarmNotFoundException
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
-import com.friends.alarm.toAlarmResponseDto
 import com.friends.chat.ChatRoomNotFoundException
 import com.friends.chat.dto.PingPongDto
 import com.friends.chat.dto.PingPongType
@@ -27,6 +27,7 @@ class AlarmCommandService(
     private val alarmRepository: AlarmRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val pingPongRepository: PingPongRepository,
+    private val alarmMapper: AlarmMapper,
 ) {
     private val onlineUserSessions = ConcurrentHashMap<Long, MutableSet<WebSocketSession>>()
 
@@ -113,7 +114,7 @@ class AlarmCommandService(
         alarm: Alarm,
     ) {
         alarmRepository.save(alarm)
-        val alarmResponseDto = toAlarmResponseDto(alarm)
+        val alarmResponseDto = alarmMapper.toAlarmResponseDto(alarm)
         onlineUserSessions[alarm.receiver.id]?.forEach {
             it.sendMessage(TextMessage(JsonUtil.toJson(alarmResponseDto)))
         }
