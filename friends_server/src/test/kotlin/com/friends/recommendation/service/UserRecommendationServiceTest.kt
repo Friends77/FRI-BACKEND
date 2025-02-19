@@ -4,7 +4,7 @@ import com.friends.friendship.entity.Friendship
 import com.friends.friendship.entity.FriendshipRequestStatusEnums
 import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.repository.FriendShipRepository
-import com.friends.member.createTestMemberWithoutProfile
+import com.friends.member.createTestMember
 import com.friends.profile.createTestProfile
 import com.friends.profile.repository.ProfileRepository
 import io.kotest.core.spec.style.BehaviorSpec
@@ -16,16 +16,16 @@ import org.springframework.transaction.annotation.Transactional
 
 @SpringBootTest
 @Transactional
-class UserRecommendationServiceIntegrationTes :
+class UserRecommendationServiceIntegrationTest :
     BehaviorSpec({
         val profileRepository = mockk<ProfileRepository>()
         val friendShipRepository = mockk<FriendShipRepository>()
         val userRecommendationService = UserRecommendationService(profileRepository, friendShipRepository)
 
         given("getRecommendationByRandom 테스트") {
-            val requester = createTestMemberWithoutProfile()
+            val requester = createTestMember()
             val requesterProfile = createTestProfile(requester)
-            val member = createTestMemberWithoutProfile(email = "test2")
+            val member = createTestMember(email = "test2")
             val memberProfile = createTestProfile(member)
             every { friendShipRepository.findFriendshipByMemberIdAndNickname(any(), any()) } returns emptyList()
             `when`("랜덤 추천을 요청 후 해당 유저에게 친구 요청을 보낸 경우") {
@@ -54,9 +54,9 @@ class UserRecommendationServiceIntegrationTes :
                 every { profileRepository.findByMemberId(any()) } returns requesterProfile
                 every { profileRepository.findRandomProfileExcludeFriend(any(), any(), any()) } returns listOf(memberProfile)
                 every { friendShipRepository.findByRequesterAndReceiver(any(), any()) } returns null
-                val result = userRecommendationService.getRecommendationByRandom(3, requester.id).content[0]
                 then("AVAILABLE이 반환되어야 한다.") {
-                    result shouldBe listOf(FriendshipRequestStatusEnums.AVAILABLE)
+                    val result = userRecommendationService.getRecommendationByRandom(3, requester.id).content[0].type
+                    result shouldBe FriendshipRequestStatusEnums.AVAILABLE
                 }
             }
         }
