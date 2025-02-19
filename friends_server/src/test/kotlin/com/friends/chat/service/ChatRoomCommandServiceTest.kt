@@ -77,28 +77,28 @@ class ChatRoomCommandServiceTest :
                 }
 
                 `when`("채팅방 제목이 공백인 경우") {
-                    val InvaildRequest = createTestChatRoomCreateRequestDto(title = " ")
+                    val invalidRequest = createTestChatRoomCreateRequestDto(title = " ")
                     then("ParameterException이 발생한다.") {
                         shouldThrow<ParameterValidationException> {
-                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                            chatRoomCommandService.createChatRoom(invalidRequest, MEMBER_ID, null)
                         }
                     }
                 }
 
                 `when`("채팅방 제목이 0자인 경우") {
-                    val InvaildRequest = createTestChatRoomCreateRequestDto(title = "")
+                    val invalidRequest = createTestChatRoomCreateRequestDto(title = "")
                     then("ParameterException이 발생한다.") {
                         shouldThrow<ParameterValidationException> {
-                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                            chatRoomCommandService.createChatRoom(invalidRequest, MEMBER_ID, null)
                         }
                     }
                 }
 
                 `when`("카테고리 리스트가 empty인 경우") {
-                    val InvaildRequest = createTestChatRoomCreateRequestDto(categories = emptySet())
+                    val invalidRequest = createTestChatRoomCreateRequestDto(categories = emptySet())
                     then("ParameterException이 발생한다.") {
                         shouldThrow<ParameterValidationException> {
-                            chatRoomCommandService.createChatRoom(InvaildRequest, MEMBER_ID, null)
+                            chatRoomCommandService.createChatRoom(invalidRequest, MEMBER_ID, null)
                         }
                     }
                 }

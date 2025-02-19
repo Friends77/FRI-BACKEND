@@ -69,7 +69,7 @@ class GlobalRecommendationService(
         return ListBaseResponse(
             profiles.map {
                 ProfileSimpleResponseDto(
-                    it.id,
+                    it.member.id,
                     it.member.nickname,
                     it.imageUrl ?: profileBaseImageUrl,
                     it.selfDescription,

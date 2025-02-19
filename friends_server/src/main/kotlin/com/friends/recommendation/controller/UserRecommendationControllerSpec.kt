@@ -4,6 +4,7 @@ import com.friends.common.dto.ListBaseResponse
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
 import com.friends.profile.dto.ProfileWithDistanceResponseDto
+import com.friends.recommendation.dto.LonginRecommendationByRandom
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -31,4 +32,23 @@ interface UserRecommendationControllerSpec {
         distance: Double,
         size: Int,
     ): ResponseEntity<ListBaseResponse<ProfileWithDistanceResponseDto>>
+
+    @Operation(
+        description = "로그인된 유저 추천 API(이미 친구인 유저는 제외)",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "유저 추천 성공",
+            ),
+        ],
+    )
+    @ApiErrorCodeExamples(
+        [
+            ErrorCode.PROFILE_NOT_FOUND,
+        ],
+    )
+    fun getUserRecommendation(
+        size: Int,
+        memberId: Long,
+    ): ResponseEntity<ListBaseResponse<LonginRecommendationByRandom>>
 }
