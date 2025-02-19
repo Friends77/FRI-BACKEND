@@ -18,5 +18,5 @@ class MemberLastReadAlarm(
     val member: Member,
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "alarm_id")
-    val alarm: Alarm,
+    var alarm: Alarm,
 )
