@@ -54,13 +54,13 @@ interface ProfileRepository :
         """
         SELECT distinct p, random() as rand
         FROM Profile p
-        WHERE p.member NOT IN :friendIds and p.member != :member
+        WHERE p.member NOT IN :friendAndBlocked and p.member != :member
         ORDER BY random()
     """,
     )
     fun findRandomProfileExcludeFriend(
         pageable: Pageable,
-        friendIds: List<Member>,
+        friendAndBlocked: List<Member>,
         member: Member,
     ): List<Profile>
 }
