@@ -3,8 +3,8 @@ package com.friends.recommendation.controller
 import com.friends.common.dto.ListBaseResponse
 import com.friends.common.exception.ErrorCode
 import com.friends.common.swagger.ApiErrorCodeExamples
-import com.friends.profile.dto.ProfileSimpleResponseDto
 import com.friends.profile.dto.ProfileWithDistanceResponseDto
+import com.friends.recommendation.dto.LonginRecommendationByRandom
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -50,5 +50,5 @@ interface UserRecommendationControllerSpec {
     fun getUserRecommendation(
         size: Int,
         memberId: Long,
-    ): ResponseEntity<ListBaseResponse<ProfileSimpleResponseDto>>
+    ): ResponseEntity<ListBaseResponse<LonginRecommendationByRandom>>
 }
