@@ -1,12 +1,12 @@
 package com.friends.alarm.service
 
 import com.friends.alarm.AlarmNotFoundException
+import com.friends.alarm.AlarmMapper
 import com.friends.alarm.AlarmResponseDto
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.MemberLastReadAlarm
 import com.friends.alarm.repository.AlarmRepository
 import com.friends.alarm.repository.MemberLastReadAlarmRepository
-import com.friends.alarm.toAlarmResponseDto
 import com.friends.common.dto.SliceBaseResponse
 import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.MemberNotFoundException
@@ -20,6 +20,7 @@ class AlarmQueryService(
     private val memberRepository: MemberRepository,
     private val alarmRepository: AlarmRepository,
     private val memberLastReadAlarmRepository: MemberLastReadAlarmRepository,
+    private val alarmMapper: AlarmMapper,
 ) {
     @Transactional // 읽지 않은 알람 개수를 조회하기 위해 읽은 알람을 저장하기 때문에 Transactional 필요
     fun getAlarmList(
@@ -35,7 +36,7 @@ class AlarmQueryService(
             updateLastReadAlarm(memberId, lastReadAlarm)
         }
 
-        return toSliceBaseResponse(result.map { toAlarmResponseDto(it) })
+        return toSliceBaseResponse(result.map { alarmMapper.toAlarmResponseDto(it) })
     }
 
     // 마지막으로 읽은 알람을 저장 (읽지 않은 알람 개수를 알기 위함)
