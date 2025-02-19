@@ -1,5 +1,6 @@
 package com.friends.alarm.service
 
+import com.friends.alarm.AlarmNotFoundException
 import com.friends.alarm.AlarmResponseDto
 import com.friends.alarm.entity.Alarm
 import com.friends.alarm.entity.MemberLastReadAlarm
@@ -31,24 +32,27 @@ class AlarmQueryService(
         // 마지막으로 읽은 알람을 저장 (읽지 않은 알람 개수를 알기 위함)
         if (!result.isEmpty) {
             val lastReadAlarm = result.content.first()
-            saveLastReadAlarm(memberId, lastReadAlarm)
+            updateLastReadAlarm(memberId, lastReadAlarm)
         }
 
         return toSliceBaseResponse(result.map { toAlarmResponseDto(it) })
     }
 
     // 마지막으로 읽은 알람을 저장 (읽지 않은 알람 개수를 알기 위함)
-    private fun saveLastReadAlarm(
+    private fun updateLastReadAlarm(
         memberId: Long,
         lastReadAlarm: Alarm,
     ) {
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
-        memberLastReadAlarmRepository.save(
-            MemberLastReadAlarm(
-                member = member,
-                alarm = lastReadAlarm,
-            ),
-        )
+        val memberLastReadAlarm =
+            memberLastReadAlarmRepository.findByMemberId(memberId)
+                ?: memberLastReadAlarmRepository.save(
+                    MemberLastReadAlarm(
+                        member = member,
+                        alarm = lastReadAlarm,
+                    ),
+                )
+        memberLastReadAlarm.alarm = lastReadAlarm
     }
 
     fun getUnreadAlarmCount(memberId: Long): Long {
@@ -56,4 +60,10 @@ class AlarmQueryService(
         val lastReadAlarm = memberLastReadAlarmRepository.findByMemberId(memberId)
         return alarmRepository.countByReceiverIdAndIdGreaterThan(memberId, lastReadAlarm?.alarm?.id)
     }
+
+    fun getSenderId(alarmId: Long) =
+        alarmRepository
+            .findById(alarmId)
+            .orElseThrow { AlarmNotFoundException() }
+            .sender.id
 }
