@@ -35,6 +35,10 @@ interface FriendShipCustomRepository {
         memberId: Long,
         nickname: String?,
     ): List<Member>
+
+    fun findFriendAndBlockedByMemberId(
+        memberId: Long,
+    ): List<Member>
 }
 
 class FriendShipCustomRepositoryImpl(
@@ -89,6 +93,40 @@ class FriendShipCustomRepositoryImpl(
                     )
             }
 
+        return result1 + result2
+    }
+
+    override fun findFriendAndBlockedByMemberId(
+        memberId: Long,
+    ): List<Member> {
+        val result1 =
+            kotlinJdslJpqlExecutor.getList {
+                select(path(Friendship::requester))
+                    .from(entity(Friendship::class))
+                    .where(
+                        and(
+                            path(Friendship::receiver).path(Member::id).equal(memberId),
+                            or(
+                                path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
+                                path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.BLOCK),
+                            ),
+                        ),
+                    )
+            }
+        val result2 =
+            kotlinJdslJpqlExecutor.getList {
+                select(path(Friendship::receiver))
+                    .from(entity(Friendship::class))
+                    .where(
+                        and(
+                            path(Friendship::requester).path(Member::id).equal(memberId),
+                            or(
+                                path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.ACCEPT),
+                                path(Friendship::getFriendshipStatus).equal(FriendshipStatusEnums.BLOCK),
+                            ),
+                        ),
+                    )
+            }
         return result1 + result2
     }
 }

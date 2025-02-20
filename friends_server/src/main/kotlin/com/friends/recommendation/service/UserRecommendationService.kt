@@ -2,7 +2,6 @@ package com.friends.recommendation.service
 
 import com.friends.common.dto.ListBaseResponse
 import com.friends.friendship.entity.FriendshipRequestStatusEnums
-import com.friends.friendship.entity.FriendshipStatusEnums
 import com.friends.friendship.repository.FriendShipRepository
 import com.friends.member.entity.Member
 import com.friends.profile.ProfileLocationNullException
@@ -56,7 +55,7 @@ class UserRecommendationService(
     ): ListBaseResponse<LonginRecommendationByRandom> {
         val myProfile = profileRepository.findByMemberId(memberId) ?: throw ProfileNullResponseException()
         val member = myProfile.member
-        val friends = friendShipRepository.findFriendshipByMemberIdAndNickname(memberId, null)
+        val friends = friendShipRepository.findFriendAndBlockedByMemberId(memberId)
         val result =
             profileRepository
                 .findRandomProfileExcludeFriend(Pageable.ofSize(size), friends, member)
@@ -80,19 +79,11 @@ class UserRecommendationService(
     ): FriendshipRequestStatusEnums {
         val requestFriendship = friendShipRepository.findByRequesterAndReceiver(member, friend)
         if (requestFriendship != null) {
-            return if (requestFriendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
-                FriendshipRequestStatusEnums.REQUESTED
-            } else {
-                FriendshipRequestStatusEnums.UNAVAILABLE
-            }
+            return FriendshipRequestStatusEnums.REQUESTED
         }
         val receiveFriendship = friendShipRepository.findByRequesterAndReceiver(friend, member)
         if (receiveFriendship != null) {
-            return if (receiveFriendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
-                FriendshipRequestStatusEnums.RECEIVED
-            } else {
-                FriendshipRequestStatusEnums.UNAVAILABLE
-            }
+            return FriendshipRequestStatusEnums.RECEIVED
         }
         return FriendshipRequestStatusEnums.AVAILABLE
     }

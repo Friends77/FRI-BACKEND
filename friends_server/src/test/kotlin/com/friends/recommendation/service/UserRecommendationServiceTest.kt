@@ -27,7 +27,7 @@ class UserRecommendationServiceIntegrationTest :
             val requesterProfile = createTestProfile(requester)
             val member = createTestMember(email = "test2")
             val memberProfile = createTestProfile(member)
-            every { friendShipRepository.findFriendshipByMemberIdAndNickname(any(), any()) } returns emptyList()
+            every { friendShipRepository.findFriendAndBlockedByMemberId(any()) } returns emptyList()
             `when`("랜덤 추천을 요청 후 해당 유저에게 친구 요청을 보낸 경우") {
                 every { profileRepository.findByMemberId(any()) } returns requesterProfile
                 every { profileRepository.findRandomProfileExcludeFriend(any(), any(), any()) } returns listOf(memberProfile)
