@@ -97,7 +97,7 @@ class ProfileRepositoryTest
 
         @Test
         fun `친구가 없는 경우 랜덤 프로필 조회`() {
-            val pageable = PageRequest.of(0, 100)
+            val pageable = PageRequest.of(0, 200)
             val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, emptyList(), profile1.member)
             profiles shouldNotContain profile1
             profiles shouldContain profile2
