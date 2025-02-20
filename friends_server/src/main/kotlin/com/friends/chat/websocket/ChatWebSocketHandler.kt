@@ -7,6 +7,7 @@ import com.friends.chat.dto.PingPongDto
 import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.PingPongRepository
 import com.friends.common.util.JsonUtil
+import com.friends.message.entity.MessageType
 import com.friends.message.service.MessageCommandService
 import mu.KotlinLogging
 import org.springframework.stereotype.Component
@@ -72,6 +73,14 @@ class ChatWebSocketHandler(
 
         try {
             val memberId = getMemberId(session)
+
+            // 메세지 타입이 SYSTEM_READ 일 경우 해당 메세지 까지 읽음 처리를 합니다.
+            if (chatMessage.type == MessageType.SYSTEM_READ) {
+                val chatRoomId = chatMessage.chatRoomId
+                val messageId = chatMessage.messageId ?: return
+                messageCommandService.readMessageUpdate(memberId, chatRoomId, messageId)
+                return
+            }
 
             messageCommandService.sendMessage(
                 chatMessage.chatRoomId,

@@ -9,6 +9,7 @@ import java.time.LocalDateTime
  */
 data class ChatReceiveMessageDto(
     val clientMessageId: String,
+    val messageId: Long?, // type 이 SYSTEM_READ 일 경우 해당 메세지 까지 읽음 처리를 하기 위해 사용됩니다.
     val chatRoomId: Long,
     val content: String,
     val type: MessageType,
