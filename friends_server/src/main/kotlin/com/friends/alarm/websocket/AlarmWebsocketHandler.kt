@@ -2,7 +2,10 @@ package com.friends.alarm.websocket
 
 import com.friends.alarm.service.AlarmCommandService
 import com.friends.chat.UnexpectedChatRoomException
+import com.friends.chat.dto.PingPongDto
+import com.friends.chat.dto.PingPongType
 import com.friends.chat.repository.PingPongRepository
+import com.friends.common.util.JsonUtil
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
@@ -37,9 +40,14 @@ class AlarmWebsocketHandler(
         message: TextMessage,
     ) {
         // ping / pong
-        if (message.payload.equals("pong", ignoreCase = true)) {
-            pingPongRepository.deletePing(session.id)
-            return
+        try {
+            val pingPongDto = JsonUtil.fromJson<PingPongDto>(message.payload)
+            if (pingPongDto.type.equals(PingPongType.PONG.name, ignoreCase = true)) {
+                pingPongRepository.deletePing(session.id)
+                return
+            }
+        } catch (e: Exception) {
+            // ignore
         }
 
         // 알람 전송의 경우 REST API 에서 웹소켓 세션을 활용합니다.
