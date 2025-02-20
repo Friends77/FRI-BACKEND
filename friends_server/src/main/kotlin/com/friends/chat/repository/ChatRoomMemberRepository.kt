@@ -19,6 +19,11 @@ interface ChatRoomMemberRepository :
 
     fun findAllByMemberId(memberId: Long): List<ChatRoomMember>
 
+    fun findByChatRoomIdAndMemberId(
+        chatRoomId: Long,
+        memberId: Long,
+    ): ChatRoomMember?
+
     fun findByChatRoomAndMember(
         chatRoom: ChatRoom,
         member: Member,

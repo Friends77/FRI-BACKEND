@@ -178,6 +178,17 @@ class MessageCommandService(
         }
     }
 
+    @Transactional
+    fun readMessageUpdate(
+        memberId: Long,
+        chatRoomId: Long,
+        messageId: Long,
+    ) {
+        val chatRoomMember = chatRoomMemberRepository.findByChatRoomIdAndMemberId(chatRoomId, memberId) ?: return
+        val message = messageRepository.findById(messageId).orElse(null) ?: return
+        chatRoomMember.lastReadMessage = message
+    }
+
     /**
      * 채팅방에 메세지를 보내고 메세지를 저장합니다.
      * 채팅방이 없거나 멤버가 없을 경우 예외를 발생시킵니다.
