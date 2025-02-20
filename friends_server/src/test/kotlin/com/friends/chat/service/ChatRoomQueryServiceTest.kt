@@ -64,7 +64,7 @@ class ChatRoomQueryServiceTest :
                 }
 
                 `when`("친구 중 해당 닉네임을 가진 친구가 없는 경우") {
-                    every { friendshipRepository.findFriendshipByMemberIdAndNickname(any(), any()) } returns emptyList()
+                    every { friendshipRepository.findFriendshipByMemberIdAndNickname(any(), any()) } returns emptySet()
                     then("빈 리스트가 반환된다.") {
                         chatRoomQueryService.getChatRooms(MEMBER_ID, "test")
                         verify(exactly = 0) {

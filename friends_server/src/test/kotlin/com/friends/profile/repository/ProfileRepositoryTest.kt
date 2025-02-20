@@ -89,7 +89,7 @@ class ProfileRepositoryTest
         @Test
         fun `친구를 제외한 랜덤 프로필 조회`() {
             val pageable = PageRequest.of(0, 3)
-            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, listOf(profile1.member), profile2.member)
+            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, setOf(profile1.member), profile2.member)
             profiles shouldNotContain profile1
             profiles shouldNotContain profile2
             profiles.size shouldBe 3
@@ -98,7 +98,7 @@ class ProfileRepositoryTest
         @Test
         fun `친구가 없는 경우 랜덤 프로필 조회`() {
             val pageable = PageRequest.of(0, 200)
-            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, emptyList(), profile1.member)
+            val profiles = profileRepository.findRandomProfileExcludeFriend(pageable, emptySet(), profile1.member)
             profiles shouldNotContain profile1
             profiles shouldContain profile2
             profiles shouldContain profile4

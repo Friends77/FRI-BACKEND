@@ -46,7 +46,7 @@ interface ChatRoomMemberRepository :
 interface ChatRoomMemberCustomRepository {
     fun findAllByMemberAndFriends(
         memberId: Long,
-        memberList: List<Member>?,
+        memberList: Set<Member>?,
     ): List<ChatRoomMember>
 
     fun findRepresentativeProfileByChatRoomId(chatRoomId: Long): List<Member>
@@ -63,7 +63,7 @@ class ChatRoomMemberCustomRepositoryImpl(
 ) : ChatRoomMemberCustomRepository {
     override fun findAllByMemberAndFriends(
         memberId: Long,
-        memberList: List<Member>?,
+        memberList: Set<Member>?,
     ): List<ChatRoomMember> =
         kotlinJdslJpqlExecutor.getList {
             select(entity(ChatRoomMember::class)) // 중복 제거
@@ -102,7 +102,7 @@ class ChatRoomMemberCustomRepositoryImpl(
         }
 
     private fun Jpql.dynamicChatRoomList(
-        memberList: List<Member>?,
+        memberList: Set<Member>?,
     ): Predicate? =
         if (memberList == null) {
             null

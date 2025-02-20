@@ -76,7 +76,7 @@ class ChatRoomMemberRepositoryTest(
 
             context("회원 ID 리스트를 받으면") {
                 it("chatRoomMember를 전부 반환한다") {
-                    chatRoomMemberRepository.findAllByMemberAndFriends(member2.id, listOf(member1, member3)) shouldBe listOf(chatRoomMember2)
+                    chatRoomMemberRepository.findAllByMemberAndFriends(member2.id, setOf(member1, member3)) shouldBe listOf(chatRoomMember2)
                 }
             }
         }
