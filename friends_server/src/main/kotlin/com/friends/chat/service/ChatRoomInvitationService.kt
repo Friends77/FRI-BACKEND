@@ -1,7 +1,6 @@
 package com.friends.chat.service
 
 import com.friends.alarm.AlarmNotFoundException
-import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.repository.AlarmRepository
 import com.friends.alarm.service.AlarmCommandService
 import com.friends.chat.ChatRoomNotFoundException
@@ -51,8 +50,7 @@ class ChatRoomInvitationService(
     ) {
         val alarmId = chatRoomInvitationHandlerDto.alarmId
         val alarm = alarmRepository.findById(alarmId).orElseThrow { AlarmNotFoundException() }
-        // 알람 타입을 수락으로 변경
-        alarmCommandService.changeAlarmType(alarmId, AlarmType.CHAT_ROOM_INVITATION_ACCEPTED)
+        alarmCommandService.deleteAlarm(alarmId)
 
         // 초대된 채팅방에 입장
         val invitedChatRoom = alarm.invitedChatRoom ?: throw ChatRoomNotFoundException()
@@ -64,7 +62,6 @@ class ChatRoomInvitationService(
         chatRoomInvitationHandlerDto: ChatRoomInvitationHandlerDto,
     ) {
         val alarmId = chatRoomInvitationHandlerDto.alarmId
-        // 알람 타입을 거절로 변경
-        alarmCommandService.changeAlarmType(alarmId, AlarmType.CHAT_ROOM_INVITATION_REJECTED)
+        alarmCommandService.deleteAlarm(alarmId)
     }
 }

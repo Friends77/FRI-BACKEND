@@ -1,6 +1,5 @@
 package com.friends.friendship.service
 
-import com.friends.alarm.entity.AlarmType
 import com.friends.alarm.service.AlarmCommandService
 import com.friends.alarm.service.AlarmQueryService
 import com.friends.friendship.dto.FriendShipReceiveDto
@@ -70,7 +69,7 @@ class FriendShipCommandService(
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendship.acceptFriendshipRequest()
-            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_ACCEPTED)
+            alarmCommandService.deleteAlarm(alarmId)
         } else {
             throw FriendShipNotWaitingException()
         }
@@ -93,7 +92,7 @@ class FriendShipCommandService(
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendShipRepository.delete(friendship)
-            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_REJECTED)
+            alarmCommandService.deleteAlarm(alarmId)
         } else {
             throw FriendShipNotWaitingException()
         }
@@ -116,7 +115,7 @@ class FriendShipCommandService(
 
         if (friendship.getFriendshipStatus() == FriendshipStatusEnums.WAITING) {
             friendship.blockFriendRequest()
-            alarmCommandService.changeAlarmType(alarmId, AlarmType.FRIEND_REQUEST_BLOCKED)
+            alarmCommandService.deleteAlarm(alarmId)
         } else {
             throw FriendShipNotWaitingException()
         }
