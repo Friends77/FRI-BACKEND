@@ -120,11 +120,10 @@ class AlarmCommandService(
         }
     }
 
-    fun changeAlarmType(
+    fun deleteAlarm(
         alarmId: Long,
-        alarmType: AlarmType,
     ) {
         val alarm = alarmRepository.findById(alarmId).orElseThrow { AlarmNotFoundException() }
-        alarm.changeType(alarmType)
+        alarm.changeType(AlarmType.DELETED)
     }
 }

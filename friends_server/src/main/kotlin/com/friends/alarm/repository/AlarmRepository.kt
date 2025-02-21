@@ -1,6 +1,7 @@
 package com.friends.alarm.repository
 
 import com.friends.alarm.entity.Alarm
+import com.friends.alarm.entity.AlarmType
 import com.friends.common.util.getSingle
 import com.friends.common.util.getSlice
 import com.friends.member.entity.Member
@@ -42,6 +43,7 @@ class AlarmCustomRepositoryImpl(
                 .where(
                     and(
                         path(Alarm::receiver).path(Member::id).equal(memberId),
+                        path(Alarm::getType).notEqual(AlarmType.DELETED),
                         lastAlarmId?.let { path(Alarm::id).lessThan(it) },
                     ),
                 ).orderBy(desc(path(Alarm::id)))
