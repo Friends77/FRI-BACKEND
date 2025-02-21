@@ -40,7 +40,7 @@ class ChatRoomQueryService(
         nickname: String?,
     ): List<ChatRoomInfoResponseDto> {
         memberRepository.findById(memberId).orElseThrow { throw MemberNotFoundException() }
-        val friends: List<Member>? =
+        val friends: Set<Member>? =
             if (nickname != null) {
                 friendshipRepository.findFriendshipByMemberIdAndNickname(memberId, nickname).also { if (it.isEmpty()) return emptyList() }
             } else {

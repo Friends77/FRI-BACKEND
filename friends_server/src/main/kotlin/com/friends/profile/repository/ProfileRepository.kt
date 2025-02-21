@@ -60,7 +60,7 @@ interface ProfileRepository :
     )
     fun findRandomProfileExcludeFriend(
         pageable: Pageable,
-        friendAndBlocked: List<Member>,
+        friendAndBlocked: Set<Member>,
         member: Member,
     ): List<Profile>
 }

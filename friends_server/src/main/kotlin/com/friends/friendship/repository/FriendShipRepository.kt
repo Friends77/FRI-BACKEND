@@ -34,11 +34,11 @@ interface FriendShipCustomRepository {
     fun findFriendshipByMemberIdAndNickname(
         memberId: Long,
         nickname: String?,
-    ): List<Member>
+    ): Set<Member>
 
     fun findFriendAndBlockedByMemberId(
         memberId: Long,
-    ): List<Member>
+    ): Set<Member>
 }
 
 class FriendShipCustomRepositoryImpl(
@@ -65,7 +65,7 @@ class FriendShipCustomRepositoryImpl(
     override fun findFriendshipByMemberIdAndNickname(
         memberId: Long,
         nickname: String?,
-    ): List<Member> {
+    ): Set<Member> {
         val result1 =
             kotlinJdslJpqlExecutor.getList {
                 select(path(Friendship::requester))
@@ -93,12 +93,12 @@ class FriendShipCustomRepositoryImpl(
                     )
             }
 
-        return result1 + result2
+        return (result1 + result2).toSet()
     }
 
     override fun findFriendAndBlockedByMemberId(
         memberId: Long,
-    ): List<Member> {
+    ): Set<Member> {
         val result1 =
             kotlinJdslJpqlExecutor.getList {
                 select(path(Friendship::requester))
@@ -127,6 +127,6 @@ class FriendShipCustomRepositoryImpl(
                         ),
                     )
             }
-        return result1 + result2
+        return (result1 + result2).toSet()
     }
 }
