@@ -151,7 +151,8 @@ class AuthController(
             .from("refreshToken", refreshToken)
             .httpOnly(true) // JavaScript 에서 쿠키에 접근할 수 없도록 하는 보안 설정입니다.
             .maxAge(expirationFromNowInSeconds) // 쿠키의 만료 시간을 설정합니다.
-//            .secure(true) // cookie 가 https 에서만 전송되도록 하는 보안 설정입니다.
+            .secure(true) // cookie 가 https 에서만 전송되도록 하는 보안 설정입니다.
+            .sameSite("None")
             .path("/api/auth") // 쿠키의 유효 범위를 설정합니다. (브라우저가 서버에 쿠키를 자동으로 전달하는 경로를 의미합니다.)
             .build()
     }
