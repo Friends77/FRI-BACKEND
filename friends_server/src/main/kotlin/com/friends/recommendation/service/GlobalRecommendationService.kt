@@ -34,7 +34,7 @@ class GlobalRecommendationService(
         return ListBaseResponse(
             profiles.content.map {
                 ProfileWithCategoriesResponseDto(
-                    it.id,
+                    it.member.id,
                     it.member.nickname,
                     it.imageUrl ?: profileBaseImageUrl,
                     it.interestTag.map { tag -> tag.category.id },
