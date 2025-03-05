@@ -60,7 +60,7 @@ class ChatRoomCommandService(
         val chatRoom = chatRoomRepository.save(ChatRoom.of(request.title, member, imageUrl, request.description))
         chatRoomCategoryRepository.saveAll(categoryRepository.findByIdIn(request.categoryIdList).also { if (it.isEmpty()) throw ChatRoomCategoryNotFoundException() }.map { ChatRoomCategory.of(chatRoom, it) })
         val enterMassage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
-        messageCommandService.setChatRoomOnline(chatRoom.id, memberId)
+        messageCommandService.setChatRoomOnline(memberId, chatRoom.id)
         chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMassage))
         return CreateChatRoomResponseDto(chatRoom.id)
     }
@@ -74,7 +74,7 @@ class ChatRoomCommandService(
         val member = memberRepository.findById(memberId).orElseThrow { MemberNotFoundException() }
         if (!chatRoomMemberRepository.existsChatRoomMemberByChatRoomAndMember(chatRoom, member)) {
             val enterMessage = messageCommandService.sendMessage(chatRoom.id, member.id, Message.enterMessage(member.nickname), MessageType.SYSTEM_MEMBER_ENTER)
-            messageCommandService.setChatRoomOnline(chatRoomId, memberId)
+            messageCommandService.setChatRoomOnline(memberId, chatRoomId)
             chatRoomMemberRepository.save(ChatRoomMember.of(chatRoom, member, enterMessage))
         }
     }
