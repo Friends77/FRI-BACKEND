@@ -9,7 +9,7 @@ import com.friends.common.mapper.toSliceBaseResponse
 import com.friends.member.MemberNotFoundException
 import com.friends.member.repository.MemberRepository
 import com.friends.message.dto.MessageResponseDto
-import com.friends.message.dto.mapper.toMessageResponseDto
+import com.friends.message.dto.mapper.MessageResponseMapper
 import com.friends.message.repository.MessageRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,6 +21,7 @@ class MessageQueryService(
     private val memberRepository: MemberRepository,
     private val chatRoomRepository: ChatRoomRepository,
     private val chatRoomMemberRepository: ChatRoomMemberRepository,
+    private val messageResponseMapper: MessageResponseMapper,
 ) {
     fun getUnreadMessage(
         memberId: Long,
@@ -33,7 +34,7 @@ class MessageQueryService(
         // 채팅방에 속한 멤버인지 확인하는 유효성 검사도 같이 수행합니다.
         val chatRoomMember = chatRoomMemberRepository.findByChatRoomAndMember(chatRoom, member) ?: throw ChatRoomMemberNotFoundException()
 
-        val messages = messageRepository.findUnreadMessagesForMemberBeforeId(chatRoomMember, lastMessageId, size).map { toMessageResponseDto(it) }
+        val messages = messageRepository.findUnreadMessagesForMemberBeforeId(chatRoomMember, lastMessageId, size).map { messageResponseMapper.toMessageResponseDto(it) }
         return toSliceBaseResponse(messages)
     }
 
@@ -56,7 +57,7 @@ class MessageQueryService(
          * 이전 메세지 조회 sql 특성상 hasNext 가 동작하기 위해서는 id 를 내림차순으로 정렬해야합니다.
          * 하지만 클라이언트에서는 message id 를 오름차순으로 정렬하여 보여주기 때문에 역순으로 반환합니다.
          */
-        val messages = messageRepository.findMessagesBeforeIdInChatRoom(chatRoom, messageId, size).map { toMessageResponseDto(it) }
+        val messages = messageRepository.findMessagesBeforeIdInChatRoom(chatRoom, messageId, size).map { messageResponseMapper.toMessageResponseDto(it) }
         return toSliceBaseResponse(messages)
     }
 }
